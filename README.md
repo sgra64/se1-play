@@ -1,34 +1,32 @@
 # Project: *se1-play*
 
-The next commit adds [IDE](https://aws.amazon.com/what-is/ide/)
-project files.
+The next commit adds a [.env.sh](.env.sh) file to setup or
+*"source"* the Java development entvironment.
 
-For the [*Visual Studio Code*](https://code.visualstudio.com/) IDE,
-*VSCode project files* are stored in a folder: `.vscode`
-in the project directory with files:
+This includes:
 
-- [settings.json](.vscode/settings.json): project-specific VSCode
-    configuration,
+- environment variables, e.g. `CLASSPATH`, `JDK_JAVAC_OPTIONS`, etc.,
 
-- [launch.json](.vscode/launch.json): launch and debug configurations,
+- project files, e.g. `.classpath`, `.project`, etc.
 
-- [launch_terminal.sh](.vscode/launch_terminal.sh): script to launch
-    terminals in VSCode
+- libraries or links to libraries needed by the project,
+    e.g. `libs -> ./branches/libs`
 
-Project-specific [settings.json](.vscode/settings.json) over-rules
-*system-wide* (*global*) settings maintained in the VSCode
-installation directory, e.g. on Windows in:
-`C:/Users/<user>/AppData/Roaming/Code/User/settings.json`.
-VSCode combines both settings.
+- functions (e.g. `mk`, `show`) that compile: `mk compile` and
+    run: `mk run` code or to run tests: `mk compile-tests run-tests`.
+
+The term: *"sourcing the project"* or just *"sourcing"* refers to the
+`source`-command that executes the `.env.sh` file.
 
 ```sh
 <se1-play>              # project directory
  |
  +--.gitignore                  # files for git to ignore
+ +--.env.sh     <--new          # .env file to source the entvironment
  +-- README.md                  # this markup file
  |
  +-<.vscode>                    # VSCode project files
-    +-- settings.json           # project-specific VSCode configuration
-    +-- launch.json             # launch and debug configurations
-    +-- launch_terminal.sh      # script to launch terminals in VSCode
+    +--settings.json            # project-specific VSCode configuration
+    +--launch.json              # launch and debug configurations
+    +--launch_terminal.sh       # script to launch terminals in VSCode
 ```

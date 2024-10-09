@@ -3,50 +3,51 @@
 Goal of this exercise is to demonstate a professionally engineered
 Java project.
 
-You will learn about the project *"Setup"* and project *"Build"*
-processes, what *"Sourcing"* a project is and the structure
-(*"scaffold"*) of a Java project.
+You will learn about project *"Setup"* and *"Build"* processes,
+what *"Sourcing"* is and about the structure (*"scaffold"*) of a
+Java project.
 
 - Only basic tools are used: `git`, `java`, `javac`, `jar`, `javadoc`
 (more advanced build tools are introduced later).
 
 - Basic skills are trained such as the use of `git` and the `terminal shell`.
 
-- *VSCode* is the preferred IDE for development in this project.
-    Other IDE can be used as well, e.g. *eclipse*, *IntelliJ*.
+- *VSCode* is the preferred IDE for development, other IDE can be used
+    as well, e.g. *eclipse*, *IntelliJ*.
 
 
-Project *se1-play* was created in steps recorded as tagged commits
-in the Git repository. Reviewing steps provides some basic understanding:
+Project *se1-play* was created in steps that are recorded as tagged commits
+in the remote Git repository ([*"se1-play"*](https://github.com/sgra64/se1-play)).
+Reviewing steps provides a first understanding:
 
 <!-- - Step 1 ([*t0*](../../tree/t0)) - rel. path works for tags and branches -->
 - Step 1 (tag: [*t0*](https://github.com/sgra64/se1-play/tree/t0)) -
-    initial commit with the [*.gitignore*](.gitignore) file and `README.md`.
+    initial commit with [*.gitignore*](.gitignore) `README.md` files.
 
 - Step 2 (tag: [*t1*](https://github.com/sgra64/se1-play/tree/t1)) -
-    commit with the settings folder [*.vscode*](.vscode) for the *VSCode* IDE.
+    commit with the [*.vscode*](.vscode) settings folder for the *VSCode* IDE.
 
 - Step 3 (tag: [*t2*](https://github.com/sgra64/se1-play/tree/t2)) -
-    commit with an added `.env.sh` file to *source* the project
-    (setup the project environment).
+    commit with `.env.sh`, the script to *source* the project
+    (see: setup the project environment).
 
 - Step 4 (tag: [*root*](https://github.com/sgra64/se1-play/tree/root)) -
-    commit with added `src`, `test` and `resources` folders.
+    commit with `src`, `test` and `resources` folders added.
 
-- In addition, branch: [*libs*](https://github.com/sgra64/se1-play/tree/libs)
-    contains *.jar* - libraries required by the project.
+- Step 5: a separate branch: [*libs*](https://github.com/sgra64/se1-play/tree/libs)
+    containing *.jar* - libraries are added that are required by the project.
 
 
-The following steps must be performed by a developer (on a laptop)
+The following steps must be performed by a developer on a laptop
 for *onboarding* the project.
 
-- Step 5, section [*Getting the Project*](#getting-the-project-se1-play).
+- Step 6, section [*Getting the Project*](#getting-the-project-se1-play).
 
-- Step 5, section [*Project Setup*](#project-setup).
+- Step 7, section [*Project Setup*](#project-setup).
 
-- Step 6, section [*Project Build*](#project-build).
+- Step 8, section [*Project Build*](#project-build).
 
-- Step 7, section [*Running the Application*](#running-the-application).
+- Step 9, section [*Running the Application*](#running-the-application).
 
 - Summary: [*Complete Project Content*](#complete-project-content)
 
@@ -58,23 +59,23 @@ for *onboarding* the project.
 Cloning the project from the Git repository yields the project
 folder *`se1-play`* in the current directory (workspace).
 
-A *workspace* is a directory where projects reside as sub-folders
-of the *workspace* directory.
+A *workspace* is a directory where projects directories reside
+as sub-folders.
 
 You need to select a *workspace* directory on your laptop for
-this project.
+this and following projects.
 
 ```sh
 cd <workspace>          # change to folder where the project should be located
 
-# clone the repository (with all branches)
+# cloning the entire repository (with all branches)
 # - git clone git@github.com:sgra64/se1-play.git
+# is often not adviced in a real git-repository due to repository size
 # 
-# smarter is to only fetch the main-branch from the repository
+# smarter is to fetch only needed branches, here the main-branch from the repository
+# hint: if the ssh-link: git@... does not work (check your ssh-setup),
+# use the https-link: https://github.com/sgra64/se1-play.git
 git clone -b main --single-branch git@github.com:sgra64/se1-play.git se1-play
-
-# if the git@-link does not work (check your ssh-setup), use the https-link:
-git clone -b main --single-branch https://github.com/sgra64/se1-play.git se1-play
 
 ls -la                  # show new project folder: 'se1-play'
 cd se1-play             # change into the new project folder
@@ -96,7 +97,7 @@ drwxr-xr-x 1     0 Oct  3 19:45 src/
 drwxr-xr-x 1     0 Oct  3 19:29 tests/
 ```
 
-The project structure (*scaffold*) with files and folders is:
+The project structure (*"scaffold"*) with files and folders is:
 
 ```sh
 <workspaces>        # workspace folder, select and know the location of

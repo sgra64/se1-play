@@ -1,0 +1,18 @@
+# created with:
+# grep '#' jars-content.txt >j1; (cat j1; find . -name '*.jar') >jars-content.txt; rm j1
+# 
+./jackson/jackson-annotations-2.13.0.jar
+./jackson/jackson-core-2.13.0.jar
+./jackson/jackson-databind-2.13.0.jar
+./jacoco/jacocoagent.jar
+./jacoco/jacococli.jar
+./junit/apiguardian-api-1.1.2.jar
+./junit/junit-jupiter-api-5.9.3.jar
+./junit/junit-platform-commons-1.9.3.jar
+./junit/opentest4j-1.2.0.jar
+./junit-platform-console-standalone-1.9.2.jar
+./logging/log4j-api-2.23.1.jar
+./logging/log4j-core-2.23.1.jar
+./logging/log4j-slf4j2-impl-2.23.1.jar
+./logging/slf4j-api-2.0.16.jar
+./lombok/lombok-1.18.36.jar

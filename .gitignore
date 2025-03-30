@@ -3,9 +3,9 @@
 # https://www.atlassian.com/git/tutorials/saving-changes/gitignore
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-# ignore branch directories
-main
-main-dev
-env-java
-prior
+# ignore everything (in $HOME)
+/*
 
+# except following files and directories
+!.gitignore
+!env.sh

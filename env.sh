@@ -19,7 +19,7 @@
 # \\
 #  - show [cmd1, cmd2...]       ; show commands
 # 
-#  - mk [--show|-s] [cmd1, cmd2...] [args]      ; execute or show commands
+#  - mk [cmd1, cmd2...] [args]  ; execute commands
 # 
 #  - wipe [--all|-a|-la]        ; unset project env variables and functions
 #                               ; --all|-a: including project files
@@ -48,7 +48,7 @@ declare -gA P=(
     [log-dir]="logs"
     [doc-dir]="docs"
     [cov-dir]="coverage"
-    [env-script]=".env/.env.sh"
+    [env-script]=".env/env.sh"
     [jar]="bin/application-1.0.0-SNAPSHOT.jar"
     # 
     [is-zsh]=$(type setopt 2>/dev/null)
@@ -168,7 +168,7 @@ function command() {
     copy-resources) echo copy ${P[res]} ${P[target]}/${P[res]}
         ;;
 
-    run) echo java ${P[run]}
+    run) shift; echo java ${P[run]} $*
         ;;
 
     run-tests) echo java -cp \$JUNIT_CLASSPATH \\
@@ -208,27 +208,35 @@ function command() {
 }
 
 function mk() {
+    [ "${P[is-zsh]}" ] && trap "" DEBUG     # disable ANSI-codes for 'zsh'
+    # 
+    local cmds=(); local num=0
     for cmd in "$@"; do
-        if [ "$(command $cmd)" ]; then
+        [ "$(command $cmd)" ] && cmds+=($cmd)
+    done
+    for cmd in "${cmds[@]}"; do
+        shift               # shift $@ to obtain args after last command
+        num=$((num + 1))    # detect last command before args[]
+        [[ $num -ge ${#cmds[@]} ]] && local args="$@"
+        # if [ "$(command $cmd)" ]; then
             # 
-            # output command in terminal
-            command "$cmd"
-            # echo '------'
+            command "$cmd" $args    # output command in terminal
             # 
-            # disable ANSI-codes for 'zsh' during command execution
-            [ "${P[is-zsh]}" ] && trap "" DEBUG
-            # 
-            eval $(command "$cmd" | sed -e 's/\\$//' | tr -d '\n')
-            # 
-            # re-enable ANSI-codes for 'zsh' after command execution
-            [ "${P[is-zsh]}" ] && trap "echo -ne '\e[m'" DEBUG
-        else
-            [[ "$cmd" =~ (--show|-s) ]] && shift && show "$*" && break
-        fi
-    done; return 0
+            eval $(command "$cmd" $args | sed -e 's/\\$//' | tr -d '\n')
+        # else
+        #     [[ "$cmd" =~ (--show|-s) ]] && shift && show "$*" && break
+        # fi
+    done;
+    # 
+    # re-enable ANSI-codes for 'zsh' after command execution
+    [ "${P[is-zsh]}" ] && trap "echo -ne '\e[m'" DEBUG
+    # 
+    return 0
 }
 
 function show() {
+    [ "${P[is-zsh]}" ] && trap "" DEBUG     # disable ANSI-codes for 'zsh'
+    # 
     [ "$1" ] && local args=($*) || local args=( \
         clean compile compile-tests run run-tests build package coverage javadoc \
     )
@@ -239,7 +247,12 @@ function show() {
             command $cmd | sed -e 's/.*/  &/'
             [ "$cmd" != "$last" ] && echo    # line feed, except for last command
         fi
-    done; return 0
+    done;
+    # 
+    # re-enable ANSI-codes for 'zsh' after command execution
+    [ "${P[is-zsh]}" ] && trap "echo -ne '\e[m'" DEBUG
+    # 
+    return 0
 }
 
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -398,7 +411,7 @@ fi
 unset -f setup created
 
 
-# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Files extractable by extract() separated by markers: '^# -- filename$' and
 # '^# --$'.
 # 

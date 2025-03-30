@@ -1,13 +1,30 @@
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// VSCode project settings (used with system-wide settings.json file, which is
-//      on Windows in: C:/Users/<user>/AppData/Roaming/Code/User/settings.json)
+// VSCode main project settings file.
+// 
+// Setting up Java in VSCode:
+//  - https://code.visualstudio.com/docs/languages/java
+//  - https://code.visualstudio.com/docs/java/java-tutorial
+// 
+// VSCode Extensions used for Java development:
+//  - Extension Pack for Java (Microsoft)
+//    https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack
+// 
+//  - Code Runner for Java (Jun Han)
+//    https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner
+// 
+// VSCode global settings file and project caches:
+//  - Windows: C:/Users/<user>/AppData/Roaming/Code/User/
+//  - MacOS:   ~/Library/Application\ Support/Code/User/
+//     +
+//     +-- settings.json            ; VSCode global settings file
+//     +-- workspaceStorage         ; VSCode project caches
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 {
-    // terminal config: https://code.visualstudio.com/docs/terminal/profiles
+    // Terminal configuration, https://code.visualstudio.com/docs/terminal/profiles
     "terminal.integrated.profiles.windows": {
         "Bash": {
           "path": ["bash"],             // 'bash' terminal
-          "args": ["--init-file", "'${workspaceFolder}'/.vscode/launch_terminal.sh"],
+          "args": ["--init-file", "'${workspaceFolder}'/.vscode/launch-terminal.sh"],
           "icon": "terminal-bash",
         },
         "Cmd": {
@@ -15,25 +32,20 @@
         },
         "PowerShell": {
             "path": "powershell",       // 'powershell.exe' terminal
-            // "args": ["-noexit", "-file", "${env:APPDATA}\\PowerShell\\custom-init.ps1"],
-            "args": ["-noexit"],
+            "args": ["-noexit"],        // ["-noexit", "-file", "${env:APPDATA}\\PowerShell\\custom-init.ps1"],
         },
-        "Git Bash": null,               // remove other terminals from menu
+        "Git Bash": null,               // disable terminals from menu
         "Command Prompt": null,
         "JavaScript Debug Terminal": null,
     },
     "terminal.integrated.defaultProfile.windows": "Bash",
 
-    // Run/Debug launcher issues "C:\\..." on Windows, use with 'cmd.exe'
-    "terminal.integrated.automationProfile.windows": {
-        "path": "cmd"
-    },
-
-    // Java code runner properties
+    // Java Code Runner configuration
     "code-runner.defaultLanguage": "java",
     "code-runner.clearPreviousOutput": true,
-    "code-runner.executorMap": {
-        "java": "java -cp @.vscode/.classpath application.Application",
+    "code-runner.executorMap": {    // launch traditional or modular project
+        // "java": "java -cp @.vscode/.classpath application.Application",
+        "java": "java -p @.vscode/.modulepath -m se1.play/application.Application",
     },
 
     // Debug properties

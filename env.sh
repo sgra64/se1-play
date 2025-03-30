@@ -13,7 +13,7 @@
 # \\
 # Project files for VSCode and eclipse IDE:
 #  - .classpath, .project       ; used to set up the VSCode Java extension
-#    .vscode/.classpath         ; used by the VSCode Java Code Runner
+#  - .vscode/.classpath, .vscode/.modulepath  ; used by VSCode Java Code Runner
 # 
 # Executable functions:
 # \\
@@ -44,6 +44,7 @@ declare -gA P=(
     [classes]="bin/classes"
     [test-classes]="bin/test-classes"
     [test-runner]="junit-platform-console-standalone-1.9.2.jar"
+    [module]="se1.play"
     [run]="application.Application"
     [log-dir]="logs"
     [doc-dir]="docs"
@@ -133,6 +134,7 @@ function wipe() {
     local files=()  # probe files to remove are present
     [ -f .classpath ] && files+=(.classpath)
     [ -f .vscode/.classpath ] && files+=(.vscode/.classpath)
+    [ -f .vscode/.modulepath ] && files+=(.vscode/.modulepath)
     [ -f .project ] && files+=(.project)
     # 
     local env2=()
@@ -161,17 +163,18 @@ function command() {
         [ -d "${P[res]}" ] && command copy-resources
         ;;
 
-    compile-tests) echo javac -cp \$JUNIT_CLASSPATH $\(find ${P[tests]} -name \'*.java\'\) -d ${P[test-classes]}';'
+    compile-tests) echo javac -cp \"\$JUNIT_CLASSPATH\" $\(find ${P[tests]} -name \'*.java\'\) -d ${P[test-classes]}';'
         [ -d "${P[res]}" ] && command copy-resources
         ;;
 
     copy-resources) echo copy ${P[res]} ${P[target]}/${P[res]}
         ;;
 
-    run) shift; echo java ${P[run]} $*
+    run) shift;     # echo "echo java ${P[run]} $*"
+        echo java -p \"\$MODULEPATH\" -m ${P[module]}/${P[run]} $*
         ;;
 
-    run-tests) echo java -cp \$JUNIT_CLASSPATH \\
+    run-tests) echo java -cp \"\$JUNIT_CLASSPATH\" \\
         echo " " org.junit.platform.console.ConsoleLauncher \$JUNIT_OPTIONS \\
         echo " " --scan-class-path
         ;;
@@ -200,7 +203,7 @@ function command() {
         ;;
 
     doc|docs|javadoc)
-        echo javadoc -d docs $\(eval echo \$JDK_JAVADOC_OPTIONS\) \\
+        echo javadoc -d ${P[doc-dir]} $\(eval echo \$JDK_JAVADOC_OPTIONS\) \\
         echo " " $\(builtin cd ${P[src]}\; find . -type d \| sed -e \'s!/!.!g\' -e \'s/^[.]*//\'\)
         ;;
 
@@ -217,42 +220,38 @@ function mk() {
     for cmd in "${cmds[@]}"; do
         shift               # shift $@ to obtain args after last command
         num=$((num + 1))    # detect last command before args[]
-        [[ $num -ge ${#cmds[@]} ]] && local args="$@"
-        # if [ "$(command $cmd)" ]; then
-            # 
-            command "$cmd" $args    # output command in terminal
-            # 
-            eval $(command "$cmd" $args | sed -e 's/\\$//' | tr -d '\n')
-        # else
-        #     [[ "$cmd" =~ (--show|-s) ]] && shift && show "$*" && break
-        # fi
-    done;
-    # 
-    # re-enable ANSI-codes for 'zsh' after command execution
-    [ "${P[is-zsh]}" ] && trap "echo -ne '\e[m'" DEBUG
-    # 
-    return 0
+        [[ $num -ge ${#cmds[@]} ]] && local args="$@" && local last="true"
+        # 
+        command $cmd $args          # output command in terminal
+        # 
+        # line feed, except for last command; print "---" after run
+        [ "$cmd" = "run" ] && echo "---" || { [ -z "$last" ] && echo; }
+        # 
+        eval $(command  $cmd $args | sed -e 's/\\$//' | tr -d '\n')
+    done
+    [ "${P[is-zsh]}" ] && trap "echo -ne '\e[m'" DEBUG; return 0
 }
 
 function show() {
     [ "${P[is-zsh]}" ] && trap "" DEBUG     # disable ANSI-codes for 'zsh'
     # 
-    [ "$1" ] && local args=($*) || local args=( \
-        clean compile compile-tests run run-tests build package coverage javadoc \
-    )
-    local last=${args[-1]}
-    for cmd in ${args[@]}; do
-        if [ "$(command $cmd)" ]; then
-            echo $cmd:
-            command $cmd | sed -e 's/.*/  &/'
-            [ "$cmd" != "$last" ] && echo    # line feed, except for last command
-        fi
-    done;
+    local cmds=(clean compile compile-tests run run-tests build package coverage javadoc)
+    [ "$1" ] && local cmds=() && \
+        for cmd in "$@"; do
+            [ "$(command $cmd)" ] && cmds+=($cmd)
+        done
     # 
-    # re-enable ANSI-codes for 'zsh' after command execution
-    [ "${P[is-zsh]}" ] && trap "echo -ne '\e[m'" DEBUG
-    # 
-    return 0
+    local num=0
+    for cmd in "${cmds[@]}"; do
+        shift               # shift $@ to obtain args after last command
+        num=$((num + 1))    # detect last command before args[]
+        [[ $num -ge ${#cmds[@]} ]] && local args="$@" && local last="true"
+        # 
+        echo "$cmd:"
+        command $cmd $args | sed -e 's/.*/  &/'     # indent by 2 spaces
+        [ -z "$last" ] && echo      # line feed, except for last command
+    done
+    [ "${P[is-zsh]}" ] && trap "echo -ne '\e[m'" DEBUG; return 0
 }
 
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -294,9 +293,10 @@ function created() {
 # 
 # ------ setup-classpath: -----------------------------------------------------
 # 
-if  [ -z "$CLASSPATH" -o -z "$JUNIT_CLASSPATH" -o -z "$MODULEPATH" -o ! \
-      -f .classpath -o ! -f .project ] || \
-    [ -d .vscode -a ! -f .vscode/.classpath ]; then
+# https://stackoverflow.com/questions/51175148/nested-condition-of-if-statement-in-bash
+if  [ -z "$CLASSPATH" -o -z "$JUNIT_CLASSPATH" -o -z "$MODULEPATH" -o \
+      ! -f .classpath -o ! -f .project ] || \
+        { [ -d .vscode ] && [ ! -f .vscode/.classpath -o ! -f .vscode/.modulepath ]; }; then
 
     function setup_classpath() {
         # CLASSPATH seperator is ';' on Windows, any other system it is ':'
@@ -314,11 +314,8 @@ if  [ -z "$CLASSPATH" -o -z "$JUNIT_CLASSPATH" -o -z "$MODULEPATH" -o ! \
         local cp=""; local jcp=""
         if [ -z "$CLASSPATH" -o -z "$JUNIT_CLASSPATH" ]; then
             local sep2=""; local sep3=""
-            for cpe in  "${P[classes]}" \
-                        "${P[test-classes]}" \
-                        "${P[target]}/${P[res]}" \
-                        ${jars[@]};
-            do
+            for cpe in "${P[classes]}" "${P[test-classes]}" "${P[target]}/${P[res]}" ${jars[@]}; do
+                # 
                 # collect entries for CLASSPATH, exclude 'jacoco' jars with test-runner
                 [[ ! "$cpe" =~ (jacoco|test-classes|junit-platform|opentest|apiguardian) ]] && \
                     cp+="$sep2$cpe" && sep2="$sep"
@@ -326,21 +323,19 @@ if  [ -z "$CLASSPATH" -o -z "$JUNIT_CLASSPATH" -o -z "$MODULEPATH" -o ! \
                 # collect entries for JUNIT_CLASSPATH, exclude 'junit' jars
                 [[ ! "$cpe" =~ (/junit/) ]] &&
                     jcp+="$sep3$cpe" && sep3="$sep"
-                # 
             done
-            # jcp+="$sep3$libs_path/${P[test-runner]}" # append junit test-runner
         fi
-        [ -z "$CLASSPATH" ] && export CLASSPATH="$cp" && created env CLASSPATH  # ${CLASSPATH:0:52}...
+        [ -z "$CLASSPATH" ] && export CLASSPATH="$cp" && created env CLASSPATH
         [ -z "$JUNIT_CLASSPATH" ] && export JUNIT_CLASSPATH="$jcp" && created env JUNIT_CLASSPATH
 
         if [ -z "$MODULEPATH" ]; then
             local mp=""; local sep2=""
-            # cut off trailing jar-name leaving dirname for modulepath
-            for mod in $(tr ' ' '\n' <<< ${jars[@]} | sed -e 's|/[^/]*$||' | uniq); do
+            # cut trailing jar-name leaving dirname for modulepath with 'libs/*' (remove 'libs')
+            for mod in "${P[classes]}" $(tr ' ' '\n' <<< ${jars[@]} | sed -e 's|/[^/]*$||' -e '/\//!d' | uniq); do
                 mp+="$sep2$mod"; sep2="$sep"
             done
             export MODULEPATH="$mp"
-            created env MODULEPATH    # ${MODULEPATH:0:52}"
+            created env MODULEPATH
         fi
 
         # on Windows, use abs path with C:/ for .classpath file
@@ -360,13 +355,16 @@ if  [ -z "$CLASSPATH" -o -z "$JUNIT_CLASSPATH" -o -z "$MODULEPATH" -o ! \
             created file ".classpath"
         fi
 
-        [ -d .vscode -a ! -f .vscode/.classpath ] && \
-            echo "$CLASSPATH" > .vscode/.classpath && \
-            created file ".vscode/.classpath"
+        if [ -d .vscode ]; then
+            [ ! -f .vscode/.classpath ] && \
+                echo "$CLASSPATH" > .vscode/.classpath && created file ".vscode/.classpath"
+
+            [ ! -f .vscode/.modulepath ] && \
+                echo "$MODULEPATH" > .vscode/.modulepath && created file ".vscode/.modulepath"
+        fi
 
         [ ! -f .project ] && \
-            template .project > .project && \
-            created file ".project"
+            template .project > .project && created file ".project"
         # 
         return 0
     }
@@ -401,10 +399,10 @@ if  [ -z "$CLASSPATH" -o -z "$JUNIT_CLASSPATH" -o -z "$MODULEPATH" -o ! \
     }
     # 
     # invoke setup with functions for setting up CLASSPATH, JUNIT_CLASSPATH, MODULEPATH
-    # and files: .classpath, .vscode/.classpath, .project
+    # and files: .project, .classpath, .vscode/.classpath, .vscode/.modulepath
     setup --setup-classpath
 else
-    # skip setting up CLASSPATH, etc. and files: .classpath, .vscode/.classpath, .project
+    # skip setting up CLASSPATH and files
     setup
 fi
 

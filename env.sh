@@ -38,6 +38,7 @@ declare -gA P=(
     [src]="src"
     [tests]="tests"
     [res]="resources"
+    [manifest]="${P[res]}/META-INF/MANIFEST.MF"
     [lib]="libs"
     [lib-repo]="git clone -b libs --single-branch git@github.com:sgra64/se1-play.git"
     [target]="bin"
@@ -182,9 +183,10 @@ function command() {
     package|jar)
         echo tar cv ${P[lib]}/'{jackson,logging}*/*' "| tar -C ${P[target]} -xvf - "';'
         echo jar -c -v -f ${P[jar]} '\'
-        echo "     " -m ${P[res]}/META-INF/MANIFEST.MF '\'
+        [ -f ${P[manifest]} ] && \
+            echo "     " $(echo -m ${P[manifest]}) '\'
         echo "     " -C ${P[classes]} . ';'
-        echo jar uvf ${P[jar]} -C ${P[target]} ${P[res]}
+        # echo jar uvf ${P[jar]} -C ${P[target]} ${P[res]}
         ;;
 
     build)

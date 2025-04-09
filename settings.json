@@ -43,12 +43,14 @@
     // Java Code Runner configuration
     "code-runner.defaultLanguage": "java",
     "code-runner.clearPreviousOutput": true,
-    "code-runner.executorMap": {    // launch traditional or modular project
+    "code-runner.saveAllFilesBeforeRun": true,
+    "code-runner.executorMap": {    // launch as traditional or as modular project
         // "java": "java -cp @.vscode/.classpath application.Application",
-        "java": "java -p @.vscode/.modulepath -m se1.play/application.Application",
+        "java": "javac @.vscode/.sources -d bin/classes && java -p @.vscode/.modulepath -m se1.play/application.Application",
     },
 
-    // Debug properties
+    // Java and debug properties
+    "java.autobuild.enabled": true,
     "java.debug.settings.onBuildFailureProceed": true,
     "java.debug.settings.showHex": true,
 }

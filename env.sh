@@ -13,7 +13,7 @@
 # \\
 # Project files for VSCode and eclipse IDE:
 #  - .classpath, .project       ; used to set up the VSCode Java extension
-#  - .vscode/.classpath, .vscode/.modulepath  ; used by VSCode Java Code Runner
+#  - .vscode: .classpath, .modulepath, .sources  ; for VSCode Java Code Runner
 # 
 # Executable functions:
 # \\
@@ -29,6 +29,7 @@
 #  - build: Ctrl-Shift-B
 #  - run:   Ctrl-Alt-N
 #  - clean Java Language Server Workspace: Ctrl-Shift-P
+# 
 # VSCode project cache:
 #  - Windows: C:\Users\<USER>\AppData\Roaming\Code\User\workspaceStorage
 #  - MacOS:   ~/Library/Application Support/Code/User/workspaceStorage
@@ -136,6 +137,7 @@ function wipe() {
     [ -f .classpath ] && files+=(.classpath)
     [ -f .vscode/.classpath ] && files+=(.vscode/.classpath)
     [ -f .vscode/.modulepath ] && files+=(.vscode/.modulepath)
+    [ -f .vscode/.sources ] && files+=(.vscode/.sources)
     [ -f .project ] && files+=(.project)
     # 
     local env2=()
@@ -298,8 +300,9 @@ function created() {
 # https://stackoverflow.com/questions/51175148/nested-condition-of-if-statement-in-bash
 if  [ -z "$CLASSPATH" -o -z "$JUNIT_CLASSPATH" -o -z "$MODULEPATH" -o \
       ! -f .classpath -o ! -f .project ] || \
-        { [ -d .vscode ] && [ ! -f .vscode/.classpath -o ! -f .vscode/.modulepath ]; }; then
-
+        { [ -d .vscode ] && \
+            [ ! -f .vscode/.classpath -o ! -f .vscode/.modulepath -o ! -f .vscode/.sources ]; }
+then
     function setup_classpath() {
         # CLASSPATH seperator is ';' on Windows, any other system it is ':'
         [ "${P[is-win]}" ] && local sep=';' || local sep=':'
@@ -363,6 +366,9 @@ if  [ -z "$CLASSPATH" -o -z "$JUNIT_CLASSPATH" -o -z "$MODULEPATH" -o \
 
             [ ! -f .vscode/.modulepath ] && \
                 echo "$MODULEPATH" > .vscode/.modulepath && created file ".vscode/.modulepath"
+
+            [ ! -f .vscode/.sources ] && \
+                find ${P[src]} -type f -name '*.java' > .vscode/.sources && created file ".vscode/.sources"
         fi
 
         [ ! -f .project ] && \
@@ -401,7 +407,7 @@ if  [ -z "$CLASSPATH" -o -z "$JUNIT_CLASSPATH" -o -z "$MODULEPATH" -o \
     }
     # 
     # invoke setup with functions for setting up CLASSPATH, JUNIT_CLASSPATH, MODULEPATH
-    # and files: .project, .classpath, .vscode/.classpath, .vscode/.modulepath
+    # and files: .project, .classpath, .vscode/.classpath, .vscode/.modulepath, vscode/.sources
     setup --setup-classpath
 else
     # skip setting up CLASSPATH and files

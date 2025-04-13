@@ -335,8 +335,8 @@ then
 
         if [ -z "$MODULEPATH" ]; then
             local mp=""; local sep2=""
-            # cut trailing jar-name leaving dirname for modulepath with 'libs/*' (remove 'libs')
-            for mod in "${P[classes]}" $(tr ' ' '\n' <<< ${jars[@]} | sed -e 's|/[^/]*$||' -e '/\//!d' | uniq); do
+            # cut trailing jar-name leaving dirname for modulepath with 'libs/*' (remove trailing 'libs' entry)
+            for mod in "${P[classes]}" $(tr ' ' '\n' <<< ${jars[@]} | sed -e 's|/[^/]*$||' -e '/libs$/d' | uniq); do
                 mp+="$sep2$mod"; sep2="$sep"
             done
             export MODULEPATH="$mp"

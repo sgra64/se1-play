@@ -1,577 +1,138 @@
-# Project: *se1-play*
+# Project: *se1-play*, branch *b1-numbers*
 
-Goal of this challenge is to demonstate a professionally engineered Java project.
+Branch *b1-numbers* contains code and tasks for the *b1-numbers* assignment.
 
-Such a project is comprised of several parts:
+Goals are:
 
-- `src` - folder with Java source code (`.java` files),
+- supplement the project with content from branches
+    [*b1-numbers*](../../tree/b1-numbers) and
+    [*b1-numbers-tests*](../../tree/b1-numbers-tests),
 
-- `tests` - folder with unit test code,
+- rebuild the project,
 
-- `resources` - folder with none-Java sources and properties files,
+- implement functions of the [*Numbers.java*](src/numbers/Numbers.java) interface and
 
-- `bin` (binaries) - folder with compiled (`.class`) and packaged (`.jar`) files,
+- verify correctness through *JUnit-tests*.
 
-- `libs` (libraries) - folder with `.jar` libraries for imported packages,
-
-- `.vscode` - folder with configuration and settings for the
-    [*VSCode*](https://code.visualstudio.com/)
-    [*IDE*](https://en.wikipedia.org/wiki/Integrated_development_environment),
-
-- `.env` - folder with the "*sourcing script*" `env.sh` to set the environment
-
-- "*project files*" created by the sourcing script to configure the project for the IDE,
-
-    - e.g. `.project` and `.classpath`,
-
-- `.git` - local repository of the [*git*](https://en.wikipedia.org/wiki/Git)
-    source code management or
-    [*version control*](https://en.wikipedia.org/wiki/Version_control)
-    system with
-
-    - `.gitignore` and `.gitmodules` files.
+Code and JUnit-tests must work in the IDE and in the terminal.
 
 
-&nbsp;
+Steps:
 
----
-Project "*se1-play*" is created in several steps:
+1. [Project Structure](#1-project-structure)
 
-1. [Project Structure ("*Scaffold*")](#1-project-structure-scaffold)
+1. [*Setup* and *Build* Project](#2-setup-and-build-project)
 
-1. [Project Location and Initialization](#2-project-location-and-initialization)
+1. [Implement *sum()*](#3-implement-sum)
 
-1. [Create *.gitignore* - File](#3-create-gitignore---file)
+1. [*JUnit*-Tests](#4-junit---tests)
 
-1. [Importing *git*-Submodules](#4-importing-git-submodules)
+1. [Implement *Numbers*-Functions](#5-implement-numbers-functions)
 
-1. [Exploring: *libs*](#5-exploring-libs)
-
-1. [Add Java Code](#6-add-java-code)
-
-1. [*"Sourcing"* the Project](#7-sourcing-the-project)
-
-1. [Project Build and Run](#8-project-build-and-run)
-
-1. [Add *JUnit* Tests](#9-add-junit-tests)
-
-1. [Launching *VSCode*](#10-launching-vscode)
-
-1. [*Javadoc*](#11-javadoc)
-
-1. [Packaging the Project](#12-packaging-the-project)
+1. [Final Result](#final-result)
 
 
 
 
 &nbsp;
 
-## 1. Project Structure ("*Scaffold*")
+## 1. Project Structure
 
+The *Numbers*-project is assembled from three parts:
 
-The overall project structure (*"scaffold"*) is:
+- the content from the [*main*](../../tree/main) branch,
 
-```sh
-<workspaces>        # workspace folder within which project directories exist
-  |
-  +-<se1-play>          # project folder of the "se1-play" project
-     +--.project            # VSCode/eclipse file with project information (*)
-     +--.classpath          # VSCode/eclipse file with CLASSPATH information (*)
-     |
-     +-<.env>               # folder with the "sourcing script" (env.sh)
-     |
-     +-<.git>               # folder with the local git repository
-     +--.gitignore          # file to tell git which files to ignore
-     +--.gitmodules         # file with information about git modules (*)
-     |
-     +-<.vscode>            # folder with VSCode project files
-     |
-     +-<src>                # folder with Java source code
-     |
-     +-<tests>              # folder with unit test code
-     |
-     +-<resources>          # folder with none-Java sources and properties files
-     |
-     +-<bin>                # folder with compiled code (.class files) (*)
-     |
-     +-<docs>               # folder with compiled javadoc (html content) (*)
+- branch: [*b1-numbers*](../../tree/b1-numbers) adds source code
+    with package [*src/numbers*](src/numbers),
 
-# names in '<>' are folders, otherwise files
-# content labeled with (*) is generated content
-```
+- branch: [*b1-numbers-tests*](../../tree/b1-numbers-tests) adds
+    *JUnit-tests* with package [*tests/numbers*](tests/numbers)
 
-<!-- 
-The project is created in steps indicated by tags:
-
-<!-- relative paths work for tags and branches -->
-<!-- - Step 1 (tag: [*t0*](https://github.com/sgra64/se1-play/tree/t0)) - -- >
-- Initial (tag: [*root*](../../tree/root)) -
-    initial (empty) root commit.
-
-- Step 1 (tag: [*t1*](../../tree/t1)) -
-    with [*.gitignore*](.gitignore).
-
-- Step 2 (tag: [*t2*](../../tree/t2)) -
-    with [*.gitmodules*](.gitmodules) after adding git submodules:
-
-    - [*.env*](https://github.com/sgra64/se1-play/tree/env),
-      [*.vscode*](https://github.com/sgra64/se1-play/tree/vscode-settings),
-      [*libs*](https://github.com/sgra64/se1-play/tree/libs)
-
-- Step 3 (tag: [*t3*](../../tree/t3)) -
-    commit with the `src` folder added.
-
-- Step 4 (tag: [*t4*](../../tree/t4)) -
-    commit with the `tests` folder added.
--->
-
-
-&nbsp;
-
-## 2. Project Location and Initialization
-
-In order to create the project, find a place or "*workspace*" where to create it.
-
-An example is to create a "*workspace*" folder in the *HOME* directory:
+The project content assembled from the three branches is:
 
 ```sh
-cd                          # change directory to the HOME directory
-mkdir workspaces            # create the 'workspaces' folder
-cd workspaces               # change directory to the 'workspaces' folder
-mkdir se1-play              # create folder for the 'se1-play' project
-ls -la                      # show content of the 'workspaces' folder
-```
-```
-total 16
-drwxr-xr-x 1 svgr2 Kein 0 Apr  6 18:29 .
-drwxr-xr-x 1 svgr2 Kein 0 Apr  6 17:42 ..
-drwxr-xr-x 1 svgr2 Kein 0 Apr  6 18:31 se1-play     <-- project directory
-```
-```sh
-cd se1-play                 # cd into project directory
-ls -la                      # show content of the 'se1-play' project directory
-```
-```
-total 4                                             <-- project directory is empty
-drwxr-xr-x 1 svgr2 Kein 0 Apr  6 18:33 .
-drwxr-xr-x 1 svgr2 Kein 0 Apr  6 18:29 ..
-```
-```sh
-pwd                         # show path to the 'se1-play' project directory
-```
-```
-/c/Sven1/svgr2/tmp/svgr/workspaces/se1-play         <-- will show path on your laptop
-```
-
-The first step inside the *se1-play* project directory is to create a local
-*git* repository with an empty root commit:
-
-```sh
-git init                    # initialize local git repository
-
-ls -la
-```
-```
-total 8
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:31 .
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 18:29 ..
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:19 .git      <-- local git repository created
-```
-
-```sh
-git commit --allow-empty -m "root commit (empty)"       # create empty root commit
-git tag root                                            # tag commit as 'root'
-
-git log --oneline                                       # show empty root commit
-```
-```
-52f8547 (HEAD -> main, tag: root) root commit (empty)   <-- empty root commit
-```
-
-The project has now a local *git* repository with an empty root commit.
-
-This is the basis for importing other project parts as *git Submodules*.
-
-
-
-&nbsp;
-
-## 3. Create *.gitignore* - File
-
-Creating a *.gitignore* file should always be done. Install [*.gitignore*](.gitignore)
-into the project directory and commit:
-
-```sh
-# download '.gitignore' file from remote repository
-curl -o .gitignore https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/main/.gitignore
-
-ls -la                      # show new '.gitignore' file
-```
-```
-total 25
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:31 .
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 18:29 ..
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:19 .git
--rw-r--r-- 1 svgr2 Kein 1214 Apr  6 19:31 .gitignore    <-- new '.gitignore' file
-```
-
-Commit the new *.gitignore* file and tag with *"t1"*:
-
-```sh
-git add .gitignore                  # stage '.gitignore' file
-git commit -m "add .gitignore"      # commit '.gitignore' file
-
-git tag t1                          # tag commit with 't1'
-
-git log --oneline                   # show commit log/history
-```
-```
-7eacbb9 (HEAD -> main, tag: t1) add .gitignore          <-- new commit tagged with 't1'
-52f8547 (tag: root) root commit (empty)                 <-- initial root commit
+<se1-play>              # project directory
+ |
+ # regular content of the project from the 'main'-branch
+ +--.gitignore                  # files for git to ignore
+ +-- README.md                  # this markup file
+ | ...v
+ |
+ # content from branch: 'b1-numbers' with package 'numbers'
+ +-<src>                        # source code for 'numbers'
+ |  +--module-info.java         # description of module 'se1.play'
+ |  |
+ |  +-<application>             # existing package 'application'
+ |  |  +--Application.java      # program with main()-method
+ |  |  +--Runner.java           # new interface
+ |  |  +--...
+ |  |
+ |  +-<numbers>                 # new package 'numbers'
+ |    +--Numbers.java           # interface with methods to implement
+ |    +--NumbersData.java       # numbers data sets
+ |    +--NumbersRunner.java     # driver code to perform calculations from command line
+ |    +--package-info.java      # package information
+ |
+ # content from branch: 'b1-numbers-tests' adding JUnit tests
+ +-<tests>                      # source code for 'numbers' JUnit tests
+ |  +-<numbers>
+      +--Matchers.java
+      +--Numbers_1_sum_Tests.java
+      +--Numbers_2_sum_positive_even_Tests.java
+      +--Numbers_3_sum_recursion_Tests.java
+      +--Numbers_4_find_first_Tests.java
+      +--Numbers_5_find_last_Tests.java
+      +--Numbers_6_find_all_Tests.java
+      +--Numbers_7a_find_sums_Tests.java
+      +--Numbers_7b_find_sums_duplicates_Tests.java
+      +--Numbers_8a_find_all_sums_Tests.java
+      +--Numbers_8b_find_all_sums_XL_Tests.java
 ```
 
 
 
 &nbsp;
 
-## 4. Importing *git*-Submodules
+## 2. *Setup* and *Build* Project
 
-[*Git Submodules*](https://git-scm.com/docs/git-submodule)
-([*article*](https://www.freecodecamp.org/news/how-to-use-git-submodules/))
-is a mechanism to import other *git* repositories as *submodules* into a repository.
-
-We import three parts in the *se1-play* project:
-
-- `.env` - module with the "*sourcing script*" `env.sh` to set the environment.
-
-- `.vscode` - module with configuration and settings for the *VSCode* IDE.
-
-- `libs` - module with `.jar` libraries for imported packages.
-
-The three submodules can be imported from the remote repository:
-[*https://github.com/sgra64/se1-play.git*](https://github.com/sgra64/se1-play.git).
-
-
-<!-- 
-The overall pattern for importing *git submodules* is:
-```
-git submodule add -b <remote-branch> -- <remote-URL> <local-dir-name>
-``` -->
+*Setup* of the project is assembling content from branches:
 
 ```sh
-# import '.env' submodule from branch 'env' of the remote repository
-git submodule add -b env -f -- https://github.com/sgra64/se1-play.git .env
+cd se1-play                 # change into the project directory
 
-# import '.vscode' submodule from branch 'vscode-settings' of the remote repository
-git submodule add -b vscode-settings -f -- https://github.com/sgra64/se1-play.git .vscode
-
-# import '.libs' submodule from branch 'libs' of the remote repository
-git submodule add -b libs -f -- https://github.com/sgra64/se1-play.git libs
+git status                  # make sure workspace is clean
 ```
 ```
-Cloning into 'C:/Sven1/svgr2/tmp/svgr/workspaces/se1-play/.env'...
-remote: Enumerating objects: 47, done.
-remote: Counting objects: 100% (47/47), done.
-remote: Compressing objects: 100% (41/41), done.
-remote: Total 47 (delta 8), reused 43 (delta 4), pack-reused 0 (from 0)
-Receiving objects: 100% (47/47), 8.71 MiB | 11.65 MiB/s, done.
-Resolving deltas: 100% (8/8), done.
-...
-Cloning into 'C:/Sven1/svgr2/tmp/svgr/workspaces/se1-play/.vscode'...
-...
-Cloning into 'C:/Sven1/svgr2/tmp/svgr/workspaces/se1-play/libs'...
+On branch main
+nothing to commit, working tree clean
 ```
-
-A new folder `.env` has been imported as git submodule and a new file `.gitmodules`
-has been created:
 
 ```sh
-ls -la                      # show new content of the 'se1-play' project directory
+# set remote URL to repository to fetch branches
+git remote add se1-play-repo https://github.com/sgra64/se1-play.git
+
+git remote -v               # show the new remote URL
+
+# fetch branch 'b1-numbers' from remote repository 'se1-play-repo'
+git fetch se1-play-repo b1-numbers
 ```
 ```
-total 21
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:17 .
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 18:29 ..
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:06 .env          <-- new submodule '.env'
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:17 .git
--rw-r--r-- 1 svgr2 Kein 1214 Apr  6 19:31 .gitignore
--rw-r--r-- 1 svgr2 Kein  295 Apr  6 19:17 .gitmodules   <-- new '.gitmodules' file
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:11 .vscode       <-- new submodule '.vscode'
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:17 libs          <-- new submodule '.libs'
+remote: Enumerating objects: 18, done.
+remote: Counting objects: 100% (18/18), done.
+remote: Compressing objects: 100% (16/16), done.
+remote: Total 18 (delta 1), reused 17 (delta 0), pack-reused 0 (from 0)
+Unpacking objects: 100% (18/18), 16.54 KiB | 164.00 KiB/s, done.
+From https://github.com/sgra64/se1-play
+ * branch            b1-numbers -> FETCH_HEAD
+ * [new branch]      b1-numbers -> se1-play-repo/b1-numbers
 ```
 
-Show the *.gitmodules* file:
+*Fetch* only downloads content into the local *git* repository. It does not
+merge it (*pull* does).
 
 ```sh
-cat .gitmodules                     # show the '.gitmodules' file
+find src                    # verify content of 'src' before the merge
 ```
-```
-[submodule ".env"]
-        path = .env
-        url = https://github.com/sgra64/se1-play.git
-        branch = env
-[submodule ".vscode"]
-        path = .vscode
-        url = https://github.com/sgra64/se1-play.git
-        branch = vscode-settings
-[submodule "libs"]
-        path = libs
-        url = https://github.com/sgra64/se1-play.git
-        branch = libs
-```
-
-Commit the new *.gitmodules* file and tag with *"t2"*:
-
-```sh
-git add .gitmodules                 # stage '.gitmodules' file
-git commit -m "add .gitmodules"     # commit '.gitmodules' file
-
-git tag t2                          # tag commit with 't2'
-
-git log --oneline                   # show commit log/history
-```
-```
-5834efb (HEAD -> main, tag: t2) add .gitmodules         <-- new commit tagged with 't2'
-42ec65a (tag: t1) add .gitignore
-52f8547 (tag: root) root commit (empty)
-```
-
-
-
-&nbsp;
-
-## 5. Exploring: *libs*
-
-<!-- 
-```sh
-# Fetch branch 'libs' from the repository (use the http-link, if the
-# git@-link does not work)
-# 
-git clone -b libs --single-branch git@github.com:sgra64/se1-play.git libs
-```
-```
-Cloning into 'libs'...
-remote: Enumerating objects: 38, done.
-remote: Counting objects: 100% (38/38), done.
-remote: Compressing objects: 100% (32/32), done.
-remote: Total 38 (delta 5), reused 38 (delta 5), pack-reused 0 (from 0)
-Receiving objects: 100% (38/38), 6.91 MiB | 7.28 MiB/s, done.
-Resolving deltas: 100% (5/5), done.
-``` -->
-
-Show the content of folder `libs`:
-
-```sh
-find libs                           # list content of 'libs'
-```
-```
-libs
-libs/jackson
-libs/jackson/jackson-annotations-2.13.0.jar
-libs/jackson/jackson-core-2.13.0.jar
-libs/jackson/jackson-databind-2.13.0.jar
-libs/jacoco
-libs/jacoco/jacocoagent.jar
-libs/jacoco/jacococli.jar
-libs/jars-content.txt
-libs/junit
-libs/junit/apiguardian-api-1.1.2.jar
-libs/junit/junit-jupiter-api-5.9.3.jar
-libs/junit/junit-platform-commons-1.9.3.jar
-libs/junit/opentest4j-1.2.0.jar
-libs/junit-platform-console-standalone-1.9.2.jar
-libs/logging
-libs/logging/log4j-api-2.23.1.jar
-libs/logging/log4j-core-2.23.1.jar
-libs/logging/log4j-slf4j2-impl-2.23.1.jar
-libs/logging/slf4j-api-2.0.16.jar
-libs/lombok
-libs/lombok/lombok-1.18.36.jar
-libs/README.md
-```
-
-Java code is distributed as `.jar` files from large global repositories such as the
-[*Maven Central Repository*](https://mvnrepository.com/).
-
-
-[Learn](https://github.com/sgra64/se1-play/tree/libs) about the libraries used
-in this project:
-
-- `jackson` - processing JSON data in Java
-
-- `jacoco`- code coverage library for Java
-
-- `junit` - libraries for JUnit tests
-
-- `logging` - *log4j2* logging library for Java
-
-- `junit-platform-console-standalone-1.9.2.jar` - JUnit test runner
-
-In order for libraries to be usable, they must be included in `CLASSPATH`.
-
-
-
-&nbsp;
-
-## 6. Add Java Code
-
-Java source code is added under the `src` folder. This project is created as a
-[*modular Java Project*](https://jenkov.com/tutorials/java/modules.html).
- The module concept has been introduced in Java in version 9 in order to provide
- a mechanism to build larger Java projects that not only consist of `packages`
- within a project, but can be assembled from multiple Java projects.
-
- A modular Java project has following files under `src`:
-
-```sh
-+-<se1-play>            # project folder of the "se1-play" project
-   |
-   +-<src>                  # folder with Java source code
-      |
-      +--module-info.java       # module description
-      |
-      +-<application>           # folder with 'application' package
-         |
-         +--Application.java        # class with main() method
-         +--package-info.java       # package description (new in Java 9)
- ```
-
-Create the `src` folder in the project directory:
-
-```sh
-mkdir -p src/application            # create 'src' with sub-folder 'application'
-
-ls -la
-```
-```
-total 25
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 20:37 .
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 18:29 ..
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:06 .env
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:59 .git
--rw-r--r-- 1 svgr2 Kein 1331 Apr  6 19:55 .gitignore
--rw-r--r-- 1 svgr2 Kein  295 Apr  6 19:17 .gitmodules
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:11 .vscode
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:17 libs
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 20:37 src           <-- new 'src' folder created
-```
-
-Insert source files into the structure. Make sure to create source files in the
-correct sub-folders.
-
-
-`module-info.java`:
-<!-- @@ src/module-info.java @BEGIN -->
-```java
-/**
- * Modules have been introduced in Java 9 (in 2017) to compose software from
- * modularized projects. Prior, only packages within a project could be used.
- *
- * {@code module-info.java} indicates a <i>mudularized</i> Java project. It
- * includes the module the description with the module name: {@link se1.play},
- * external modules required by this module and project packages exported to
- * other modules.
- *
- * Locations of <i>required</i> modules must be provided via {@code MODULEPATH}.
- *
- * @version <code style=color:green>{@value application.package_info#Version}</code>
- * @author <code style=color:blue>{@value application.package_info#Author}</code>
- */
-module se1.play {
-
-    /*
-     * Make package {@code application} accessible to other modules at compile
-     * and runtime (use <i>open</i> for compile-time access only).
-     */
-    exports application;
-
-    /*
-     * External module required by this module (JUnit-5 module for JUnit testing).
-     */
-    requires org.junit.jupiter.api;
-}
-```
-<!-- @@ src/module-info.java @END -->
-
-
-`Application.java` -- class with `main()` method:
-<!-- @@ src/application/Application.java @BEGIN -->
-```java
-package application;
-
-import java.util.Arrays;
-
-/**
- * Application class with a {@code main()} - function that parses command line
- * arguments.
- *
- * @version <code style=color:green>{@value application.package_info#Version}</code>
- * @author <code style=color:blue>{@value application.package_info#Author}</code>
- */
-public class Application {
-
-    /**
-     * {@code main()} - function as entry point for the Java VM.
-     * @param args arguments passed from the command line
-     */
-    public static void main(String[] args) {
-        var module = Application.class.getModule().getName();
-        var greeting = String.format(module==null? "%s, se1-play" : "%s, %s (modular)", "Hello", module);
-        System.out.println(greeting);
-
-        Arrays.stream(args)
-            .map(arg -> String.format(" - arg: %s", arg))
-            .forEach(System.out::println);
-    }
-}
-```
-<!-- @@ src/application/Application.java @END -->
-
-
-`package-info.java` -- adjust the `Author` information with your name:
-<!-- @@ src/application/package-info.java @BEGIN -->
-```java
-/**
- * The {@link application} package includes classes with a {@code main()} -
- * function executable by the Java VM.
- *
- * @version <code style=color:green>{@value application.package_info#Version}</code>
- * @author <code style=color:blue>{@value application.package_info#Author}</code>
- */
-package application;
-
-
-/**
- * Class {@code package_info} of the {@link application} package provides global
- * variables used in <i>Javadoc</i>.
- *
- * File {@code package-info.java} has been introduced with <i>Modules</i>
- * in Java 9 (2017) to provide package-level documentation.
- */
-class package_info {
-
-    /**
-     * Author attribute to appear in javadoc.
-     */
-    static final String Author = "sgraupner";           // <-- adjust with your name
-
-    /**
-     * Version attribute to appear in javadoc.
-     */
-    static final String Version = "1.0.0-SNAPSHOT";
-}
-```
-<!-- @@ src/application/package-info.java @END -->
-
-
-Make sure source files have been created in the correct folders:
-
-```sh
-find src                        # show files under 'src'
-```
-
-Output must exactly match:
-
 ```
 src
 src/application
@@ -580,837 +141,1286 @@ src/application/package-info.java
 src/module-info.java
 ```
 
-
-
-&nbsp;
-
-## 7. *"Sourcing"* the Project
-
-*"Sourcing"* is jargon referring to executing a *shell* script with the
-[*source*](https://superuser.com/questions/46139/what-does-source-do)
-command in the context of the *shell* process (not as a sub-process).
-
-*"Sourcing a Project"* means to execute a script that typically sets up the environment
-of the project. Scripts are ususally called `.env` or `env.sh` and are quite common in
-software development.
-
-In this project, the source script
-[env.sh](https://github.com/sgra64/se1-play/blob/env/env.sh)
-resides in the `.env` submodule and will:
-
-- set environment variables, e.g.
-    `PROJECT_PATH`, `CLASSPATH`, `JUNIT_CLASSPATH`, `MODULEPATH`, `JDK_JAVAC_OPTIONS`,
-    `JDK_JAVADOC_OPTIONS`, `JUNIT_OPTIONS`, `JACOCO_AGENT` ... ,
-
-- create project configuration files for the *VSCode* IDE, e.g.
-    e.g. `.classpath`, `.project`, `.vscode/.classpath`, `.vscode/.modulepath`,
-    `.vscode/.sources` and
-
-- create functions used for the *build* process, e.g.
-    `show`, `mk`, `clean`, `wipe` ... .
-
-This environment will be set for the *executing shell* and only last for the existence
-of the *shell* process (terminal).
-
-When the *shell* process ends, e.g. when the terminal is closed, *environment variables*
-and *functions* will be lost (project configuration files will remain).
-
-The *project must be sourced* with every new *shell* processes and terminal.
-
-*"Source"* the project in the project folder with:
+Next, merge content from the fetched branch into the `main` branch:
 
 ```sh
-source .env/env.sh          # source the project (execute script 'env.sh' in '.env')
+# merge content of branch 'b1-numbers' into the 'main' branch of the project
+# '-m' specifies the message for the resulting merge commit
+# '--allow-unrelated-histories' allows merging from a repository with no shared history
+# '--strategy-option theirs' resolves merge conflicts favoring incoming changes
+# 
+git merge se1-play-repo/b1-numbers \
+    -m "merge branch se1-play-repo/b1-numbers" \
+    --allow-unrelated-histories \
+    --strategy-option theirs
 ```
 
-Output shows what was created for the environment:
+The merge reports changes made to the `src` folder:
 
 ```
- - created environment variables:
-    - PROJECT_PATH: "/c/Sven1/svgr2/tmp/svgr/workspaces/se1-play"
-    - CLASSPATH
-    - JUNIT_CLASSPATH
-    - MODULEPATH
-    - JDK_JAVAC_OPTIONS
-    - JDK_JAVADOC_OPTIONS
-    - JUNIT_OPTIONS
-    - JACOCO_AGENT
- - created folders or files:
-    - .classpath
-    - .vscode/.classpath
-    - .vscode/.modulepath
-    - .vscode/.sources
-    - .project
+Auto-merging src/application/Application.java
+Merge made by the 'ort' strategy.
+ README.md                        | 1416 ++++++++++++++++++++++++++++++++++++++
+ src/application/Application.java |   13 +-
+ src/application/Runner.java      |   15 +
+ src/numbers/Numbers.java         |  114 +++
+ src/numbers/NumbersData.java     |   54 ++
+ src/numbers/NumbersRunner.java   |  177 +++++
+ 6 files changed, 1785 insertions(+), 4 deletions(-)
+ create mode 100644 README.md
+ create mode 100644 src/application/Runner.java
+ create mode 100644 src/numbers/Numbers.java
+ create mode 100644 src/numbers/NumbersData.java
+ create mode 100644 src/numbers/NumbersRunner.java
 ```
 
-A new function: `show` shows the commands that are now available
-for *building* the project.
+New content has arrived:
 
 ```sh
-show                    # show commands for the build process
-```
-```
-clean:
-  rm -rf bin logs docs coverage
-
-compile:
-  javac $(find src -name '*.java') -d bin/classes;
-
-compile-tests:
-  javac -cp "$JUNIT_CLASSPATH" $(find tests -name '*.java') -d bin/test-classes;
-
-run:
-  java -p "$MODULEPATH" -m se1.play/application.Application
-
-run-tests:
-  java -cp "$JUNIT_CLASSPATH" \
-    org.junit.platform.console.ConsoleLauncher $JUNIT_OPTIONS \
-    --scan-class-path
-
-build:
-  mk clean compile compile-tests run-tests package javadoc
-
-package:
-  tar cv libs/{jackson,logging}*/* | tar -C bin -xvf - ;
-  jar -c -v -f bin/application-1.0.0-SNAPSHOT.jar \
-        -C bin/classes . ;
-
-coverage:
-  java $(eval echo $JACOCO_AGENT) $(eval echo $JUNIT_CLASSPATH) \
-    org.junit.platform.console.ConsoleLauncher $(eval echo $JUNIT_OPTIONS) \
-    --scan-class-path;
-  echo coverage events recorded in: coverage/jacoco.exec
-
-javadoc:
-  javadoc -d docs $(eval echo $JDK_JAVADOC_OPTIONS) \
-    $(builtin cd src; find . -type d | sed -e 's!/!.!g' -e 's/^[.]*//')
-```
-
-The new environment variables that have been created in the executing *shell*
-process can be listed:
-
-```sh
-# show value of the 'CLASSPATH' environment variable
-echo $CLASSPATH
-
-echo $CLASSPATH | tr '[:;]' '\n'        # pretty-print ClASSPATH
-```
-
-Output is a `:` (`;` on Windows) - separated list with paths pointing to folders with
-`.class` files or `.jar` files:
-
-```
-bin/classes;bin/resources;libs/jackson/jackson-annotations-2.13.0.jar;libs/jackson/jackson-core-2.13.0.jar;libs/jackson/jackson-databind-2.13.0.jar;libs/junit/junit-jupiter-api-5.9.3.jar;libs/logging/log4j-api-2.23.1.jar;libs/logging/log4j-core-2.23.1.jar;libs/logging/log4j-slf4j2-impl-2.23.1.jar;libs/logging/slf4j-api-2.0.16.jar;libs/lombok/lombok-1.18.36.jar
-
-bin/classes
-bin/resources
-libs/jackson/jackson-annotations-2.13.0.jar
-libs/jackson/jackson-core-2.13.0.jar
-libs/jackson/jackson-databind-2.13.0.jar
-libs/junit/junit-jupiter-api-5.9.3.jar
-libs/logging/log4j-api-2.23.1.jar
-libs/logging/log4j-core-2.23.1.jar
-libs/logging/log4j-slf4j2-impl-2.23.1.jar
-libs/logging/slf4j-api-2.0.16.jar
-libs/lombok/lombok-1.18.36.jar
-```
-
-The following script shows values of all environment variables that have been set
-during sourcing:
-
-```sh
-# show values of all environment variables that have been set during sourcing
-for e in PROJECT_PATH CLASSPATH JUNIT_CLASSPATH MODULEPATH JDK_JAVAC_OPTIONS \
-    JDK_JAVADOC_OPTIONS JUNIT_OPTIONS JACOCO_AGENT; do
-    # 
-    echo "$e:" \"$(eval echo \$$e)\"    # output name: value of variable $e
-    echo
-done
-```
-
-New project configuration files also appear in the project directory:
-
-```sh
-ls -la . .vscode
-```
-```
-total 30
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 20:43 .
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 18:29 ..
--rw-r--r-- 1 svgr2 Kein 2306 Apr  6 20:43 .classpath        <-- created
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:06 .env
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:59 .git
--rw-r--r-- 1 svgr2 Kein 1331 Apr  6 19:55 .gitignore
--rw-r--r-- 1 svgr2 Kein  295 Apr  6 19:17 .gitmodules
--rw-r--r-- 1 svgr2 Kein  420 Apr  6 20:43 .project          <-- created
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 20:43 .vscode
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:17 libs
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 20:38 src
-
-.vscode/:
-total 20
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 20:43 .
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 20:43 ..
--rw-r--r-- 1 svgr2 Kein  363 Apr  6 20:43 .classpath        <-- created
--rw-r--r-- 1 svgr2 Kein   32 Apr  6 19:11 .git
--rw-r--r-- 1 svgr2 Kein   73 Apr  6 20:43 .modulepath       <-- created
--rw-r--r-- 1 svgr2 Kein  120 Apr  9 02:31 .sources          <-- created
--rw-r--r-- 1 svgr2 Kein 1299 Apr  6 19:11 launch.json
--rw-r--r-- 1 svgr2 Kein  572 Apr  6 19:11 launch-terminal.sh
--rw-r--r-- 1 svgr2 Kein 2305 Apr  6 19:11 settings.json
-```
-
-Function `wipe` unsets created environment variables, which allows rebuilding
-them with project changes:
-
-```sh
-wipe                    # unset all created environment variables
-
-wipe --all              # in addition, also remove created project configuration files
-```
-
-Environment variables are no longer set:
-
-```sh
-# show value of the 'CLASSPATH' environment variable
-echo $CLASSPATH
-```
-```
-                        <-- empty output
-```
-
-One can create a
-[*symbolic link*]()
-pointing to `.env/env.sh` to shorten the source command:
-
-```sh
-ln -s .env/env.sh env.sh        # create symbolic link to source script in project directory
-
-ls -la
-```
-```
-total 30
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 21:19 .
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 18:29 ..
-lrwxrwxrwx 1 svgr2 Kein   11 Apr  6 21:19 env.sh -> .env/env.sh     <-- new symbolic link
-...
-```
-
-Re-source the project:
-
-```sh
-source env.sh           # re-source the project using the new symbolic link
-```
-
-
-
-&nbsp;
-
-## 8. Project Build and Run
-
-*"Project Build"* refers to the process of:
-
-- compiling source code from `src` into `bin` (new folder containing compiled
-    classes),
-
-- performing unit tests
-
-- packaging compiled files into a `.jar` file that can be released and distributed.
-
-We use *shell* functions that have been set up during *sourcing* for the *build process*.
-
-```sh
-mk compile              # compile '.java' files from 'src' to '.class' files in 'bin'
-```
-
-Output shows the command calling the Java compiler `javac` with `.java` files discovered
-under the `src` folder and compiled output directed `-d` to the `bin/classes` folder:
-
-```
-javac $(find src -name '*.java') -d bin/classes;
-```
-
-Compare the `src` folder to the (new) `bin` folder containing the compiled output:
-
-```sh
-find src bin            # output 'src' and 'bin' folders
+find src                    # verify new content of 'src' after the merge
 ```
 ```
 src
 src/application
-src/application/Application.java                <-- .java file in package 'application'
+src/application/Application.java    <-- modified
 src/application/package-info.java
+src/application/Runner.java         <-- new
 src/module-info.java
-bin
-bin/classes
-bin/classes/application
-bin/classes/application/Application.class       <-- compiled .class file under 'application'
-bin/classes/application/package_info.class
-bin/classes/module-info.class
+src/numbers                         <-- new
+src/numbers/Numbers.java            <-- new
+src/numbers/NumbersData.java        <-- new
+src/numbers/NumbersRunner.java      <-- new
 ```
 
-The program has been compiled and can be run:
+A new commit has been created on the `main` branch:
 
 ```sh
-mk run 1 23 456         # run the program with arguments: "1", "23" and "456"
+git log --oneline           # show commit log after the merge
+```
+```
+4a85589 (HEAD -> main) merge branch se1-play-repo/b1-numbers    <-- new merge commit
+a2657c7 (tag: t4) add junit tests
+9d78427 (tag: t3) add src
+06dc610 (tag: t2) add .gitmodules
+7294cc9 (tag: t1) add .gitignore
+2d33392 (tag: root) root commit (empty)
+f00adf4 (se1-play-repo/b1-numbers) add numbers src
+6d070b4 add README.md
+72f10ab add .gitignore
+8106dc6 root commit (empty)
 ```
 
-Output shows the command invoking the Java VM `java` with arguments and after `---` the
-output of the program:
-
-```
-java -p "$MODULEPATH" -m se1.play/application.Application 1 23 456
----
-Hello, se1.play (modular)
- - arg: 1
- - arg: 23
- - arg: 456
-```
-
-The command can also be invoked directly:
+*Build* the project (no compile errors should appear):
 
 ```sh
-java -p "$MODULEPATH" -m se1.play/application.Application 1 23 456
-```
-
-When everything works, source files can be committed and tagged with *"t3"*:
-
-```sh
-git add src                     # stage 'src' file
-git commit -m "add src"         # commit 'src' file
-
-git tag t3                          # tag commit with 't2'
-
-git log --oneline                   # show commit log/history
-```
-```
-ce009f7 (HEAD -> main, tag: t3) add src                 <-- new commit tagged with 't3'
-5834efb (tag: t2) add .gitmodules
-42ec65a (tag: t1) add .gitignore
-52f8547 (tag: root) root commit (empty)
+mk compile                  # compile sources
 ```
 
 
 
 &nbsp;
 
-## 9. Add *JUnit* Tests
+## 3. Implement *Sum()*
 
-[*JUnit Tests*](https://www.codeflow.site/de/article/junit-assertions#_4_junit_5_assertions)
-test individual code units ("*units-under-test*") in isolation to other units.
+Interface: [*Numbers.java*](src/numbers/Numbers.java) defines a function
+`sum(int[] numbers)`:
 
-We introduce a simple test class in the `tests` folder that merely runs passing tests.
-It is used to make sure unit tests run properly.
+```java
+/**
+ * Interface defining functions for the <i>"b1-numbers"</i> assignment.
+ */
+public interface Numbers {
 
-Create a tests folder in the project directory:
-
-```sh
-mkdir -p tests/application          # create 'tests' folder with 'application' package inside
+    /**
+     * Aufgabe 1.) Calculate sum of numbers[].
+     * @param numbers input
+     * @return sum of numbers[]
+     */
+    int sum(int[] numbers);
+}
 ```
 
-Insert test class `Application_0_always_pass_Tests.java` under `tests/application`:
-<!-- @@ tests.application.Application_0_always_pass_Tests.java @BEGIN -->
+Create a new, non-public implementation class `NumbersImpl.java` in package `numbers`
+that implements the [*Numbers.java*](src/numbers/Numbers.java) interface.
+
+Generate method stubs with the IDE for all interface methods such that `NumbersImpl.java`
+compiles.
+
+Next, return an instance of class `NumbersImpl.java` in interface `Numbers.java` in
+the `getInstance()`-method:
+
 ```java
-package application;
+/**
+ * Public interface with functions for the <i>"b1-numbers"</i> assignment.
+ * 
+ * @version <code style=color:green>{@value application.package_info#Version}</code>
+ * @author <code style=color:blue>{@value application.package_info#Author}</code>
+ */
+public interface Numbers {
+
+    /**
+     * Static getter method that returns an instance of the {@link Numbers} interface.
+     * @return instance of the {@link Numbers} interface
+     */
+    static Numbers getInstance() {
+        throw new UnsupportedOperationException("Unimplemented method 'getInstance()' "
+            + "in interface 'Numbers'. Create an implementation class and return.");
+        // return new NumbersImpl();
+    }
+}
+```
+
+Next, implement the first method `int sum(int[] numbers);` in the implementation class.
+
+Class: [*NumbersData.java*](src/numbers/NumbersData.java) defines some numbers
+data sets with names: *numb*, *numb_1*, *numb_2* and *numb_3*:
+
+<!-- @@ src.numbers.NumbersData.java @BEGIN -->
+```java
+package numbers;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
+/**
+ * Non-public class with numbers data accessible by name via the
+ * {@link Map} interface.
+ */
+class NumbersData extends HashMap<String, List<Integer>> {
+    /*
+     * Numbers with negative numbers and duplicates.
+     */
+    static final List<Integer> numb = Arrays.asList(-2, 4, 9, 4, -3, 4, 9, 5);
+
+    /*
+     * Numbers with no negative numbers and no duplicates.
+     */
+    static final List<Integer> numb_1 = Arrays.asList(8, 10, 7, 2, 14, 5, 4);
+
+    /*
+     * Larger set of 24 numbers, no negatives, no duplicates.
+     */
+    static final List<Integer> numb_2 = Arrays.asList(   // 24 numbers
+        371,  682,  446,  754,  205,  972,  600,  163,  541,  672,
+         27,  170,  226,    7,  190,  639,   87,  773,  651,  370,
+        125,  774,  903,  636//,225,  463,  286,  569,  384,    9,
+    ); // add more numbers to find more solutions
+
+    /*
+     * Even larger set of 63 numbers, no negatives, no duplicates.
+     */
+    static final List<Integer> numb_3 = Arrays.asList(
+        799, 2377,  936, 3498, 1342,  493, 1635, 4676, 1613, 3851,
+       1445, 4506, 3346,    7, 2141, 2064, 1491,  908,   78, 3325,
+       1756, 3691,   23, 1995, 1800,   15, 2784, 4305,   36, 2532,
+       4292, 4802, 2522, 4183, 3261, 2610,  803, 2656,  498, 1668,
+       2038, 2194,  440,  463, 4047, 4235, 3931,  756,  521, 4042,
+       3302,  485, 1002,  408, 4691, 3387, 3104, 3658, 2241, 4382,
+       1220, 3656,  500
+    );
+
+    /**
+     * Constructor.
+     */
+    NumbersData() {
+        super.put("numb", numb);
+        super.put("numb_1", numb_1);
+        super.put("numb_2", numb_2);
+        super.put("numb_3", numb_3);
+    }
+
+    /**
+     * Retrieve data from *key* (name) and return as {@code int[]}. Return
+     * empty data (not null) if *key* is not found.
+     * @param key name of data set to return
+     * @return return data set as {@code int[]}
+     */
+    public int[] getArr(String key) {
+        return (Optional.ofNullable(get(key))
+            .orElse(List.of())) // empty data set
+            .stream().mapToInt(i->i).toArray(); // convert to int[]
+    }
+}
+```
+<!-- @@ src.numbers.NumbersData.java @END -->
+
+Rebuild the project and run the program with calculations specified on the
+command line and executed by class:
+[*NumbersRunner.java*](src/numbers/NumbersRunner.java).
+
+```sh
+mk run sum numb \
+    sum numb_1 \
+    sum numb_2 \
+    sum numb_3
+```
+
+Output shows the correct results of sums of the data sets:
+
+```
+Hello, se1.play (modular)
+ - sum(numb) -> 30
+ - sum(numb_1) -> 50
+ - sum(numb_2) -> 10984
+ - sum(numb_3) -> 141466
+```
+
+
+
+&nbsp;
+
+## 4. *JUnit* - Tests
+
+After `sum(int[] numbers)` has been implemented, *JUnit*-tests can verify
+its correct function.
+
+Read about *JUnit-tests:*
+
+- Carsten Gips, [*Testen mit JUnit5*](https://www.hsbi.de/elearning/data/FH-Bielefeld/lm_data/lm_1359639/testing/junit-basics.html).
+
+- Tobias Trelle, [*JUnit 5*](https://www.codecentric.de/wissens-hub/blog/junit5-junit-5).
+
+
+&nbsp;
+
+Install test class `Numbers_1_sum_Tests.java` in package `tests/numbers`:
+
+<!-- @@ tests.numbers.Numbers_1_sum_Tests.java @BEGIN -->
+```java
+package numbers;
 
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-
 /**
- * Test class to test the JUnit test setup. @Test methods of this class
- * always pass. If JUnit is setup properly, tests should run in the IDE
- * and in the terminal.
+ * JUnit 5 test class of Numbers class, sum() method.
+ * 
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class Application_0_always_pass_Tests {
+public class Numbers_1_sum_Tests {
+
+    /*
+     * tested object is an instance of the Numbers class
+     */
+    private static Numbers testObj;
+
+    /*
+     * tested object is an instance of the Numbers class
+     */
+    private static NumbersData testData;
+
 
     /**
-     * Method is executed once before any @Test method.
-     * @throws Exception if any exception occurs
+     * Static setup method executed once for all tests. Creates
+     * the test object.
+     * @throws Exception when test creation fails
      */
     @BeforeAll
-    public static void setUpBeforeClass() throws Exception {
-        System.out.println("\nsetUpBeforeClass() runs once before any @Test method");
+    public static void setUpBeforeTests() throws Exception {
+        testObj = Numbers.getInstance();
+        testData = new NumbersData();
     }
 
-    /**
-     * Method is executed before each @Test method
-     * @throws Exception if any exception occurs
-     */
-    @BeforeEach
-    public void setUpBeforeEach() throws Exception {
-        System.out.println("setUpBeforeEach() runs before each @Test method");
-    }
-
-    /**
-     * Method is executed after each @Test method
-     * @throws Exception if any exception occurs
-     */
-    @AfterEach
-    public void tearDownAfterEach() throws Exception {
-        System.out.println("tearDownAfterEach() runs after each @Test method");
-    }
-
-    /**
-     * First @Test method (always passes).
-     */
     @Test
-    @Order(001)
-    void test_001_always_pass() {
-        int expected = 10;
-        int actual = 10;
-        assertEquals(expected, actual);
+    @Order(100)
+    void test100_sum_regular() {
+        assertEquals(30, testObj.sum(testData.getArr("numb")));
     }
 
-    /**
-     * Second @Test method (always passes).
-     */
     @Test
-    @Order(002)
-    void test_002_always_pass() {
-        int expected = 10;
-        int actual = 10;
-        assertEquals(expected, actual);
+    @Order(101)
+    void test101_sum_regular() {
+        assertEquals(50, testObj.sum(testData.getArr("numb_1")));
     }
 
-    /**
-     * Method is executed once after all @Test methods have finished.
-     * @throws Exception if any exception occurs
-     */
-    @AfterAll
-    public static void tearDownAfterClass() throws Exception {
-        System.out.println("tearDownAfterClass() runs after all @Test methods have finished");
+    @Test
+    @Order(102)
+    void test102_sum_regular() {
+        assertEquals(10984, testObj.sum(testData.getArr("numb_2")));
+    }
+
+    @Test
+    @Order(103)
+    void test103_sum_regular() {
+        assertEquals(141466, testObj.sum(testData.getArr("numb_3")));
     }
 }
 ```
-<!-- @@ tests.application.Application_0_always_pass_Tests.java @END -->
+<!-- @@ tests.numbers.Numbers_1_sum_Tests.java @END -->
 
-
-Compile tests:
-
-```sh
-mk compile-tests        # compile '.java' files from 'tests' to '.class' files in 'bin/test-classes'
-```
-
-Output shows the command calling the Java compiler `javac` with `.java` files discovered
-under the `tests` folder and compiled output directed `-d` to the `bin/test-classes` folder:
-
-```
-javac -cp "$JUNIT_CLASSPATH" $(find tests -name '*.java') -d bin/test-classes;
-```
-
-Compare the `src` folder to the (new) `bin` folder containing the compiled output:
+Verify the correct location:
 
 ```sh
-find src bin            # output 'src' and 'bin' folders
+find tests                  # show tests
 ```
 ```
-src
-src/application
-src/application/Application.java
-src/application/package-info.java
-src/module-info.java
-bin
-bin/classes
-bin/classes/application
-bin/classes/application/Application.class
-bin/classes/application/package_info.class
-bin/classes/module-info.class
-bin/test-classes
-bin/test-classes/application                    <-- new compiled test .class files
-bin/test-classes/application/Application_0_always_pass_Tests.class
+tests
+tests/application
+tests/application/Application_0_always_pass_Tests.java
+tests/numbers
+tests/numbers/Numbers_1_sum_Tests.java              <-- new
 ```
 
-Tests can be run:
+Compile tests and run:
 
 ```sh
-mk run-tests            # run tests using the test runner: 'libs/junit-platform-console-standalone-1.9.2.jar'
+mk compile-tests                # compile JUnit tests
+mk run-tests                    # run JUnit-tests (all tests found)
+
+# or run specific tests specified by the '-c' flag
+java -cp "$JUNIT_CLASSPATH" org.junit.platform.console.ConsoleLauncher $JUNIT_OPTIONS \
+  -c application.Application_0_always_pass_Tests \
+  -c numbers.Numbers_1_sum_Tests
 ```
 
-Output shows the command invoking the Java VM `java` with arguments:
+Output:
 
 ```
 java -cp "$JUNIT_CLASSPATH" \
   org.junit.platform.console.ConsoleLauncher $JUNIT_OPTIONS \
   --scan-class-path
-```
-
-Output of the test runner showing two passing tests from test class `Application_0_always_pass_Tests`:
-
-```
-setUpBeforeClass() runs once before any @Test method
-setUpBeforeEach() runs before each @Test method
-tearDownAfterEach() runs after each @Test method
-setUpBeforeEach() runs before each @Test method
-tearDownAfterEach() runs after each @Test method
-tearDownAfterClass() runs after all @Test methods have finished
-
-Thanks for using JUnit! Support its development at https://junit.org/sponsoring
-```
-<!-- 
-```
 ╷
 ├─ JUnit Jupiter ✔
-│  └─ Application_0_always_pass_Tests ✔
-│     ├─ test_001_always_pass() ✔
-│     └─ test_002_always_pass() ✔
+│  ├─ Application_0_always_pass_Tests ✔
+│  │  ├─ test_001_always_pass() ✔
+│  │  └─ test_002_always_pass() ✔
+│  └─ Numbers_1_sum_Tests ✔            <-- new test class
+│     ├─ test100_sum_regular() ✔
+│     ├─ test101_sum_regular() ✔
+│     ├─ test102_sum_regular() ✔
+│     └─ test103_sum_regular() ✔
 ├─ JUnit Vintage ✔
 └─ JUnit Platform Suite ✔
 
-Test run finished after 133 ms
-[         4 containers found      ]
+Test run finished after 177 ms
+[         5 containers found      ]
 [         0 containers skipped    ]
-[         4 containers started    ]
+[         5 containers started    ]
 [         0 containers aborted    ]
-[         4 containers successful ]
+[         5 containers successful ]
 [         0 containers failed     ]
-[         2 tests found           ]
+[         6 tests found           ]
 [         0 tests skipped         ]
-[         2 tests started         ]
+[         6 tests started         ]
 [         0 tests aborted         ]
-[         2 tests successful      ]
+[         6 tests successful      ]     <-- all tests have been successful
+[         0 tests failed          ]     <-- no test failed
+```
+
+&nbsp;
+
+Install from branch
+[*b1-numbers-tests*](../../tree/b1-numbers-tests/tests/numbers)
+files (only these two):
+
+- [*Matchers.java*](../../tree/b1-numbers-tests/tests/numbers/Matchers.java)
+
+- [*Numbers_1_sum_Tests.java*](../../tree/b1-numbers-tests/tests/numbers/Numbers_1_sum_Tests.java)
+
+into the proper place in the project (under: *tests/numbers* ).
+
+
+
+&nbsp;
+
+## 5. Implement *Numbers*-Functions
+
+Implement [*Numbers.java*](src/numbers/Numbers.java) functions, one after another:
+
+1. `sum(int[] numbers)` (already done).
+
+1. `sum_positive_even_numbers(numbers[])`, [link](#2-sum_positive_even_numbers).
+
+1. `sum_recursive(numbers[], int i)`, [link](#3-sum_recursive).
+
+1. `findFirst(numbers[], int x)`, [link](#4-findfirst).
+
+1. `findLast(numbers[], int x)`, [link](#5-findlast).
+
+1. `findAll(numbers[], int x)`, [link](#6-findall).
+
+1. `findSums(numbers[], int sum)`, [link](#7-findsums).
+
+1. `findAllSums(numbers[], int sum)`, [link](#8-findallsums).
+
+1. `findAllSums(), XXL`, [link](#9-findallsums-xxl).
+
+
+Interface: [*Numbers.java*](src/numbers/Numbers.java) defines eight functions:
+
+<!-- @@ src.numbers.Numbers.java @BEGIN -->
+```java
+package numbers;
+
+import java.util.List;
+import java.util.Set;
+
+import application.Runner;
+
+/**
+ * Public interface with functions for the <i>"b1-numbers"</i> assignment.
+ * 
+ * @version <code style=color:green>{@value application.package_info#Version}</code>
+ * @author <code style=color:blue>{@value application.package_info#Author}</code>
+ */
+public interface Numbers {
+
+    /**
+     * Aufgabe 1.) Calculate sum of numbers[].
+     * @param numbers input
+     * @return sum of numbers[]
+     */
+    int sum(int[] numbers);
+
+    /**
+     * Aufgabe 2.) Calculate sum of positive even numbers[].
+     * @param numbers input
+     * @return sum of positive even numbers[]
+     */
+    int sum_positive_even_numbers(int[] numbers);
+
+    /**
+     * Aufgabe 3.) Calculate sum of numbers[] recursively without using loops
+     * (for, while, do/while).
+     * @param numbers input numbers
+     * @param i start index, calculate sum from index i in numbers[]
+     * @return sum of numbers[]
+     */
+    int sum_recursive(int[] numbers, int i);
+
+    /**
+     * Aufgabe 4.) Return index of first occurrence of x in numbers[]
+     * or return -1 if x was not found.
+     * @param numbers input
+     * @param x number to find
+     * @return index of first occurrence of x in numbers[] or -1 if not found
+     */
+    int findFirst(int[] numbers, int x);
+
+    /**
+     * Aufgabe 5.) Return index of last occurrence of x in numbers[]
+     * or return -1 if x was not found.
+     * @param numbers input
+     * @param x number to find
+     * @return index of last occurrence of x in numbers[] or -1 if not found
+     */
+    int findLast(int[] numbers, int x);
+
+    /**
+     * Aufgabe 6.) Return list of all indices of number x in numbers[].
+     * Return empty list, if x was not found.
+     * @param numbers input
+     * @param x number to find
+     * @return list with all indices of x in numbers[]
+     */
+    List<Integer> findAll(int[] numbers, int x);
+
+    /**
+     * Immutable pair of integer values a and b used by {@code Set<Pair>
+     * findSums(int[] numbers, int sum)}.
+     * @param a first element of pair
+     * @param b second element of pair
+     */
+    record Pair(int a, int b) {
+        public String toString() { return String.format("(%d,%d)", a, b); }
+    };
+
+    /**
+     * Aufgabe 7.) Return all pairs (a, b) in numbers[] with a + b = sum with
+     * consolidating mirror copies such as (a, b) and (b, a) by returning
+     * either (a, b) or (b, a), not both.
+     * @param numbers input
+     * @param sum to find
+     * @return Set of all Pairs (a, b) that add to sum
+     */
+    Set<Pair> findSums(int[] numbers, int sum);
+
+    /**
+     * Aufgabe 8.) Find all combinations of numbers in numbers[] that add to sum.
+     * @param numbers input
+     * @param sum to find
+     * @return set of all combinations of numbers that add to sum or empty list
+     */
+    Set<Set<Integer>> findAllSums(int[] numbers, int sum);
+
+
+    /**
+     * Static getter method that returns an instance of the {@link Numbers} interface.
+     * @return instance of the {@link Numbers} interface
+     */
+    static Numbers getInstance() {
+        // throw new UnsupportedOperationException("Unimplemented method 'getInstance()' "
+        //     + "in interface 'Numbers'. Create an implementation class and return.");
+        return new NumbersImpl();
+    }
+
+    /**
+     * Factory method that creates instance of the {@link Runner} interface.
+     * @param numbers instance of the {@link Numbers} interface used by the runner
+     * @return instance of the {@link Runner} interface
+     */
+    static Runner createRunner(Numbers numbers) {
+        return new NumbersRunner(numbers);
+    }
+}
+```
+<!-- @@ src.numbers.Numbers.java @END -->
+
+After you are done with a function,
+
+- install the corresponding JUnit test from:
+    [*tests/numbers*](../../tree/b1-numbers-tests/tests/numbers).
+
+- Also install file: [*Matchers.java*](../../tree/b1-numbers-tests/tests/numbers/Matchers.java).
+
+
+
+&nbsp;
+
+### 2. *sum_positive_even_numbers()*
+
+Function: `sum_positive_even_numbers(numbers[], int i)` returns the sum of
+only positive and even numbers from `numbers[]`.
+
+Implement the function and demonstrate:
+
+```sh
+mk run sum_positive_even_numbers numb \
+    sum_positive_even_numbers numb_1 \
+    sum_positive_even_numbers numb_2 \
+    sum_positive_even_numbers numb_3
+```
+
+Output shows the correct results:
+
+```
+java application.Runtime sum numbers sum numb_1 sum numb_2 sum numb_3
+NumbersDriver executing NumbersImpl
+ - sum_positive_even_numbers(numbers) -> 12
+ - sum_positive_even_numbers(numb_1) -> 38
+ - sum_positive_even_numbers(numb_2) -> 6492
+ - sum_positive_even_numbers(numb_3) -> 80012
+done.
+```
+
+Install the *JUnit*-test for the function
+[*Numbers_2_sum_positive_even_Tests.java*](../../tree/b1-numbers-tests/tests/numbers/Numbers_2_sum_positive_even_Tests.java)
+and run the test:
+
+```sh
+java -cp "$JUNIT_CLASSPATH" org.junit.platform.console.ConsoleLauncher $JUNIT_OPTIONS \
+  -c numbers.Numbers_2_sum_positive_even_Tests
+```
+
+Output shows all 200's tests passing:
+
+```
+├─ JUnit Jupiter ✔
+|  |
+│  └─ Numbers_2_sum_positive_even_Tests ✔
+│     ├─ test200_sum_positive_even_numbers_regular() ✔
+│     ├─ test201_sum_positive_even_numbers_regular() ✔
+│     ├─ test202_sum_positive_even_numbers_regular() ✔
+│     └─ test203_sum_positive_even_numbers_regular() ✔
+|
+├─ JUnit Vintage ✔
+└─ JUnit Platform Suite ✔
+```
+
+
+
+&nbsp;
+
+### 3. *sum_recursive()*
+
+Function: `sum_recursive(numbers[], int i)` returns the sum of `numbers[]`,
+but uses recursion instead of loops (`for`, `while`, `do-while`).
+
+Implement the function (no loops!) and demonstrate:
+
+```sh
+mk run sum_recursive numb \
+    sum_recursive numb_1 \
+    sum_recursive numb_2 \
+    sum_recursive numb_3
+```
+
+Output shows the correct results:
+
+```
+java application.Runtime sum numbers sum numb_1 sum numb_2 sum numb_3
+NumbersDriver executing NumbersImpl
+ - sum_recursive(numbers) -> 30
+ - sum_recursive(numb_1) -> 50
+ - sum_recursive(numb_2) -> 10984
+ - sum_recursive(numb_3) -> 141466
+done.
+```
+
+Install the *JUnit*-test class
+[*Numbers_3_sum_recursion_Tests.java*](../../tree/b1-numbers-tests/tests/numbers/Numbers_3_sum_recursion_Tests.java)
+and run the test:
+
+```sh
+java -cp "$JUNIT_CLASSPATH" org.junit.platform.console.ConsoleLauncher $JUNIT_OPTIONS \
+  -c numbers.Numbers_3_sum_recursion_Tests
+```
+
+Output shows 300's tests passing:
+
+```
+├─ JUnit Jupiter ✔
+│  └─ Numbers_3_sum_recursion_Tests ✔
+│     ├─ test300_sum_recursion_regular() ✔
+│     ├─ test301_sum_recursion_regular() ✔
+│     ├─ test302_sum_recursion_regular() ✔
+│     └─ test303_sum_recursion_regular() ✔
+|
+├─ JUnit Vintage ✔
+└─ JUnit Platform Suite ✔
+```
+
+
+
+&nbsp;
+
+### 4. *findFirst()*
+
+Function: `findFirst(numbers[], int x)` returns index of the first occurence
+of `x` in `numbers[]` or `-1` if `x` is not found.
+
+For example, number `4` occurs 3x in `numbers: [-2, 4, 9, 4, -3, 4, 9, 5]`.
+Index `1` is the first occurence.
+
+Implement and run the function:
+
+```sh
+mk run findFirst numb x=4 \
+    findFirst numb x=-3 \
+    findFirst numb x=1
+```
+```
+ - findFirst(numbers, x=4) -> 1
+ - findFirst(numbers, x=-3) -> 4
+ - findFirst(numbers, x=1) -> -1
+```
+
+Add and run tests
+[*Numbers_4_find_first_Tests.java*](../../tree/b1-numbers-tests/tests/numbers/Numbers_4_find_first_Tests.java):
+
+```sh
+java -cp "$JUNIT_CLASSPATH" org.junit.platform.console.ConsoleLauncher $JUNIT_OPTIONS \
+  -c numbers.Numbers_4_find_first_Tests
+```
+
+Output shows 400's tests passing:
+
+```
+├─ JUnit Jupiter ✔
+│  └─ Numbers_4_find_first_Tests ✔
+│     ├─ test400_find_first_regular() ✔
+│     ├─ test401_find_first_regular() ✔
+│     ├─ test402_find_first_regular() ✔
+│     └─ test403_find_first_regular() ✔
+|
+├─ JUnit Vintage ✔
+└─ JUnit Platform Suite ✔
+```
+
+
+
+&nbsp;
+
+### 5. *findLast()*
+
+Function: `findLast(numbers[], int x)` returns index of the last occurence
+of `x` in `numbers[]` or `-1` if `x` is not found.
+
+For example, number `4` occurs 3x in `numb[]: [-2, 4, 9, 4, -3, 4, 9, 5]`.
+Index `5` is the last occurence.
+
+- *findFirst()* is an efficient function. It can immediately return
+    when *x* is found - giving it a *"speed"* of *n/2* on average
+    with *n* as the length of the array.
+
+    - What is the efficiency of *findLast()*? Can it also return *"early"* or has
+    it to visit the entire array - giving it a *"speed"* of *n*.
+
+    - Can you find an implementation that runs at *"speed"* *n/2*?
+
+
+Implement and run the function:
+
+```sh
+mk run findLast numb x=4 \
+    findLast numb x=-3 \
+    findLast numb x=1
+```
+```
+ - findLast(numbers, x=4) -> 5
+ - findLast(numbers, x=-3) -> 4
+ - findLast(numbers, x=1) -> -1
+```
+
+Add and run tests
+[*Numbers_5_find_last_Tests.java*](../../tree/b1-numbers-tests/tests/numbers/Numbers_5_find_last_Tests.java):
+
+```sh
+java -cp "$JUNIT_CLASSPATH" org.junit.platform.console.ConsoleLauncher $JUNIT_OPTIONS \
+  -c numbers.Numbers_5_find_last_Tests
+```
+
+Output shows 500's tests passing:
+
+```
+├─ JUnit Jupiter ✔
+│  └─ Numbers_5_find_last_Tests ✔
+│     ├─ test500_find_last_regular() ✔
+│     ├─ test501_find_last_regular() ✔
+│     ├─ test502_find_last_regular() ✔
+│     └─ test503_find_last_regular() ✔
+|
+├─ JUnit Vintage ✔
+└─ JUnit Platform Suite ✔
+```
+
+
+
+&nbsp;
+
+### 6. *findAll()*
+
+Function: `List<Integer> findAll(int[] numbers, int x)` returns indices of all
+occurences of `x` in `numbers[]` as a `List<Integer>`.
+
+Implement and run the function:
+
+```sh
+mk run findAll numb x=4 \
+    findAll numb x=-3 \
+    findAll numb x=1
+```
+
+Output shows that `x=4` was found 3x in `numbers[]: [-2, 4, 9, 4, -3, 4, 9, 5]`
+at indices: `[1, 3, 5]`, `x=-3` was found once at index `[4]` and `x=1` was
+not found returning an empty result `[]`.
+
+```
+ - findAll(numbers, x=4) -> [1, 3, 5]
+ - findAll(numbers, x=-3) -> [4]
+ - findAll(numbers, x=1) -> []
+```
+
+Add and run tests
+[*Numbers_6_find_all_Tests.java*](../../tree/b1-numbers-tests/tests/numbers/Numbers_6_find_all_Tests.java):
+
+```sh
+java -cp "$JUNIT_CLASSPATH" org.junit.platform.console.ConsoleLauncher $JUNIT_OPTIONS \
+  -c numbers.Numbers_6_find_all_Tests
+```
+
+Output shows 600's tests passing:
+
+```
+├─ JUnit Jupiter ✔
+│  └─ Numbers_6_find_all_Tests ✔
+│     ├─ test600_find_all_regular() ✔
+│     ├─ test601_find_all_regular() ✔
+│     ├─ test602_find_all_regular() ✔
+│     └─ test603_find_all_regular() ✔
+|
+├─ JUnit Vintage ✔
+└─ JUnit Platform Suite ✔
+```
+
+
+
+&nbsp;
+
+### 7. *findSums()*
+
+Function: `Set<Pair> findSums(int[] numbers, int sum)` returns a set of
+pairs: `(x, y)` from `numbers[]` with `x + y = sum`.
+
+For example: `sum=12` can be created from `numb_1[]: [8, 10, 7, 2, 14, 5, 4]`
+with pairs: `[ (5,7), (4,8), (2,10) ]`.
+
+Duplicates should be avoided and included only once, which means either
+`(5,7)` or `(7,5)` and not both.
+
+Interface `Numbers.java` defines `Pair` as Java-Record:
+
+```java
+/**
+ * Immutable pair of integer values a and b.
+ * @param a first element of pair
+ * @param b second element of pair
+ */
+record Pair(int a, int b) {
+    public String toString() { return String.format("(%d,%d)", a, b); }
+};
+```
+
+Implementing the functions yields results using array `numb_1[]`:
+
+```sh
+mk run findSums numb_1 sum=10 \
+    findSums numb_1 sum=12 \
+    findSums numb_1 sum=15 \
+    findSums numb_3 sum=500
+```
+
+Output shows that `sum=10` can be added by `2+8` from array
+`numb_1[]: [8, 10, 7, 2, 14, 5, 4]`. There is only one solution.
+
+There are three pairs of numbers from `numb_1[]` that add to `sum=12`:
+`[ (5,7), (4,8), (2,10) ]` and two pairs that add to `sum=15`.
+
+Sum `500` can be added from pairs: `[ (7,493), (485,15) ]` from array `numb_3[]`.
+
+```
+ - findSums(numb_1, sum=10) -> [(2,8)], solutions: 1
+ - findSums(numb_1, sum=12) -> [(5,7), (4,8), (2,10)], solutions: 3
+ - findSums(numb_1, sum=15) -> [(7,8), (5,10)], solutions: 2
+ - findSums(numb_3, sum=500) -> [(7,493), (485,15)], solutions: 2
+```
+
+Add and run tests
+[*Numbers_7a_find_sums_Tests.java*](../../tree/b1-numbers-tests/tests/numbers/Numbers_7a_find_sums_Tests.java)
+and
+[*Numbers_7b_find_sums_duplicates_Tests.java*](../../tree/b1-numbers-tests/tests/numbers/Numbers_7b_find_sums_duplicates_Tests.java):
+
+Leave out tests `7b` if duplicate tests are not passing.
+
+```sh
+java -cp "$JUNIT_CLASSPATH" org.junit.platform.console.ConsoleLauncher $JUNIT_OPTIONS \
+  -c numbers.Numbers_7a_find_sums_Tests \
+  -c numbers.Numbers_7b_find_sums_duplicates_Tests
+```
+
+Output shows 700's tests passing:
+
+```
+├─ JUnit Jupiter ✔
+│  ├─ Numbers_7a_find_sums_Tests ✔
+│  │  ├─ test700_find_sums_regular() ✔
+│  │  ├─ test701_find_sums_regular() ✔
+│  │  ├─ test702_find_sums_regular() ✔
+│  │  ├─ test703_find_sums_regular() ✔
+│  │  ├─ test704_find_sums_regular() ✔
+│  │  ├─ test705_find_sums_regular() ✔
+│  │  └─ test706_find_sums_regular() ✔
+|  |
+│  └─ Numbers_7b_find_sums_duplicates_Tests ✔
+│     ├─ test710_find_sums_duplicates() ✔
+│     ├─ test711_find_sums_same_duplicates() ✔
+│     ├─ test712_find_sums_mirror_duplicates() ✔
+│     └─ test713_find_sums_regular_duplicates() ✔
+|
+├─ JUnit Vintage ✔
+└─ JUnit Platform Suite ✔
+```
+
+
+
+&nbsp;
+
+### 8. *findAllSums()*
+
+Function: `Set<Set<Integer>> findAllSums(int[] numbers, int sum)` returns all
+combinations of numbers from the array that add to `sum`.
+
+For example: `sum=10` can be created from `numb_1[]: [8, 10, 7, 2, 14, 5, 4]`
+with: `[10]` and `[2, 8]`,
+`sum=14` can be created with: `[14], [4, 10], [2, 4, 8], [2, 5, 7]`.
+
+Duplicates such as `[4,10]` or `[10,4]`should be avoided and included only once.
+
+```sh
+mk run \
+    findAllSums numb_1 sum=10 \
+    findAllSums numb_1 sum=12 \
+    findAllSums numb_1 sum=14 \
+    findAllSums numb_1 sum=15 \
+    findAllSums numb_1 sum=20
+```
+
+```
+ - findAllSums(numb_1, sum=10) -> {[10], [2, 8]}, solutions: 2
+ - findAllSums(numb_1, sum=12) -> {[4, 8], [2, 10], [5, 7]}, solutions: 3
+ - findAllSums(numb_1, sum=14) -> {[14], [4, 10], [2, 4, 8], [2, 5, 7]}, solutions: 4
+ - findAllSums(numb_1, sum=15) -> {[7, 8], [5, 10], [2, 5, 8]}, solutions: 3
+ - findAllSums(numb_1, sum=20) -> {[2, 8, 10], [5, 7, 8], [2, 4, 14]}, solutions: 3
+```
+
+Explore more combinations from the (larger) `numb_2[]` array:
+
+```sh
+mk run \
+    findAllSums numb_2 sum=1000 \
+    findAllSums numb_2 sum=999
+```
+
+```
+ - findAllSums(numb_2, sum=1000) -> [
+    - [226, 774],
+    - [754, 87, 7, 27, 125],
+    - [7, 27, 636, 125, 205],
+    - [7, 651, 27, 125, 190],
+    - [7, 27, 125, 205, 190, 446]
+   ], solutions: 5
+
+ - findAllSums(numb_2, sum=999) -> [
+    - [226, 773],
+    - [27, 972],
+    - [371, 87, 541],
+    - [170, 190, 639],
+    - [226, 27, 541, 205],
+    - [163, 170, 125, 541],
+    - [163, 170, 27, 639],
+    - [163, 7, 190, 639],
+    - [226, 371, 170, 27, 205],
+    - [226, 371, 7, 205, 190],
+    - [226, 371, 87, 125, 190],
+    - [226, 163, 371, 7, 27, 205],
+    - [226, 163, 371, 87, 27, 125]
+   ], solutions: 13
+```
+
+Add and run tests
+[*Numbers_8a_find_all_sums_Tests.java*](../../tree/b1-numbers-tests/tests/numbers/Numbers_8a_find_all_sums_Tests.java):
+
+```sh
+java -cp "$JUNIT_CLASSPATH" org.junit.platform.console.ConsoleLauncher $JUNIT_OPTIONS \
+  -c numbers.Numbers_8a_find_all_sums_Tests
+```
+
+Output shows 800(a)'s tests passing:
+
+```
+├─ JUnit Jupiter ✔
+│  ├─ Numbers_8a_find_all_sums_Tests ✔
+│  │  ├─ test800_find_all_sums_regular() ✔
+│  │  └─ test821_find_all_sums_regular_nbrs_2_sum999() ✔
+|
+├─ JUnit Vintage ✔
+└─ JUnit Platform Suite ✔
+```
+
+
+
+&nbsp;
+
+### 9. *findAllSums(), XXL*
+
+Array `numb_2[]` with `24` numbers is still small.
+
+```java
+/*
+ * Larger set of 24 numbers, no negatives, no duplicates.
+ */
+static final int[] numb_2 = {   // 24 numbers
+    371,  682,  446,  754,  205,  972,  600,  163,  541,  672,
+     27,  170,  226,    7,  190,  639,   87,  773,  651,  370,
+    125,  774,  903,  636//,225,  463,  286,  569,  384,    9,
+}; // add more numbers to find more solutions
+```
+
+Run the function for `sum=999` with 24 numbers from `numb_2[]`:
+
+```sh
+mk run findAllSums numb_2 sum=999
+```
+
+Output:
+
+```
+ - findAllSums(numb_2, sum=999) -> [
+    - [27, 972],
+    - [226, 773],
+    - [371, 87, 541],
+    - [170, 190, 639],
+    - [226, 27, 541, 205],
+    - [163, 170, 125, 541],
+    - [163, 170, 27, 639],
+    - [163, 7, 190, 639],
+    - [226, 371, 170, 27, 205],
+    - [226, 371, 7, 205, 190],
+    - [226, 371, 87, 125, 190],
+    - [226, 163, 371, 7, 27, 205],
+    - [226, 163, 371, 87, 27, 125]
+   ], solutions: 13
+```
+
+Add numbers `225` und `463` to `numb_2[]` (remove comments) and repeat:
+
+```sh
+mk run findAllSums numb_2 sum=999
+```
+
+More solutions are found with the new numbers `225` und `463`:
+
+```
+ - findAllSums(numb_2, sum=999) -> [
+    - [226, 773],
+    - [225, 774],
+    - [27, 972],
+    - [371, 87, 541],
+    - [170, 190, 639],
+    - [163, 7, 190, 639],
+    - [226, 27, 541, 205],
+    - [163, 170, 125, 541],
+    - [163, 170, 27, 639],
+    - [225, 226, 7, 541],
+    - [226, 371, 170, 27, 205],
+    - [226, 371, 7, 205, 190],
+    - [225, 226, 371, 7, 170],
+    - [226, 371, 87, 125, 190],
+    - [226, 163, 371, 7, 27, 205],
+    - [226, 163, 371, 87, 27, 125],
+    - [225, 87, 7, 27, 190, 463]
+   ], solutions: 17
+```
+
+Incrementally add more numbers to `numb_2[]` and repeat:
+
+- add number `286` --> 19 solutions,
+
+- add number `569` --> 21 solutions,
+
+- add number `384` --> 24 solutions,
+
+- add number `9` --> 44 solutions:
+
+```
+-> findAllSums(sum=999, numb_2) -> [
+    - [226, 773],                   - [371, 27, 125, 286, 190],
+    - [27, 972],                    - [225, 226, 371, 7, 170],
+    - [225, 774],                   - [226, 7, 569, 170, 27],
+    - [170, 190, 639],              - [225, 370, 9, 205, 190],
+    - [371, 87, 541],               - [226, 163, 371, 7, 27, 205],
+    - [225, 569, 205],              - [226, 163, 371, 87, 27, 125],
+    - [903, 87, 9],                 - [226, 163, 9, 125, 286, 190],
+    - [226, 9, 125, 639],           - [225, 7, 9, 170, 125, 463],
+    - [163, 9, 541, 286],           - [384, 7, 170, 27, 125, 286],
+    - [163, 170, 27, 639],          - [384, 226, 163, 9, 27, 190],
+    - [225, 226, 7, 541],           - [225, 7, 9, 27, 541, 190],
+    - [163, 170, 125, 541],         - [225, 87, 7, 27, 190, 463],
+    - [163, 7, 190, 639],           - [384, 226, 87, 7, 9, 286],
+    - [773, 9, 27, 190],            - [7, 9, 125, 205, 190, 463],
+    - [226, 27, 541, 205],          - [9, 170, 27, 125, 205, 463],
+    - [163, 87, 286, 463],          - [225, 87, 9, 27, 205, 446],
+    - [384, 27, 125, 463],          - [384, 226, 87, 7, 170, 125],
+    - [226, 371, 87, 125, 190],     - [225, 370, 163, 9, 27, 205],
+    - [226, 371, 170, 27, 205],     - [225, 371, 7, 9, 170, 27, 190],
+    - [226, 371, 7, 205, 190],      - [163, 7, 9, 27, 125, 205, 463],
+    - [163, 371, 9, 170, 286],      - [370, 226, 7, 9, 170, 27, 190],
+    - [225, 87, 9, 651, 27],        - [384, 87, 7, 9, 170, 27, 125, 190]
+   ], solutions: 44
+```
+
+A *"bruteforce"* algorithm will take increasing time from the 24th number
+and not end if numbers continue to be added.
+
+Alterative algorithms need to be used that can cope with larger number
+arrays such as `numb_3`:
+
+```java
+/*
+* Even larger set of 63 numbers, no negatives, no duplicates (n=3).
+*/
+static final int numb_3[] = {
+     799, 2377,  936, 3498, 1342,  493, 1635, 4676, 1613, 3851,
+    1445, 4506, 3346,    7, 2141, 2064, 1491,  908,   78, 3325,
+    1756, 3691,   23, 1995, 1800,   15, 2784, 4305,   36, 2532,
+    4292, 4802, 2522, 4183, 3261, 2610,  803, 2656,  498, 1668,
+    2038, 2194,  440,  463, 4047, 4235, 3931,  756,  521, 4042,
+    3302,  485, 1002,  408, 4691, 3387, 3104, 3658, 2241, 4382,
+    1220, 3656,  500,
+};
+```
+
+Try to find such algorithms (e.g. *"branch-and-bound"*) and implement
+function `findAllSums(int sum)` such that it works with numbers from
+`numb_3`, e.g. for `sum=999`:
+
+```sh
+mk run findAllSums numb_3 sum=999
+```
+
+Although there are only 10 solutions for `sum=999`, the number space
+to explore is large: *2^63*.
+
+```
+ - findAllSums(numb_3, sum=999) -> [
+    - [521, 463, 15],
+    - [500, 36, 463],
+    - [36, 7, 493, 463],
+    - [498, 408, 78, 15],
+    - [498, 23, 463, 15],
+    - [23, 440, 521, 15],
+    - [500, 36, 23, 440],
+    - [36, 485, 463, 15],
+    - [36, 23, 7, 440, 493],
+    - [36, 485, 23, 440, 15]
+   ], solutions: 10
+```
+
+There are only 5 solutions for `sum=1000`:
+
+```sh
+mk run findAllSums numb_3 sum=1000
+```
+```
+ - findAllSums(numb_3, sum=1000) -> [
+    - [500, 7, 493],
+    - [500, 485, 15],
+    - [485, 7, 493, 15],
+    - [36, 408, 78, 463, 15],
+    - [36, 23, 408, 440, 78, 15]
+   ], solutions: 5
+```
+
+If you found an implementation that works with the `numb_3[]` array,
+add and run tests
+[*Numbers_8b_find_all_sums_XL_Tests.java*](../../tree/b1-numbers-tests/tests/numbers/Numbers_8b_find_all_sums_XL_Tests.java):
+
+```sh
+java -cp "$JUNIT_CLASSPATH" org.junit.platform.console.ConsoleLauncher $JUNIT_OPTIONS \
+  -c numbers.Numbers_8b_find_all_sums_XL_Tests
+```
+
+Output:
+
+```
+├─ JUnit Jupiter ✔
+|  |
+│  └─ Numbers_8b_find_all_sums_XL_Tests ✔
+│     ├─ test824_find_all_sums_XL_24_numbers() ✔
+│     ├─ test825_find_all_sums_XL_25_numbers() ✔
+│     ├─ test826_find_all_sums_XL_26_numbers() ✔
+│     ├─ test827_find_all_sums_XL_27_numbers() ✔
+│     ├─ test828_find_all_sums_XL_28_numbers() ✔
+│     ├─ test829_find_all_sums_XL_29_numbers() ✔
+│     ├─ test830_find_all_sums_XL_30_numbers() ✔
+│     ├─ test840_find_all_sums_XL_numb_3_999() ✔
+│     └─ test841_find_all_sums_XL_numb_3_1000() ✔
+|
+├─ JUnit Vintage ✔
+└─ JUnit Platform Suite ✔
+```
+
+
+
+&nbsp;
+
+## Final Result
+
+The final result will show all tests passing. Leave out tests that are
+not passing:
+
+<img src="https://gitlab.bht-berlin.de/sgraupner/playground/-/raw/main/markup/img/numbers_junit_vscode_3.png" width="800"/>
+
+```sh
+mk run-tests                    # run all tests
+```
+
+Or run tests selectively (remove tests that are failing):
+
+```sh
+# or run tests selectively (remove tests that are failing)
+java -cp "$JUNIT_CLASSPATH" org.junit.platform.console.ConsoleLauncher $JUNIT_OPTIONS \
+  -c application.Application_0_always_pass_Tests \
+  -c numbers.Numbers_1_sum_Tests \
+  -c numbers.Numbers_2_sum_positive_even_Tests \
+  -c numbers.Numbers_3_sum_recursion_Tests \
+  -c numbers.Numbers_4_find_first_Tests \
+  -c numbers.Numbers_5_find_last_Tests \
+  -c numbers.Numbers_6_find_all_Tests \
+  -c numbers.Numbers_7a_find_sums_Tests \
+  -c numbers.Numbers_7b_find_sums_duplicates_Tests \
+  -c numbers.Numbers_8a_find_all_sums_Tests \
+  -c numbers.Numbers_8b_find_all_sums_XL_Tests
+```
+
+Output with all tests passing:
+
+```
+├─ JUnit Jupiter ✔
+│  ├─ Application_0_always_pass_Tests ✔
+│  │  ├─ test_001_always_pass() ✔
+│  │  └─ test_002_always_pass() ✔
+│  ├─ Numbers_1_sum_Tests ✔
+│  │  ├─ test100_sum_regular() ✔
+│  │  ├─ test101_sum_regular() ✔
+│  │  ├─ test102_sum_regular() ✔
+│  │  └─ test103_sum_regular() ✔
+│  ├─ Numbers_2_sum_positive_even_Tests ✔
+│  │  ├─ test200_sum_positive_even_numbers_regular() ✔
+│  │  ├─ test201_sum_positive_even_numbers_regular() ✔
+│  │  ├─ test202_sum_positive_even_numbers_regular() ✔
+│  │  └─ test203_sum_positive_even_numbers_regular() ✔
+│  ├─ Numbers_3_sum_recursion_Tests ✔
+│  │  ├─ test300_sum_recursion_regular() ✔
+│  │  ├─ test301_sum_recursion_regular() ✔
+│  │  ├─ test302_sum_recursion_regular() ✔
+│  │  └─ test303_sum_recursion_regular() ✔
+│  ├─ Numbers_4_find_first_Tests ✔
+│  │  ├─ test400_find_first_regular() ✔
+│  │  ├─ test401_find_first_regular() ✔
+│  │  ├─ test402_find_first_regular() ✔
+│  │  └─ test403_find_first_regular() ✔
+│  ├─ Numbers_5_find_last_Tests ✔
+│  │  ├─ test500_find_last_regular() ✔
+│  │  ├─ test501_find_last_regular() ✔
+│  │  ├─ test502_find_last_regular() ✔
+│  │  └─ test503_find_last_regular() ✔
+│  ├─ Numbers_6_find_all_Tests ✔
+│  │  ├─ test600_find_all_regular() ✔
+│  │  ├─ test601_find_all_regular() ✔
+│  │  ├─ test602_find_all_regular() ✔
+│  │  └─ test603_find_all_regular() ✔
+│  ├─ Numbers_7a_find_sums_Tests ✔
+│  │  ├─ test700_find_sums_regular() ✔
+│  │  ├─ test701_find_sums_regular() ✔
+│  │  ├─ test702_find_sums_regular() ✔
+│  │  ├─ test703_find_sums_regular() ✔
+│  │  ├─ test704_find_sums_regular() ✔
+│  │  ├─ test705_find_sums_regular() ✔
+│  │  └─ test706_find_sums_regular() ✔
+│  ├─ Numbers_7b_find_sums_duplicates_Tests ✔
+│  │  ├─ test710_find_sums_duplicates() ✔
+│  │  ├─ test711_find_sums_same_duplicates() ✔
+│  │  ├─ test712_find_sums_mirror_duplicates() ✔
+│  │  └─ test713_find_sums_regular_duplicates() ✔
+│  ├─ Numbers_8a_find_all_sums_Tests ✔
+│  │  ├─ test800_find_all_sums_regular() ✔
+│  │  └─ test821_find_all_sums_regular_nbrs_2_sum999() ✔
+│  └─ Numbers_8b_find_all_sums_XL_Tests ✔
+│     ├─ test824_find_all_sums_XL_24_numbers() ✔
+│     ├─ test825_find_all_sums_XL_25_numbers() ✔
+│     ├─ test826_find_all_sums_XL_26_numbers() ✔
+│     ├─ test827_find_all_sums_XL_27_numbers() ✔
+│     ├─ test828_find_all_sums_XL_28_numbers() ✔
+│     ├─ test829_find_all_sums_XL_29_numbers() ✔
+│     ├─ test830_find_all_sums_XL_30_numbers() ✔
+│     ├─ test840_find_all_sums_XL_numb_3_999() ✔
+│     └─ test841_find_all_sums_XL_numb_3_1000() ✔
+├─ JUnit Vintage ✔
+└─ JUnit Platform Suite ✔
+
+Test run finished after 4911 ms
+[        14 containers found      ]
+[         0 containers skipped    ]
+[        14 containers started    ]
+[         0 containers aborted    ]
+[        14 containers successful ]
+[         0 containers failed     ]
+[        48 tests found           ]
+[         0 tests skipped         ]
+[        48 tests started         ]
+[         0 tests aborted         ]
+[        48 tests successful      ]
 [         0 tests failed          ]
-``` -->
-
-<img src="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/markup/img/junit-run-2.png" width="360"/>
-
-
-When tests are passing, tests can be committed and tagged with *"t4"*:
-
-```sh
-git add tests                       # stage test files
-git commit -m "add junit tests"     # commit test files
-
-git tag t4                              # tag commit with 't2'
-
-git log --oneline                       # show commit log/history
 ```
-```
-db11e83 (HEAD -> main, tag: t4) add junit tests         <-- new commit tagged with 't4'
-ce009f7 (tag: t3) add src
-5834efb (tag: t2) add .gitmodules
-42ec65a (tag: t1) add .gitignore
-52f8547 (tag: root) root commit (empty)
-```
-
-
-
-&nbsp;
-
-## 10. Launching *VSCode*
-
-Re-source the project before launching *VSCode:*
-
-```sh
-wipe --all              # unset all created environment variables and remove created project files
-
-source .env/env.sh      # re-source the project
-```
-
-*VSCode* discovers the project it is launched in.
-
-```sh
-code .                  # launch VSCode in the project directory
-```
-
-*VSCode* starts with the project. If *VSCode* is launched for the first time, it may take some
-time for *VSCode* to discover the project:
-
-<img src="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/markup/img/vscode-1.png" width="600"/>
-
-Run the program in *VSCode* - the greeting "*Hello, se1.play*" will show:
-
-<img src="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/markup/img/vscode-2.png" width="600"/>
-
-Run *JUnit* tests in *VSCode* - all tests should pass:
-
-<img src="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/markup/img/vscode-3.png" width="600"/>
-
-
-There is always the assumption that a project builds and runs in both environments, the terminal
-and the IDE.
-
-Re-build the project and re-run in the terminal:
-
-```sh
-mk clean compile compile-tests          # clean project build
-
-mk run A BC DEF                         # run the program
-
-mk run-tests                            # run tests
-```
-
-
-
-&nbsp;
-
-## 11. *Javadoc*
-
-*Javadoc* is *Java's* documentation method and toolset relying on
-[*Java doc strings*](https://de.wikipedia.org/wiki/Javadoc)
-included in Java comments.
-
-The `javadoc` compiler parses `.java` files and "*compiles*" HTML documentation.
-
-```sh
-mk javadoc              # generate javadoc in the 'docs' folder (new)
-```
-
-Output shows the command calling the `javadoc` compiler with output directed `-d` to the `docs` folder:
-
-```
-javadoc -d docs $(eval echo $JDK_JAVADOC_OPTIONS) \
-  $(builtin cd src; find . -type d | sed -e 's!/!.!g' -e 's/^[.]*//')
-```
-
-Output of the `javadoc` compiler:
-
-```
-Loading source files for package application...
-Constructing Javadoc information...
-Creating destination directory: "docs\"
-Building index for all the packages and classes...
-Standard Doclet version 21+35-LTS-2513
-Building tree for all the packages and classes...
-Generating docs\se1.play\application\Application.html...
-Generating docs\se1.play\application\package-summary.html...
-Generating docs\se1.play\application\package-tree.html...
-Generating docs\se1.play\module-summary.html...
-Generating docs\overview-tree.html...
-Building index for all classes...
-Generating docs\allclasses-index.html...
-Generating docs\allpackages-index.html...
-Generating docs\index-all.html...
-Generating docs\search.html...
-Generating docs\index.html...
-Generating docs\help-doc.html...
-```
-
-Output is included in the `docs` folder and can be visualized with a web-browser from
-the `index.html` file.
-
-```sh
-ls -la docs                 # show generated content of the 'docs' folder
-```
-```
-total 146
-drwxr-xr-x 1 svgr2 Kein     0 Apr  6 22:15 .
-drwxr-xr-x 1 svgr2 Kein     0 Apr  6 22:15 ..
--rw-r--r-- 1 svgr2 Kein  1038 Apr  6 22:15 index.html       <-- file to open in web-browser
-...
-```
-
-Open file `docs/index.html` in a web-browser, e.g. with:
-
-```sh
-chrome docs/index.html      # open web-browser with Javadoc
-```
-
-You may need to open the file in another way if the `chrome` command does not work.
-
-The web-browser shows the Java documentation:
-
-<img src="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/markup/img/javadoc-1.png" width="600"/>
-
-Navigate through: `application` -> `Application`:
-
-<img src="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/markup/img/javadoc-2.png" width="600"/>
-
-
-Since *Javadoc* is generated (compiled) content, documentation is not checked into the
-*git* repository.
-
-
-
-&nbsp;
-
-## 12. Packaging the Project
-
-"*Packaging*" means packing compiled code into a `.jar` (Java archive) for release and
-distribution.
-
-Package the project:
-
-```sh
-mk clean compile package            # re-build and package
-```
-
-Packaging invokes the `jar` command:
-
-```
-rm -rf bin logs docs coverage
-
-javac $(find src -name '*.java') -d bin/classes;
-
-tar cv libs/{jackson,logging}*/* | tar -C bin -xvf - ;
-jar -c -v -f bin/application-1.0.0-SNAPSHOT.jar \
-      -C bin/classes . ;
-```
-
-Output of the `jar` command when packaging `libs` and compiled files:
-
-```
-libs/jackson/jackson-annotations-2.13.0.jar
-libs/jackson/jackson-core-2.13.0.jar
-libs/jackson/jackson-annotations-2.13.0.jar
-libs/jackson/jackson-core-2.13.0.jar
-libs/jackson/jackson-databind-2.13.0.jar
-libs/jackson/jackson-databind-2.13.0.jar
-libs/logging/log4j-api-2.23.1.jar
-libs/logging/log4j-api-2.23.1.jar
-libs/logging/log4j-core-2.23.1.jar
-libs/logging/log4j-core-2.23.1.jar
-libs/logging/log4j-slf4j2-impl-2.23.1.jar
-libs/logging/slf4j-api-2.0.16.jar
-libs/logging/log4j-slf4j2-impl-2.23.1.jar
-libs/logging/slf4j-api-2.0.16.jar
-added manifest
-added module-info: module-info.class
-adding: application/(in = 0) (out= 0)(stored 0%)
-adding: application/Application.class(in = 1913) (out= 940)(deflated 50%)
-adding: application/package_info.class(in = 333) (out= 260)(deflated 21%)
-```
-
-Show the result in the `bin` folder:
-
-```sh
-ls -la bin
-```
-
-Output shows the packaged `.jar` file `application-1.0.0-SNAPSHOT.jar`:
-
-```
-total 8
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 23:44 .
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 23:44 ..
--rw-r--r-- 1 svgr2 Kein 2230 Apr  6 23:44 application-1.0.0-SNAPSHOT.jar
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 23:44 classes
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 23:44 libs
-```
-
-Run `application-1.0.0-SNAPSHOT.jar`:
-
-```sh
-java -cp bin/application-1.0.0-SNAPSHOT.jar application.Application A BC DEF
-```
-
-<!-- 
-Package the `.jar` file as stand-alone `.jar` file:
--->
-
-The `.jar` can now be released and distributed.
-
-
-
-<!-- 
-&nbsp;
-
-## Complete Project Content
-
-The complete content of the project is shown below. All generated content
-can be removed at any time and re-created by the *Build Process*.
-
-The *Build Process* must always work in a software project.
-
-Only *"source"* content belongs in the code repository, not generated
-artefacts. Only *"working"* content must be checked-in, never broken files.
-
-```sh
-<se1-play>              # project folder
- |
- +--.env.sh             # file to set/source the project entvironment
- +-<.git>               # local git repository
- |  +--config               # git project settings
- +--.gitignore          # files for git to ignore
- +-- README.md          # this markup file
- |
- +--.classpath          # VSCode, eclipse IDE configuration files,
- +--.project            # generated during "sourcing" the project
- |
- +-<.vscode>                    # VSCode project files
- |  +--settings.json                # project-specific VSCode configuration
- |  +--launch.json                  # launch and debug configurations
- |  +--launch_terminal.sh           # script to launch terminals in VSCode
- |  +--.classpath                   # (generated) file used by VSCoderunner
- |
- +-<src>                        # Java source code
- |  +-<application>                 # package 'application'
- |  |  +--Application.java              # main application file
- |  |  +--Runtime.java                  # basic runtime
- |  |  +--package-info.java             # package documentation
- |  +--module-info.java             # module description (exports, requires)
- |
- +-<resources>                  # none-Java sources, configuration files
- |  +--application.properties       # application configuration file
- |  +--log4j2.properties            # logging configuration file
- |  +-<META-INF>                    # required to package executabe .jar
- |     +--<MANIFEST.MF>             # define main class and CLASSPATH for .jar
- |
- +-<tests>                      # source code for tests
- |  +-<application>                 # package 'application'
- |     +--Application_0_always_pass_Tests.java      # test class
- |
- +-<libs> -> ./branches/libs    # link to 'libs'-branch in folder 'branches'
- |
- +-<branches>                   # home of separately checkout project branches
- |  |
- |  +-<libs>                    # 'libs'-branch containing project libraries
- |     +-<jackson>                  # JSON library for Java
- |     |  +--jackson-annotations-2.13.0.jar
- |     |  +--jackson-core-2.13.0.jar
- |     |  +--jackson-databind-2.13.0.jar
- |     |
- |     +-<jacoco>                   # code coverage library
- |     |  +--jacocoagent.jar
- |     |  +--jacococli.jar
- |     |
- |     +-<logging>                  # logging library
- |     |  +--log4j-api-2.23.1.jar
- |     |  +--log4j-core-2.23.1.jar
- |     |  +--log4j-slf4j2-impl-2.23.1.jar
- |     |  +--slf4j-api-2.0.16.jar
- |     |
- |     +-<junit>                    # library for JUnit5 tests
- |     |  +--apiguardian-api-1.1.2.jar
- |     |  +--junit-jupiter-api-5.9.3.jar
- |     |  +--junit-platform-commons-1.9.3.jar
- |     |  +--opentest4j-1.2.0.jar
- |     |
- |     +--junit-platform-console-standalone-1.9.2.jar   # JUnit5 test runner
- |
- +-<bin>                        # compiled code (.class files, generated)
- |  +--application-1.0.0-SNAPSHOT.jar   # packaged application
- |  |
- |  +-<classes>                 # compiled files from 'src'
- |  |  +-<application>                  # package 'application' from 'src'
- |  |  |  +--Application.class
- |  |  |  +--Runtime.class
- |  |  |  +--Runtime$Run.class
- |  |  |  +--Runtime$Runnable.class
- |  |  |  +--Runtime$StartUpStatus.class
- |  |  |  +--Runtime$SupplierWithExceptions.class
- |  |  |  +--package-info.class
- |  |  |  +--package_info.class
- |  |  +--module-info.class
- |  |
- |  +-<resources>               # files copied from 'resources' folder that
- |  |  +--application.properties    # are accessed at runtime and therefore
- |  |  +--log4j2.properties         # need to be on the CLASSPATH (bin)
- |  |
- |  +-<test-classes>            # compiled tests from 'tests'
- |     +-<application>              # package 'application' in 'tests'
- |     +--Application_0_always_pass_Tests.class     # compiled test class
- |
- +-<docs>                       # javadoc documentation (generated)
- |  +--index.html                   # javadoc landing page
- |  +-- ...                         # more .html and .css files
- |
- +-<coverage>                   # code coverage files (generated)
- |  +--jacoco.exec                  # coverage recording
- |  +--index.html                   # coverage report
- |
- +-<logs>                       # log files (generated during program execution)
-    +--runtime.log                  # log file for Runtime.java logger
-    +--application.log              # log file for Application.java logger
-``` -->

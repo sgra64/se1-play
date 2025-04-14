@@ -13,7 +13,7 @@
 # \\
 # Project files for VSCode and eclipse IDE:
 #  - .classpath, .project       ; used to set up the VSCode Java extension
-#  - .vscode: .classpath, .modulepath, .sources  ; for VSCode Java Code Runner
+#  - in .vscode: .classpath, .modulepath, .sources  ; for Java Code Runner
 # 
 # Executable functions:
 # \\
@@ -34,7 +34,15 @@
 #  - Windows: C:\Users\<USER>\AppData\Roaming\Code\User\workspaceStorage
 #  - MacOS:   ~/Library/Application Support/Code/User/workspaceStorage
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# 
+
+# the following segment disables zsh to output ANSI escape characters in sub-
+# processes such as in: wc $(find tmp -name '*.py') or colors="${colors:3}".
+# setopt no_match: disables 'no matches found:' message in zsh.
+[[ ! "$SHELL" =~ bash ]] && \
+    trap "" DEBUG && \
+    setopt no_nomatch
+
+# global associative array with common values
 declare -gA P=(
     [src]="src"
     [tests]="tests"
@@ -59,14 +67,6 @@ declare -gA P=(
     [created-env]=""
     [created-files]=""
 )
-
-# trap: disable zsh from outputting ANSI escape characters in sub-processes such
-# as in: wc $(find tmp -name '*.py') or colors="${colors:3}"
-# setopt no_match: disable 'no matches found:' message in zsh 
-[ "${P[is-zsh]}" ] && \
-    trap "" DEBUG && \
-    setopt no_nomatch
-
 
 function setup() {
     # 

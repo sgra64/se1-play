@@ -321,13 +321,62 @@ then
             local sep2=""; local sep3=""
             for cpe in "${P[classes]}" "${P[test-classes]}" "${P[target]}/${P[res]}" ${jars[@]}; do
                 # 
-                # collect entries for CLASSPATH, exclude 'jacoco' jars with test-runner
-                [[ ! "$cpe" =~ (jacoco|test-classes|junit-platform|opentest|apiguardian) ]] && \
-                    cp+="$sep2$cpe" && sep2="$sep"
+                # # following code does not properly work on MacOS (zsh):
+                # # collect entries for CLASSPATH, exclude 'jacoco' jars with test-runner
+                # [[ ! "$cpe" =~ (jacoco|test-classes|junit-platform|opentest|apiguardian) ]] && \
+                #     cp+="$sep2$cpe" && sep2="$sep"
+                # # 
+                # # collect entries for JUNIT_CLASSPATH, exclude 'junit' jars
+                # [[ ! "$cpe" =~ (/junit/) ]] &&
+                #     jcp+="$sep3$cpe" && sep3="$sep"
                 # 
-                # collect entries for JUNIT_CLASSPATH, exclude 'junit' jars
-                [[ ! "$cpe" =~ (/junit/) ]] &&
+                # instead, use case matching to sort CLASSPATH and JUNIT_CLASSPATH entries
+                # 
+                # echo $CLASSPATH | tr ';' '\n'
+                # - bin/classes
+                # - bin/resources
+                # - libs/jackson/jackson-annotations-2.13.0.jar
+                # - libs/jackson/jackson-core-2.13.0.jar
+                # - libs/jackson/jackson-databind-2.13.0.jar
+                # - libs/junit/junit-jupiter-api-5.9.3.jar
+                # - libs/logging/log4j-api-2.23.1.jar
+                # - libs/logging/log4j-core-2.23.1.jar
+                # - libs/logging/log4j-slf4j2-impl-2.23.1.jar
+                # - libs/logging/slf4j-api-2.0.16.jar
+                # - libs/lombok/lombok-1.18.36.jar
+                # 
+                # echo $JUNIT_CLASSPATH | tr ';' '\n'
+                # - bin/classes
+                # - bin/test-classes
+                # - bin/resources
+                # - libs/jackson/jackson-annotations-2.13.0.jar
+                # - libs/jackson/jackson-core-2.13.0.jar
+                # - libs/jackson/jackson-databind-2.13.0.jar
+                # - libs/jacoco/jacocoagent.jar
+                # - libs/jacoco/jacococli.jar
+                # - libs/junit-platform-console-standalone-1.9.2.jar
+                # - libs/logging/log4j-api-2.23.1.jar
+                # - libs/logging/log4j-core-2.23.1.jar
+                # - libs/logging/log4j-slf4j2-impl-2.23.1.jar
+                # - libs/logging/slf4j-api-2.0.16.jar
+                # - libs/lombok/lombok-1.18.36.jar
+                # 
+                case "$cpe" in
+
+                "${P[classes]}"|bin/resources|*/jackson/*.jar|*/logging/*.jar|*/lombok/*.jar)
+                    # include in both, CLASSPATH and JUNIT_CLASSPATH
+                    cp+="$sep2$cpe" && sep2="$sep"
                     jcp+="$sep3$cpe" && sep3="$sep"
+                    ;;
+
+                */junit/junit-jupiter-api*.jar)
+                    # include in CLASSPATH only
+                    cp+="$sep2$cpe" && sep2="$sep" ;;
+
+                "${P[test-classes]}"|*/${P[test-runner]}|*/jacoco/*.jar)
+                    # include in JUNIT_CLASSPATH only
+                    jcp+="$sep3$cpe" && sep3="$sep" ;;
+                esac
             done
         fi
         [ -z "$CLASSPATH" ] && export CLASSPATH="$cp" && created env CLASSPATH

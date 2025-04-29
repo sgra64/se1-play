@@ -8,10 +8,10 @@ is_zsh=$(type setopt 2>/dev/null)
 # Probe build_dir ($1, "se1-play") exists, create if not, and cd into it.
 # Build project with initial "src" and "tests" files extracted from README.md
 # and commit:
-#  - 712313b (HEAD -> main, tag: t4) add junit tests
-#  - 315d513 (tag: t3) add src
-#  - 996e14c (tag: t2) add .gitmodules
-#  - b78f544 (tag: t1) add .gitignore
+#  - 712313b (HEAD -> main) add junit tests
+#  - 315d513 add src
+#  - 996e14c add .gitmodules
+#  - b78f544 add .gitignore
 #  - a836206 (tag: root) root commit (empty)
 # 
 # @param $1 stage to build: 'se1_play', 'numbers', 'streams'
@@ -21,49 +21,72 @@ function build() {
     [ -z "$1" ] && local build_dir="se1-play" || local build_dir="$1"
 
     build_se1_play "$build_dir"
-
+    # 
+    # within 'se1-play':
+    # - build_numbers
+    # - build_numbers_sol
 
     [ "$is_zsh" ] && trap "echo -ne '\e[m'" DEBUG    # zsh: resume formatting
 }
 
+# build 'b1-numbers' on-top of 'se1-play'
 function build_numbers() {
-    # build 'numbers' on-top of 'se1-play'
+    # tag last commit of 'se1-play' and create new branch 'b1-numbers'
+    [ -z "$(git tag -l base)" ] && git tag base
+    [ "$(git show-ref refs/heads/b1-numbers)" ] && git switch b1-numbers || \
+        git switch -c b1-numbers
 
     # set remote URL to repository to fetch branches
-    git remote add se1-play-repo https://github.com/sgra64/se1-play.git
+    git remote add se1-play-repo git@github.com:sgra64/se1-play.git
 
     # fetch branch 'b1-numbers' from remote repository 'se1-play-repo'
     git fetch se1-play-repo b1-numbers
-    # git fetch se1-play-repo b1-numbers-tests
 
     # merge content of branch 'b1-numbers' into the 'main' branch of the project
     # '-m' specifies the message for the resulting merge commit
     # '--allow-unrelated-histories' allows merging from a repository with no shared history
     # '--strategy-option theirs' resolves merge conflicts favoring incoming changes
     # 
-    git merge se1-play-repo/b1-numbers -m "merge branch se1-play-repo/b1-numbers" \
+    git merge se1-play-repo/b1-numbers --squash \
         --allow-unrelated-histories --strategy-option theirs
-
-    git pull se1-play-repo b1-numbers-tests --no-edit \
-        --allow-unrelated-histories --strategy-option theirs
-
-    # install 'NumbersImpl.java' ???
-    [ -f ../NumbersImpl.java ] && \
-        cp ../NumbersImpl.java src/numbers
     # 
-    # diff -Naru src/numbers/Numbers_prior.java src/numbers/Numbers.java > Numbers.patch
-    [ -f ../Numbers.patch ] && \
-        patch -p1 src/numbers/Numbers.java < ../Numbers.patch
+    git commit -m "merge branch se1-play-repo/b1-numbers"
+
+    git fetch se1-play-repo b1-numbers-tests
+    git merge se1-play-repo/b1-numbers-tests --squash \
+        --allow-unrelated-histories --strategy-option theirs
+    # 
+    git commit -m "merge branch se1-play-repo/b1-numbers-tests"
+}
+
+function build_numbers_sol() {
+    [ -z "$pwd" ] && echo "no password: export pwd=\"\"" && return 1
+
+    curl https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/build/pack-b1-numbers.tgz.uue | \
+        uudecode -o - | ccrypt -dfK "$pwd" | \
+        tar xfvz -
+
+    for patch in $(find src -name '*.patch'); do
+        local patched_file="${patch/.patch/}"
+        # apply patch if patched file exists and remove patch
+        [ -f "$patched_file" ] && \
+            patch -p1 < "$patch" && rm "$patch" ||
+            echo "patched file $patched_file does not exist for patch: $patch"
+    done
+
+    # commit solution
+    git add src
+    git commit -m "b1-numbers solution applied"
 }
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Probe build_dir ($1, "se1-play") exists, create if not, and cd into it.
 # Build project with initial "src" and "tests" files extracted from README.md
 # and commit:
-#  - 712313b (HEAD -> main, tag: t4) add junit tests
-#  - 315d513 (tag: t3) add src
-#  - 996e14c (tag: t2) add .gitmodules
-#  - b78f544 (tag: t1) add .gitignore
+#  - 712313b (HEAD -> main) add junit tests
+#  - 315d513 add src
+#  - 996e14c add .gitmodules
+#  - b78f544 add .gitignore
 #  - a836206 (tag: root) root commit (empty)
 # 
 # @param $1 folder to build project in
@@ -87,8 +110,7 @@ function build_se1_play() {
 
     [ -f .gitignore -a -z "$(git log --oneline | grep 'add .gitignore')" ] && \
         git add ".gitignore" && \
-        git commit -m "add .gitignore" && \
-        git tag t1
+        git commit -m "add .gitignore"
 
     # import '.env' submodule from branch 'env' of the remote repository
     [ ! -d .env ] && \
@@ -114,8 +136,7 @@ function build_se1_play() {
 
     [ -f .gitmodules -a -z "$(git log --oneline | grep 'add .gitmodules')" ] && \
         git add .gitmodules && \
-        git commit -m "add .gitmodules" && \
-        git tag t2
+        git commit -m "add .gitmodules"
 
     for f in src.module-info.java \
             src.application.package-info.java \
@@ -138,17 +159,13 @@ function build_se1_play() {
 
     [ -d src -a -z "$(git log --oneline | grep 'add src')" ] && \
         git add src && \
-        git commit -m "add src" && \
-        git tag t3
+        git commit -m "add src"
 
     [ -d tests -a -z "$(git log --oneline | grep 'add junit tests')" ] && \
         git add tests && \
-        git commit -m "add junit tests" && \
-        git tag t4
+        git commit -m "add junit tests"
 
     [ ! -L env.sh ] && ln -s .env/env.sh env.sh
-
-    # source env.sh
 }
 
 function prune_submodule() {

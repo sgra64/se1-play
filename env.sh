@@ -17,9 +17,9 @@
 # 
 # Executable functions:
 # \\
-#  - show [cmd1, cmd2...]       ; show commands
+#  - show [cmd1, cmd2...]       ; show build commands
 # 
-#  - mk [cmd1, cmd2...] [args]  ; execute commands
+#  - mk [cmd1, cmd2...] [args]  ; execute build commands
 # 
 #  - wipe [--all|-a|-la]        ; unset project env variables and functions
 #                               ; --all|-a: including project files
@@ -66,6 +66,7 @@ declare -gA P=(
     [is-win]=$([[ "$(uname)" =~ (CYGWIN|MINGW) ]] && echo true)
     [created-env]=""
     [created-files]=""
+    [created-functions]=""
 )
 
 function setup() {
@@ -129,158 +130,11 @@ function setup() {
     return 0
 }
 
-function wipe() {
-    local env=(PROJECT_PATH CLASSPATH JUNIT_CLASSPATH MODULEPATH \
-                JDK_JAVAC_OPTIONS JDK_JAVADOC_OPTIONS JUNIT_OPTIONS JACOCO_AGENT \
-    )
-    local files=()  # probe files to remove are present
-    [ -f .classpath ] && files+=(.classpath)
-    [ -f .vscode/.classpath ] && files+=(.vscode/.classpath)
-    [ -f .vscode/.modulepath ] && files+=(.vscode/.modulepath)
-    [ -f .vscode/.sources ] && files+=(.vscode/.sources)
-    [ -f .project ] && files+=(.project)
-    # 
-    local env2=()
-    for e in ${env[@]}; do  # collect var that have been set
-        [ "$(eval echo '$'$e)" ] && env2+=($e)
-    done
-    # 
-    [[ "${#env2[@]}" -gt 0 ]] && \
-        unset "${env2[@]}" && echo "unset variables: ${env2[@]}"
-    # 
-    [[ "$1" =~ (-a|--all|-la) ]] && \
-        unset -f wipe && \
-        rm -rf ${files[@]} && echo "removed files: ${files[@]}" && \
-        [[ "$1" =~ (-la) ]] && \
-            rm -rf "${P[lib]}" && echo "removed: ${P[lib]}"
-}
-
-function command() {
-    case "$1" in
-
-    clean) echo rm -rf ${P[target]} ${P[log-dir]} ${P[doc-dir]} ${P[cov-dir]}
-        ;;
-
-    compile)
-        echo javac $\(find ${P[src]} -name \'*.java\'\) -d ${P[classes]}';'
-        [ -d "${P[res]}" ] && command copy-resources
-        ;;
-
-    compile-tests) echo javac -cp \"\$JUNIT_CLASSPATH\" $\(find ${P[tests]} -name \'*.java\'\) -d ${P[test-classes]}';'
-        [ -d "${P[res]}" ] && command copy-resources
-        ;;
-
-    copy-resources) echo copy ${P[res]} ${P[target]}/${P[res]}
-        ;;
-
-    run) shift;     # echo "echo java ${P[run]} $*"
-        echo java -p \"\$MODULEPATH\" -m ${P[module]}/${P[run]} $*
-        ;;
-
-    run-tests) echo java -cp \"\$JUNIT_CLASSPATH\" \\
-        echo " " org.junit.platform.console.ConsoleLauncher \$JUNIT_OPTIONS \\
-        echo " " --scan-class-path
-        ;;
-
-    package|jar)
-        echo tar cv ${P[lib]}/'{jackson,logging}*/*' "| tar -C ${P[target]} -xvf - "';'
-        echo jar -c -v -f ${P[jar]} '\'
-        [ -f ${P[manifest]} ] && \
-            echo "     " $(echo -m ${P[manifest]}) '\'
-        echo "     " -C ${P[classes]} . ';'
-        # echo jar uvf ${P[jar]} -C ${P[target]} ${P[res]}
-        ;;
-
-    build)
-        echo mk clean compile compile-tests run-tests package javadoc
-        ;;
-
-    tests)
-        echo mk compile compile-tests run-tests
-        ;;
-
-    coverage)
-        echo java $\(eval echo \$JACOCO_AGENT\) $\(eval echo \$JUNIT_CLASSPATH\) \\
-        echo " " org.junit.platform.console.ConsoleLauncher $\(eval echo \$JUNIT_OPTIONS\) \\
-        echo " " --scan-class-path';'
-        echo echo coverage events recorded in: ${P[cov-dir]}/jacoco.exec
-        ;;
-
-    doc|docs|javadoc)
-        echo javadoc -d ${P[doc-dir]} $\(eval echo \$JDK_JAVADOC_OPTIONS\) \\
-        echo " " $\(builtin cd ${P[src]}\; find . -type d \| sed -e \'s!/!.!g\' -e \'s/^[.]*//\'\)
-        ;;
-
-    esac; return 0
-}
-
-function mk() {
-    [ "${P[is-zsh]}" ] && trap "" DEBUG     # disable ANSI-codes for 'zsh'
-    # 
-    local cmds=(); local num=0
-    for cmd in "$@"; do
-        [ "$(command $cmd)" ] && cmds+=($cmd)
-    done
-    for cmd in "${cmds[@]}"; do
-        shift               # shift $@ to obtain args after last command
-        num=$((num + 1))    # detect last command before args[]
-        [[ $num -ge ${#cmds[@]} ]] && local args="$@" && local last="true"
-        # 
-        command $cmd $args          # output command in terminal
-        # 
-        # line feed, except for last command; print "---" after run
-        [ "$cmd" = "run" ] && echo "---" || { [ -z "$last" ] && echo; }
-        # 
-        eval $(command  $cmd $args | sed -e 's/\\$//' | tr -d '\n')
-    done
-    [ "${P[is-zsh]}" ] && trap "echo -ne '\e[m'" DEBUG; return 0
-}
-
-function show() {
-    [ "${P[is-zsh]}" ] && trap "" DEBUG     # disable ANSI-codes for 'zsh'
-    # 
-    local cmds=(clean compile compile-tests run run-tests build package coverage javadoc)
-    [ "$1" ] && local cmds=() && \
-        for cmd in "$@"; do
-            [ "$(command $cmd)" ] && cmds+=($cmd)
-        done
-    # 
-    local num=0
-    for cmd in "${cmds[@]}"; do
-        shift               # shift $@ to obtain args after last command
-        num=$((num + 1))    # detect last command before args[]
-        [[ $num -ge ${#cmds[@]} ]] && local args="$@" && local last="true"
-        # 
-        echo "$cmd:"
-        command $cmd $args | sed -e 's/.*/  &/'     # indent by 2 spaces
-        [ -z "$last" ] && echo      # line feed, except for last command
-    done
-    [ "${P[is-zsh]}" ] && trap "echo -ne '\e[m'" DEBUG; return 0
-}
-
-# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-# Copy content of (resource) directory passed as first argument to directory
-# passed as second argumet, except 'META-INF' directory.
-# Usage:
-#   copy [from_dir] [to_dir]
-# @param from_dir source directory from which content is recursively copied
-# @param to_dir destination directory
-function copy() {
-    local from_dir="$1"
-    local to_dir="$2"
-    if [ -z "$from_dir" ] || [ -z "$to_dir" ]; then
-        echo "use: copy <from-dir> <to-dir>"
-    else
-        [[ ! -d "$to_dir" ]] && mkdir -p $to_dir
-        # find $from_dir ! -path '*META-INF*' -type f | xargs cp --parent -t $to_dir
-        tar -cpf - -C $from_dir --exclude='META-INF' . | tar xpf - -C $to_dir
-    fi
-}
-
 function created() {
     case "$1" in
-    env)    shift; local args="$@"; P[created-env]+="$args@@" ;;
-    file)   shift; local args="$@"; P[created-files]+="$args@@" ;;
+    env)        shift; local args="$@"; P[created-env]+="$args@@" ;;
+    file)       shift; local args="$@"; P[created-files]+="$args@@" ;;
+    function)   shift; local args="$@"; P[created-functions]+="$args@@" ;;
     show)
         [ "${P[created-env]}" ] && \
             echo " - created environment variables:" && \
@@ -289,10 +143,185 @@ function created() {
         if [ "${P[created-files]}" ]; then
             echo " - created folders or files:"
             sed -e 's/@@/\n/g' <<< ${P[created-files]} | sed -e 's/^.*$/    - &/' -e '$d'
+        fi
+        if [ "${P[created-functions]}" ]; then
+            echo " - created functions:"
+            sed -e 's/@@/\n/g' <<< ${P[created-functions]} | sed -e 's/^.*$/    - &/' -e '$d'
         fi ;;
     esac
     return 0
 }
+
+if ! typeset -f command >/dev/null; then
+    # 
+    function command() {
+        case "$1" in
+
+        clean) echo rm -rf ${P[target]} ${P[log-dir]} ${P[doc-dir]} ${P[cov-dir]}
+            ;;
+
+        compile)
+            echo javac $\(find ${P[src]} -name \'*.java\'\) -d ${P[classes]}';'
+            [ -d "${P[res]}" ] && command copy-resources
+            ;;
+
+        compile-tests) echo javac -cp \"\$JUNIT_CLASSPATH\" $\(find ${P[tests]} -name \'*.java\'\) -d ${P[test-classes]}';'
+            [ -d "${P[res]}" ] && command copy-resources
+            ;;
+
+        copy-resources) echo copy ${P[res]} ${P[target]}/${P[res]}
+            ;;
+
+        run) shift;     # echo "echo java ${P[run]} $*"
+            echo java -p \"\$MODULEPATH\" -m ${P[module]}/${P[run]} $*
+            ;;
+
+        run-tests) echo java -cp \"\$JUNIT_CLASSPATH\" \\
+            echo " " org.junit.platform.console.ConsoleLauncher \$JUNIT_OPTIONS \\
+            echo " " --scan-class-path
+            ;;
+
+        package|jar)
+            echo tar cv ${P[lib]}/'{jackson,logging}*/*' "| tar -C ${P[target]} -xvf - "';'
+            echo jar -c -v -f ${P[jar]} '\'
+            [ -f ${P[manifest]} ] && \
+                echo "     " $(echo -m ${P[manifest]}) '\'
+            echo "     " -C ${P[classes]} . ';'
+            # echo jar uvf ${P[jar]} -C ${P[target]} ${P[res]}
+            ;;
+
+        build)
+            echo mk clean compile compile-tests run-tests package javadoc
+            ;;
+
+        tests)
+            echo mk compile compile-tests run-tests
+            ;;
+
+        coverage)
+            echo java $\(eval echo \$JACOCO_AGENT\) $\(eval echo \$JUNIT_CLASSPATH\) \\
+            echo " " org.junit.platform.console.ConsoleLauncher $\(eval echo \$JUNIT_OPTIONS\) \\
+            echo " " --scan-class-path';'
+            echo echo coverage events recorded in: ${P[cov-dir]}/jacoco.exec
+            ;;
+
+        doc|docs|javadoc)
+            echo javadoc -d ${P[doc-dir]} $\(eval echo \$JDK_JAVADOC_OPTIONS\) \\
+            echo " " $\(builtin cd ${P[src]}\; find . -type d \| sed -e \'s!/!.!g\' -e \'s/^[.]*//\'\)
+            ;;
+
+        esac; return 0
+    }
+fi
+
+if ! typeset -f show >/dev/null; then
+    # 
+    function show() {
+        [ "${P[is-zsh]}" ] && trap "" DEBUG     # disable ANSI-codes for 'zsh'
+        # 
+        local cmds=(clean compile compile-tests run run-tests build package coverage javadoc)
+        [ "$1" ] && local cmds=() && \
+            for cmd in "$@"; do
+                [ "$(command $cmd)" ] && cmds+=($cmd)
+            done
+        # 
+        local num=0
+        for cmd in "${cmds[@]}"; do
+            shift               # shift $@ to obtain args after last command
+            num=$((num + 1))    # detect last command before args[]
+            [[ $num -ge ${#cmds[@]} ]] && local args="$@" && local last="true"
+            # 
+            echo "$cmd:"
+            command $cmd $args | sed -e 's/.*/  &/'     # indent by 2 spaces
+            [ -z "$last" ] && echo      # line feed, except for last command
+        done
+        [ "${P[is-zsh]}" ] && trap "echo -ne '\e[m'" DEBUG; return 0
+    }
+    created function "show [cmd1, cmd2...]"
+fi
+
+if ! typeset -f mk >/dev/null; then
+    # 
+    function mk() {
+        [ "${P[is-zsh]}" ] && trap "" DEBUG     # disable ANSI-codes for 'zsh'
+        # 
+        local cmds=(); local num=0
+        for cmd in "$@"; do
+            [ "$(command $cmd)" ] && cmds+=($cmd)
+        done
+        for cmd in "${cmds[@]}"; do
+            shift               # shift $@ to obtain args after last command
+            num=$((num + 1))    # detect last command before args[]
+            [[ $num -ge ${#cmds[@]} ]] && local args="$@" && local last="true"
+            # 
+            command $cmd $args          # output command in terminal
+            # 
+            # line feed, except for last command; print "---" after run
+            [ "$cmd" = "run" ] && echo "---" || { [ -z "$last" ] && echo; }
+            # 
+            eval $(command  $cmd $args | sed -e 's/\\$//' | tr -d '\n')
+        done
+        [ "${P[is-zsh]}" ] && trap "echo -ne '\e[m'" DEBUG; return 0
+    }
+    created function "mk [cmd1, cmd2...] [args]"
+fi
+
+if ! typeset -f wipe >/dev/null; then
+    # 
+    function wipe() {
+        local env=(PROJECT_PATH CLASSPATH JUNIT_CLASSPATH MODULEPATH \
+                    JDK_JAVAC_OPTIONS JDK_JAVADOC_OPTIONS JUNIT_OPTIONS JACOCO_AGENT \
+        )
+        local files=()  # probe files to remove are present
+        [ -f .classpath ] && files+=(.classpath)
+        [ -f .vscode/.classpath ] && files+=(.vscode/.classpath)
+        [ -f .vscode/.modulepath ] && files+=(.vscode/.modulepath)
+        [ -f .vscode/.sources ] && files+=(.vscode/.sources)
+        [ -f .project ] && files+=(.project)
+        # 
+        local funcs=(); for f in wipe command mk show copy; do
+            if typeset -f $f >/dev/null; then
+                funcs+=($f)
+            fi
+        done
+        # 
+        local env2=(); for e in ${env[@]}; do  # collect var that have been set
+            [ "$(eval echo '$'$e)" ] && env2+=($e)
+        done
+        # 
+        [[ "${#env2[@]}" -gt 0 ]] && \
+            unset "${env2[@]}" && echo " - unset variables: ${env2[@]}"
+        # 
+        if [[ "$1" =~ (-a|--all|-la) ]]; then
+            [[ "${#funcs[@]}" -gt 0 ]] && unset -f ${funcs[@]} && echo " - removed functions: ${funcs[@]}"
+            [[ "${#files[@]}" -gt 0 ]] && rm -rf ${files[@]} && echo " - removed files: ${files[@]}"
+            [[ "$1" =~ (-la) ]] && \
+                rm -rf "${P[lib]}" && echo " - removed: ${P[lib]}"
+        fi
+    }
+    created function "wipe [--all|-a|-la]"
+fi
+
+if ! typeset -f copy >/dev/null; then
+    # 
+    # Copy content of (resource) directory passed as first argument to directory
+    # passed as second argumet, except 'META-INF' directory.
+    # Usage:
+    #   copy [from_dir] [to_dir]
+    # @param from_dir source directory from which content is recursively copied
+    # @param to_dir destination directory
+    function copy() {
+        local from_dir="$1"
+        local to_dir="$2"
+        if [ -z "$from_dir" ] || [ -z "$to_dir" ]; then
+            echo "use: copy <from-dir> <to-dir>"
+        else
+            [[ ! -d "$to_dir" ]] && mkdir -p $to_dir
+            # find $from_dir ! -path '*META-INF*' -type f | xargs cp --parent -t $to_dir
+            tar -cpf - -C $from_dir --exclude='META-INF' . | tar xpf - -C $to_dir
+        fi
+    }
+fi
 
 # 
 # ------ setup-classpath: -----------------------------------------------------

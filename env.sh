@@ -38,7 +38,8 @@
 # the following segment disables zsh to output ANSI escape characters in sub-
 # processes such as in: wc $(find tmp -name '*.py') or colors="${colors:3}".
 # setopt no_match: disables 'no matches found:' message in zsh.
-[[ ! "$SHELL" =~ bash ]] && \
+type setopt 2>/dev/null | grep builtin >/dev/null
+[ $? = 0 ] && \
     trap "" DEBUG && \
     setopt no_nomatch
 
@@ -99,7 +100,7 @@ function setup() {
 
     if [ "$1" = "--setup-classpath" ]; then
         setup_classpath
-        unset -f setup_classpath classpath_file template trlink
+        unset -f setup_classpath template
     fi
 
     [ -z "$JDK_JAVAC_OPTIONS" ] &&
@@ -332,82 +333,60 @@ if  [ -z "$CLASSPATH" -o -z "$JUNIT_CLASSPATH" -o -z "$MODULEPATH" -o \
         { [ -d .vscode ] && \
             [ ! -f .vscode/.classpath -o ! -f .vscode/.modulepath -o ! -f .vscode/.sources ]; }
 then
+    # 
     function setup_classpath() {
         # CLASSPATH seperator is ';' on Windows, any other system it is ':'
         [ "${P[is-win]}" ] && local sep=';' || local sep=':'
         # 
-        # absolute path to libs and path with symbolic links resolved
-        local libs_path_abs=$(builtin cd "${P[lib]}"; pwd)
-        local libs_path_traced=$(trlink "${P[lib]}" "$libs_path_abs")
-        # echo "trlink: --> "$(trlink "${P[lib]}" "$libs_path_abs")
-        # 
-        # jars with abs path, e.g. /cygdrive/c/home/svgr/libs/lombok/lombok-1.18.36.jar
-        local jars_abs=($(find "$libs_path_abs" -name '*.jar'))
-        local jars=($(find "$libs_path_traced" -name '*.jar'))
-        # 
+        local jars=()       # jars from libraries
+        local jars_abs=()   # jars with absolute path used for .classpath file
         local cp=""; local jcp=""
         if [ -z "$CLASSPATH" -o -z "$JUNIT_CLASSPATH" ]; then
+            # 
+            local libs_path_abs=$(builtin cd "${P[lib]}"; dirname $(pwd))
+            # replace drive letter '/c' or '/cygdrive/c' with 'C:' on Windows
+            [ "${P[is-win]}" ] && \
+                libs_path_abs=$(sed -e 's!^/cygdrive!!' <<< "$libs_path_abs" | \
+                                    sed -E 's!^/([[:alpha:]])/!\U\1:/!')
+            # 
+            [ -L "${P[lib]}" ] && local lib_is_link="true"
+            [ "$lib_is_link" ] && local lib_tr="$libs_path_abs/${P[lib]}" || local lib_tr="${P[lib]}"
+            # 
             local sep2=""; local sep3=""
-            for cpe in "${P[classes]}" "${P[test-classes]}" "${P[target]}/${P[res]}" ${jars[@]}; do
-                # 
-                # # following code does not properly work on MacOS (zsh):
-                # # collect entries for CLASSPATH, exclude 'jacoco' jars with test-runner
-                # [[ ! "$cpe" =~ (jacoco|test-classes|junit-platform|opentest|apiguardian) ]] && \
-                #     cp+="$sep2$cpe" && sep2="$sep"
-                # # 
-                # # collect entries for JUNIT_CLASSPATH, exclude 'junit' jars
-                # [[ ! "$cpe" =~ (/junit/) ]] &&
-                #     jcp+="$sep3$cpe" && sep3="$sep"
-                # 
-                # instead, use case matching to sort CLASSPATH and JUNIT_CLASSPATH entries
-                # 
-                # echo $CLASSPATH | tr ';' '\n'
-                # - bin/classes
-                # - bin/resources
-                # - libs/jackson/jackson-annotations-2.13.0.jar
-                # - libs/jackson/jackson-core-2.13.0.jar
-                # - libs/jackson/jackson-databind-2.13.0.jar
-                # - libs/junit/junit-jupiter-api-5.9.3.jar
-                # - libs/logging/log4j-api-2.23.1.jar
-                # - libs/logging/log4j-core-2.23.1.jar
-                # - libs/logging/log4j-slf4j2-impl-2.23.1.jar
-                # - libs/logging/slf4j-api-2.0.16.jar
-                # - libs/lombok/lombok-1.18.36.jar
-                # 
-                # echo $JUNIT_CLASSPATH | tr ';' '\n'
-                # - bin/classes
-                # - bin/test-classes
-                # - bin/resources
-                # - libs/jackson/jackson-annotations-2.13.0.jar
-                # - libs/jackson/jackson-core-2.13.0.jar
-                # - libs/jackson/jackson-databind-2.13.0.jar
-                # - libs/jacoco/jacocoagent.jar
-                # - libs/jacoco/jacococli.jar
-                # - libs/junit-platform-console-standalone-1.9.2.jar
-                # - libs/logging/log4j-api-2.23.1.jar
-                # - libs/logging/log4j-core-2.23.1.jar
-                # - libs/logging/log4j-slf4j2-impl-2.23.1.jar
-                # - libs/logging/slf4j-api-2.0.16.jar
-                # - libs/lombok/lombok-1.18.36.jar
+            for cpe in "${P[classes]}" "${P[test-classes]}" "${P[target]}/${P[res]}" \
+                $(find "$lib_tr" -name '*.jar')
+            do
                 # 
                 case "$cpe" in
-
-                "${P[classes]}"|bin/resources|*/jackson/*.jar|*/logging/*.jar|*/lombok/*.jar)
-                    # include in both, CLASSPATH and JUNIT_CLASSPATH
+                # include in CLASSPATH only: junit-jupiter-api-5.9.3.jar (no other junit lib, jacoco)
+                */junit/junit-jupiter-api*.jar)
                     cp+="$sep2$cpe" && sep2="$sep"
-                    jcp+="$sep3$cpe" && sep3="$sep"
+                    jars+=($cpe)
                     ;;
 
-                */junit/junit-jupiter-api*.jar)
-                    # include in CLASSPATH only
-                    cp+="$sep2$cpe" && sep2="$sep" ;;
-
+                # include in JUNIT_CLASSPATH only: jacoco, junit-platform-console-standalone-1.9.2.jar
                 "${P[test-classes]}"|*/${P[test-runner]}|*/jacoco/*.jar)
-                    # include in JUNIT_CLASSPATH only
-                    jcp+="$sep3$cpe" && sep3="$sep" ;;
+                    jcp+="$sep3$cpe" && sep3="$sep"
+                    [ "$cpe" != "${P[test-classes]}" ] && jars+=($cpe)
+                    ;;
+
+                # exlcude */junit/*.jar libraries from CLASSPATH and JUNIT_CLASSPATH, tests
+                # will run with libs included in test runner jar
+                */junit/*.jar) ;;
+
+                # include other in both, CLASSPATH and JUNIT_CLASSPATH
+                *)  cp+="$sep2$cpe" && sep2="$sep"
+                    jcp+="$sep3$cpe" && sep3="$sep"
+                    # 
+                    # remember remaining .jar files with abs paths for '.classpath' file
+                    if [ -f "$cpe" ]; then
+                        jars+=($cpe)
+                        [ "$lib_is_link" ] && jars_abs+=("$cpe") || jars_abs+=("$libs_path_abs/$cpe")
+                    fi ;;
                 esac
             done
         fi
+        # 
         [ -z "$CLASSPATH" ] && export CLASSPATH="$cp" && created env CLASSPATH
         [ -z "$JUNIT_CLASSPATH" ] && export JUNIT_CLASSPATH="$jcp" && created env JUNIT_CLASSPATH
 
@@ -423,11 +402,20 @@ then
 
         # on Windows, use abs path with C:/ for .classpath file
         if [ ! -f .classpath ]; then
-            classpath_file $(for jar in ${jars_abs[@]}; do \
-                [ "${P[is-win]}" ] && \
-                    sed -e '/jacoco\|junit/d' -e 's!^/cygdrive!!' <<< "$jar" | sed -E 's!^/([[:alpha:]])/!\U\1:/!' || \
-                    sed -e '/jacoco\|junit/d' <<< "$jar"; \
-                done) > .classpath
+            # 
+            template .classpath | sed \
+                -e 's!@target!'${P[target]}'!g' \
+                -e 's!@classes!'${P[classes]}'!g' \
+                -e 's!@test-classes!'${P[test-classes]}'!g' \
+                -e 's!@resources!'${P[target]}/${P[res]}'!g' \
+                > .classpath
+            # 
+            for jar in ${jars_abs[@]}; do
+                # put absolute paths in .classpath to be effective in VS Code launch.json
+                template .classpath-entry | sed -e 's!@jar!'$jar'!g'
+            done >> .classpath
+            # 
+            template .classpath-end >> .classpath
             # 
             # remove 4 lines following match: 'path="tests"' if no 'tests' folder is present
             [ ! -d "${P[tests]}" ] && sed -e '/path="tests"/,+4d' < .classpath > .c && mv .c .classpath
@@ -455,35 +443,11 @@ then
         return 0
     }
 
-    function classpath_file() {
-        # substitute template variables
-        template .classpath | sed \
-            -e 's!@target!'${P[target]}'!g' \
-            -e 's!@classes!'${P[classes]}'!g' \
-            -e 's!@test-classes!'${P[test-classes]}'!g' \
-            -e 's!@resources!'${P[target]}/${P[res]}'!g'
-        # 
-        for jar in "$@"; do
-            # put absolute paths in .classpath to be effective in VS Code launch.json
-            template .classpath-entry | sed -e 's!@jar!'$jar'!g'
-        done
-        # 
-        template .classpath-end
-    }
-
     function template() {
         sed -n '/^# -- '"$1"'$/,/^# --/p' "${P[env-script]}" | \
             sed -e '1d' -e '$d' -e 's/^# //'
     }
 
-    function trlink() {
-        # 'realpath' command exists (may not on Mac), alt: $(readlink -e "$1")
-        [ -f /usr/bin/realpath ] && \
-            local tr=$(realpath "$1") && \
-            [ "$tr" ] && realpath -s --relative-to="$(pwd)" "$tr" \
-        || echo -n "$2"
-    }
-    # 
     # invoke setup with functions for setting up CLASSPATH, JUNIT_CLASSPATH, MODULEPATH
     # and files: .project, .classpath, .vscode/.classpath, .vscode/.modulepath, vscode/.sources
     setup --setup-classpath
@@ -548,4 +512,33 @@ unset -f setup created
 #         <nature>org.eclipse.jdt.core.javanature</nature>
 #     </natures>
 # </projectDescription>
+# --
+# -- CLASSPATH-entries
+# bin/classes
+# bin/resources
+# libs/jackson/jackson-annotations-2.13.0.jar
+# libs/jackson/jackson-core-2.13.0.jar
+# libs/jackson/jackson-databind-2.13.0.jar
+# libs/junit/junit-jupiter-api-5.9.3.jar
+# libs/logging/log4j-api-2.23.1.jar
+# libs/logging/log4j-core-2.23.1.jar
+# libs/logging/log4j-slf4j2-impl-2.23.1.jar
+# libs/logging/slf4j-api-2.0.16.jar
+# libs/lombok/lombok-1.18.36.jar
+# --
+# -- JUNIT_CLASSPATH-entries
+# bin/classes
+# bin/test-classes
+# bin/resources
+# libs/jackson/jackson-annotations-2.13.0.jar
+# libs/jackson/jackson-core-2.13.0.jar
+# libs/jackson/jackson-databind-2.13.0.jar
+# libs/jacoco/jacocoagent.jar
+# libs/jacoco/jacococli.jar
+# libs/junit-platform-console-standalone-1.9.2.jar
+# libs/logging/log4j-api-2.23.1.jar
+# libs/logging/log4j-core-2.23.1.jar
+# libs/logging/log4j-slf4j2-impl-2.23.1.jar
+# libs/logging/slf4j-api-2.0.16.jar
+# libs/lombok/lombok-1.18.36.jar
 # --

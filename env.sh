@@ -31,8 +31,16 @@
 #  - clean Java Language Server Workspace: Ctrl-Shift-P
 # 
 # VSCode project cache:
-#  - Windows: C:\Users\<USER>\AppData\Roaming\Code\User\workspaceStorage
+#  - Windows: C:/Users/<USER>/AppData/Roaming/Code/User/workspaceStorage
 #  - MacOS:   ~/Library/Application Support/Code/User/workspaceStorage
+# 
+# VSCode installation paths:
+#  - Windows: C:/Users/<User>/AppData/Local/Programs/Microsoft\ VS\ Code/bin
+#  - MacOS:   /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Revision information:
+# @version: 1.0.8
+# @author: sgraupner
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # the following segment disables zsh to output ANSI escape characters in sub-
@@ -40,8 +48,7 @@
 # setopt no_match: disables 'no matches found:' message in zsh.
 type setopt 2>/dev/null | grep builtin >/dev/null
 [ $? = 0 ] && \
-    trap "" DEBUG && \
-    setopt no_nomatch
+    trap "" DEBUG && setopt no_nomatch
 
 # global associative array with common values
 declare -gA P=(
@@ -142,7 +149,7 @@ function created() {
             sed -e 's/@@/\n/g' <<< ${P[created-env]} | sed -e 's/^.*$/    - &/' -e '$d'
         # 
         if [ "${P[created-files]}" ]; then
-            echo " - created folders or files:"
+            echo " - created files:"
             sed -e 's/@@/\n/g' <<< ${P[created-files]} | sed -e 's/^.*$/    - &/' -e '$d'
         fi
         if [ "${P[created-functions]}" ]; then
@@ -270,35 +277,50 @@ fi
 if ! typeset -f wipe >/dev/null; then
     # 
     function wipe() {
-        local env=(PROJECT_PATH CLASSPATH JUNIT_CLASSPATH MODULEPATH \
-                    JDK_JAVAC_OPTIONS JDK_JAVADOC_OPTIONS JUNIT_OPTIONS JACOCO_AGENT \
-        )
-        local files=()  # probe files to remove are present
+        # collect environment variables to remove
+        local env2=(); for e in PROJECT_PATH CLASSPATH JUNIT_CLASSPATH MODULEPATH \
+                JDK_JAVAC_OPTIONS JDK_JAVADOC_OPTIONS JUNIT_OPTIONS JACOCO_AGENT
+        do
+            [ "$(eval echo '$'$e)" ] && env2+=($e)
+        done
+        # 
+        local files=()          # collect created files to remove
         [ -f .classpath ] && files+=(.classpath)
+        [ -f .project ] && files+=(.project)
         [ -f .vscode/.classpath ] && files+=(.vscode/.classpath)
         [ -f .vscode/.modulepath ] && files+=(.vscode/.modulepath)
         [ -f .vscode/.sources ] && files+=(.vscode/.sources)
-        [ -f .project ] && files+=(.project)
         # 
-        local funcs=(); for f in wipe command mk show copy; do
+        # collect functions to remove
+        local funcs=(); for f in show mk wipe copy command; do
             if typeset -f $f >/dev/null; then
                 funcs+=($f)
             fi
         done
         # 
-        local env2=(); for e in ${env[@]}; do  # collect var that have been set
-            [ "$(eval echo '$'$e)" ] && env2+=($e)
-        done
-        # 
         [[ "${#env2[@]}" -gt 0 ]] && \
-            unset "${env2[@]}" && echo " - unset variables: ${env2[@]}"
+            unset ${env2[@]} && \
+            echo " - unset variables: $(print_list ${env2[@]:0:4})," && \
+            echo "     $(print_list ${env2[@]:4})"
         # 
         if [[ "$1" =~ (-a|--all|-la) ]]; then
-            [[ "${#funcs[@]}" -gt 0 ]] && unset -f ${funcs[@]} && echo " - removed functions: ${funcs[@]}"
-            [[ "${#files[@]}" -gt 0 ]] && rm -rf ${files[@]} && echo " - removed files: ${files[@]}"
+            [[ "${#files[@]}" -gt 0 ]] && \
+                rm -rf ${files[@]} && \
+                echo " - removed files: $(print_list ${files[@]:0:3})," && \
+                echo "     $(print_list ${files[@]:3})"
+            # 
+            [[ "${#funcs[@]}" -gt 0 ]] && \
+                unset -f ${funcs[@]} && \
+                echo " - removed functions: $(print_list ${funcs[@]} print_list)"
+            # 
             [[ "$1" =~ (-la) ]] && \
                 rm -rf "${P[lib]}" && echo " - removed: ${P[lib]}"
         fi
+        unset -f print_list
+    }
+    # 
+    function print_list() {
+        for arg in $@; do echo -ne $sep$arg; sep=", "; done
     }
     created function "wipe [--all|-a|-la]"
 fi

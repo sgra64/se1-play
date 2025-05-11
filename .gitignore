@@ -32,6 +32,7 @@ coverage
 *.gz
 *.rar
 *.tar
+*.tgz
 *.tar.gz
 *.zip
 
@@ -84,3 +85,4 @@ temp
 
 # ignore OSX system files
 .DS_Store
+

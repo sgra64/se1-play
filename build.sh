@@ -1,83 +1,28 @@
-# trap: disable zsh from outputting ANSI escape characters in sub-processes such
-# as in: wc $(find tmp -name '*.py') or colors="${colors:3}"
-# setopt no_match: disable 'no matches found:' message in zsh
-is_zsh=$(type setopt 2>/dev/null)
-[ "$is_zsh" ] && trap "" DEBUG && setopt no_nomatch
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Probe build_dir ($1, "se1-play") exists, create if not, and cd into it.
-# Build project with initial "src" and "tests" files extracted from README.md
-# and commit:
-#  - 712313b (HEAD -> main) add junit tests
-#  - 315d513 add src
-#  - 996e14c add .gitmodules
-#  - b78f544 add .gitignore
-#  - a836206 (tag: root) root commit (empty)
+# Create build pack 'pack-b1-numbers-sol.tgz.uue' from content in pack folder
+# 'pack-b1-numbers-sol':
+# - tar cvfz - -C pack-b1-numbers-sol . | ccrypt -efK "$pwd" | uuencode - > pack-b1-numbers-sol.tgz.uue
 # 
-# @param $1 stage to build: 'se1_play', 'numbers', 'streams'
-# @param $2 folder to build project in
+# Applying the pack installs files from the pack folder into the project:
+# - uudecode -o - < pack-b1-numbers-sol.tgz.uue | ccrypt -dfK "$pwd" | tar tfvz -
 # 
+# un-tar patch from .tgz and pipe to patch command using -O flag (O, not zero)
+# - tar xOf tmp/NumbersImpl_patches.tgz NumbersImpl_0_sum0.patch | patch -p1
+# 
+
+# Overall build() function.
 function build() {
     [ -z "$1" ] && local build_dir="se1-play" || local build_dir="$1"
-
+    # 
+    # build 'se1-play' project (main) in $build_dir
     build_se1_play "$build_dir"
     # 
-    # within 'se1-play':
-    # - build_numbers
-    # - build_numbers_sol
-
-    [ "$is_zsh" ] && trap "echo -ne '\e[m'" DEBUG    # zsh: resume formatting
+    # supplement 'se1-play' with branches 'b1-numbers' and 'b1-numbers-sol'
+    build_numbers
+    build_numbers_sol
+    build_numbers_completed     # 'b1-numbers' with all commits completed
 }
 
-# build 'b1-numbers' on-top of 'se1-play'
-function build_numbers() {
-    # tag last commit of 'se1-play' and create new branch 'b1-numbers'
-    [ -z "$(git tag -l base)" ] && git tag base
-    [ "$(git show-ref refs/heads/b1-numbers)" ] && git switch b1-numbers || \
-        git switch -c b1-numbers
-
-    # set remote URL to repository to fetch branches
-    git remote add se1-play-repo git@github.com:sgra64/se1-play.git
-
-    # fetch branch 'b1-numbers' from remote repository 'se1-play-repo'
-    git fetch se1-play-repo b1-numbers
-
-    # merge content of branch 'b1-numbers' into the 'main' branch of the project
-    # '-m' specifies the message for the resulting merge commit
-    # '--allow-unrelated-histories' allows merging from a repository with no shared history
-    # '--strategy-option theirs' resolves merge conflicts favoring incoming changes
-    # 
-    git merge se1-play-repo/b1-numbers --squash \
-        --allow-unrelated-histories --strategy-option theirs
-    # 
-    git commit -m "merge branch se1-play-repo/b1-numbers"
-
-    git fetch se1-play-repo b1-numbers-tests
-    git merge se1-play-repo/b1-numbers-tests --squash \
-        --allow-unrelated-histories --strategy-option theirs
-    # 
-    git commit -m "merge branch se1-play-repo/b1-numbers-tests"
-}
-
-function build_numbers_sol() {
-    [ -z "$pwd" ] && echo "no password: export pwd=\"\"" && return 1
-
-    curl https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/build/pack-b1-numbers.tgz.uue | \
-        uudecode -o - | ccrypt -dfK "$pwd" | \
-        tar xfvz -
-
-    for patch in $(find src -name '*.patch'); do
-        local patched_file="${patch/.patch/}"
-        # apply patch if patched file exists and remove patch
-        [ -f "$patched_file" ] && \
-            patch -p1 < "$patch" && rm "$patch" ||
-            echo "patched file $patched_file does not exist for patch: $patch"
-    done
-
-    # commit solution
-    git add src
-    git commit -m "b1-numbers solution applied"
-}
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Probe build_dir ($1, "se1-play") exists, create if not, and cd into it.
@@ -168,6 +113,165 @@ function build_se1_play() {
     [ ! -L env.sh ] && ln -s .env/env.sh env.sh
 }
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Build branch 'b1-numbers' on-top of project 'se1-play'.
+function build_numbers() {
+    # create empty commit and tag as "base" for the new branch 'b1-numbers'
+    [ -z "$(git tag -l base)" ] && \
+        git commit --allow-empty -m "branch commit (empty)" && \
+        git tag base
+    # 
+    [ "$(git show-ref refs/heads/b1-numbers)" ] && git switch b1-numbers || \
+        git switch -c b1-numbers
+
+    # set remote URL to repository to fetch branches
+    git remote add se1-play-repo git@github.com:sgra64/se1-play.git
+
+    # fetch branch 'b1-numbers' from remote repository 'se1-play-repo'
+    git fetch se1-play-repo b1-numbers
+
+    # merge content of branch 'b1-numbers' into the 'main' branch of the project with:
+    # '--squash' combine all incoming commits into one local commit
+    # '--allow-unrelated-histories' allows merging from a repository with no shared history
+    # '--strategy-option theirs' resolves merge conflicts favoring incoming changes
+    # 
+    git merge se1-play-repo/b1-numbers \
+        --squash \
+        --allow-unrelated-histories \
+        --strategy-option theirs
+    # 
+    # alternatively (mind the ' ' vs '/' between remote and branch):
+    # git pull se1-play-repo b1-numbers \
+    #     --squash --allow-unrelated-histories --strategy-option theirs
+    # git commit -m "merge branch se1-play-repo/b1-numbers"
+    # 
+    git commit -m "merge branch se1-play-repo/b1-numbers"
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Build branch 'b1-numbers-sol' on-top of branch 'b1-numbers'.
+function build_numbers_sol() {
+    [ -z "$pwd" ] && echo "no password: export pwd=\"\"" && return 1
+
+    # branch 'b1-numbers-sol' off branch 'b1-numbers' with solution
+    git switch -c b1-numbers-sol
+
+    # extract content of 'pack-b1-numbers-sol' into working tree
+    curl https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/build/pack-b1-numbers-sol.tgz.uue | \
+        uudecode -o - | ccrypt -dfK "$pwd" | \
+        tar xfvz -
+
+    # apply and remove extracted .patch files
+    for patch in $(find src -name '*.patch'); do
+        local patched_file="${patch/.patch/}"
+        if [ -f "$patched_file" ]; then
+            patch -p1 < "$patch"
+            rm "$patch"
+        else
+            # collect 'NumbersImpl_[0-9]*' patches in 'tmp/NumbersImpl_patches.tar'
+            # used later in build_numbers_completed()
+            [ ! -d tmp ] && mkdir tmp
+            [[ "$patch" =~ NumbersImpl_[0-9] ]] && \
+                tar uvf tmp/NumbersImpl_patches.tar "$patch" && rm "$patch" || \
+                echo "patched file $patched_file does not exist for patch: $patch"
+        fi
+    done
+
+    # commit pack-b1-numbers update
+    git add src
+    git commit -m "b1-numbers solution update, NumbersImpl.java"
+
+    # pull 'b1-numbers-tests' from remote
+    git pull se1-play-repo b1-numbers-tests \
+        --squash --allow-unrelated-histories --strategy-option theirs
+    git commit -m "pull branch se1-play-repo/b1-numbers-tests"
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Complete branch 'b1-numbers' with solution commits, assumes existing branch
+# 'b1-numbers-sol'.
+# 
+# Patch files were incrementally created by committing prior 'NumbersImpl.java'
+# and completing the next function, then creating the diff to the prior commit
+# or to the full implementation in branch 'b1-numbers-sol':
+# - git diff > NumbersImpl_0_sum0.patch
+# - git diff b1-numbers-sol -- src/numbers/NumbersImpl.java > NumbersImpl_0_sum0.patch
+# 
+function build_numbers_completed() {
+    # 
+    # switch to branch 'b1-numbers'
+    git switch b1-numbers
+    # extract 'NumbersImpl_[0-9]*' patches from .jar file created in build_numbers_sol()
+    if [ -f tmp/NumbersImpl_patches.tar ]; then
+        echo "--> extracting patches from 'tmp/NumbersImpl_patches.tar'"
+        tar xvf tmp/NumbersImpl_patches.tar
+        rm tmp/NumbersImpl_patches.tar          # remove .tar
+        [ -z "$(ls tmp)" ] && rmdir tmp         # remove 'tmp' if empty
+    else
+        echo "no file: 'NumbersImpl_patches.tar'"
+        return 1
+    fi
+    # 
+    # test branch 'b1-numbers-sol' exists
+    if [ "$(git show-ref refs/heads/b1-numbers-sol)" ]; then
+        # 
+        # restore 'Numbers.java' and 'NumbersImpl.java' from branch 'b1-numbers-sol'
+        git restore --source b1-numbers-sol -- \
+            src/numbers/Numbers.java \
+            src/numbers/NumbersImpl.java
+        # 
+        # iterate over NumbersImpl_[0-9]* patches
+        for patch in $(find src -name 'NumbersImpl_[0-9]*.patch'); do
+            local name="${patch/.patch/}"       # remote traling '.patch'
+            local func="${name/*_[0-9]_/}"      # remote up to last '_'
+            local restore=""                    # restore files from branch 'b1-numbers-sol'
+            local msg="$func() complete"
+            # 
+            echo "--> applying patch for: $func()"
+            patch -p1 < "$patch"                # apply patch
+            rm "$patch"                         # remove patch file
+            # 
+            case "$func" in
+            sum_0) msg="sum() returns 0" ;;
+            sum) restore="tests/numbers/Numbers_1_sum_Tests.java" ;;
+            sum_positive_even_numbers) restore="tests/numbers/Numbers_2_sum_positive_even_Tests.java" ;;
+            sum_recursive) restore="tests/numbers/Numbers_3_sum_recursion_Tests.java" ;;
+            findFirst) restore="tests/numbers/Numbers_4_find_first_Tests.java" ;;
+            findLast) restore="tests/numbers/Numbers_5_find_last_Tests.java" ;;
+            findAll)
+                restore="tests/numbers/Numbers_6_find_all_Tests.java \
+                    tests/numbers/Matchers.java"
+                ;;
+            findSums)
+                restore="tests/numbers/Numbers_7a_find_sums_Tests.java \
+                    tests/numbers/Numbers_7b_find_sums_duplicates_Tests.java"
+                ;;
+            findAllSums)
+                restore="tests/numbers/Numbers_8a_find_all_sums_Tests.java \
+                    tests/numbers/Numbers_8b_find_all_sums_XL_Tests.java"
+                ;;
+            *) echo "no function: $func"; msg=""
+            esac
+            # 
+            # restore files from branch 'b1-numbers-sol'
+            [ "$restore" ] && git restore --source b1-numbers-sol -- $restore
+            # 
+            # commit changes
+            [ "$msg" ] && echo "--> git commit -m \"$msg\"" && \
+                git add $(find src tests -name '*.java') && \
+                git commit -m "$msg"
+        done
+    else
+        echo "no local branch: 'b1-numbers-sol'"
+        return 1
+    fi
+    return 0
+}
+
+
 function prune_submodule() {
     # echo prune_submodule $1
     case "$1" in
@@ -194,13 +298,3 @@ function prune_submodule() {
         [ "$cd_from" ] && builtin cd "$cd_from"
     fi
 }
-
-# sed -n '/@@ src.module-info.java @BEGIN/,/@@ src.module-info.java @END/p' < README.md \
-#         | sed -e '1,/java/d' -e '/```/,$d'
-
-#[ ! -d "src/application" ] && \
-#    mkdir -p "src/application" && \
-#    touch src/module-info.java && \
-#    touch src/application/package-info.java && \
-#    touch src/application/Application.java && \
-#    [ -f ../se1-play-src.tar ] && tar xvf ../se1-play-src.tar

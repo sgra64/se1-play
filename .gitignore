@@ -1,0 +1,29 @@
+#------------------------------------------------------------------------------
+# .gitignore contains patterns of files and directories to be ignored by git.
+# 
+# see: https://www.atlassian.com/git/tutorials/saving-changes/gitignore
+# example: https://github.com/github/gitignore/blob/master/Java.gitignore
+#------------------------------------------------------------------------------
+
+#ignore solution packs
+pack*
+
+# ignore other archive files
+*.7z
+*.gz
+*.rar
+*.tar
+*.tar.gz
+*.zip
+
+# ignore tmp directories and *.tmp files
+tmp
+temp
+*.tmp
+
+# ignore images and markup directories
+**/img
+**/markup
+
+# ignore OSX system files
+.DS_Store

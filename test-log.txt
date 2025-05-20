@@ -1,0 +1,125 @@
+java -cp "$JUNIT_CLASSPATH" \
+  org.junit.platform.console.ConsoleLauncher $JUNIT_OPTIONS \
+  --scan-class-path
+# 
+setUpBeforeClass() runs once before any @Test method
+setUpBeforeEach() runs before each @Test method
+tearDownAfterEach() runs after each @Test method
+setUpBeforeEach() runs before each @Test method
+tearDownAfterEach() runs after each @Test method
+tearDownAfterClass() runs after all @Test methods have finished
+╷
+├─ JUnit Jupiter ✔
+│  ├─ Numbers_3_sum_recursion_Tests ✔
+│  │  ├─ test300_sum_recursion_regular() ✔
+│  │  ├─ test301_sum_recursion_regular() ✔
+│  │  ├─ test302_sum_recursion_regular() ✔
+│  │  └─ test303_sum_recursion_regular() ✔
+│  ├─ Streams_7_sortedNamesByLength_Tests ✔
+│  │  ├─ test700_sortedNamesByLength_regular() ✔
+│  │  ├─ test710_sortedNamesByLength_emptyNames() ✔
+│  │  └─ test790_sortedNamesByLength_irregular_names_Null() ✔
+│  ├─ Application_0_always_pass_Tests ✔
+│  │  ├─ test_001_always_pass() ✔
+│  │  └─ test_002_always_pass() ✔
+│  ├─ Numbers_7a_find_sums_Tests ✔
+│  │  ├─ test700_find_sums_regular() ✔
+│  │  ├─ test701_find_sums_regular() ✔
+│  │  ├─ test702_find_sums_regular() ✔
+│  │  ├─ test703_find_sums_regular() ✔
+│  │  ├─ test704_find_sums_regular() ✔
+│  │  ├─ test705_find_sums_regular() ✔
+│  │  └─ test706_find_sums_regular() ✔
+│  ├─ Streams_9_sortByOrderValue_Tests ✔
+│  │  ├─ test900_sortByOrderValue_regular() ✔
+│  │  ├─ test901_sortByOrderValue_regular() ✔
+│  │  ├─ test910_sortByOrderValue_emptyOrders() ✔
+│  │  └─ test990_sortByOrderValue_irregular_orders_Null() ✔
+│  ├─ Numbers_8a_find_all_sums_Tests ✔
+│  │  ├─ test800_find_all_sums_regular() ✔
+│  │  └─ test821_find_all_sums_regular_nbrs_2_sum999() ✔
+│  ├─ Streams_1_tenRandomNumbers_Tests ✔
+│  │  └─ test100_tenRandomNumbers_regular() ✔
+│  ├─ Numbers_6_find_all_Tests ✔
+│  │  ├─ test600_find_all_regular() ✔
+│  │  ├─ test601_find_all_regular() ✔
+│  │  ├─ test602_find_all_regular() ✔
+│  │  └─ test603_find_all_regular() ✔
+│  ├─ Numbers_4_find_first_Tests ✔
+│  │  ├─ test400_find_first_regular() ✔
+│  │  ├─ test401_find_first_regular() ✔
+│  │  ├─ test402_find_first_regular() ✔
+│  │  └─ test403_find_first_regular() ✔
+│  ├─ Numbers_7b_find_sums_duplicates_Tests ✔
+│  │  ├─ test710_find_sums_duplicates() ✔
+│  │  ├─ test711_find_sums_same_duplicates() ✔
+│  │  ├─ test712_find_sums_mirror_duplicates() ✔
+│  │  └─ test713_find_sums_regular_duplicates() ✔
+│  ├─ Streams_6_sortedNames_Tests ✔
+│  │  ├─ test600_sortedNames_regular() ✔
+│  │  ├─ test601_sortedNames_regular() ✔
+│  │  ├─ test610_sortedNames_emptyNames() ✔
+│  │  ├─ test690_sortedNames_irregularNamesNull() ✔
+│  │  ├─ test691_sortedNames_irregularLimitNegativ() ✔
+│  │  └─ test692_sortedNames_irregularNamesNullAndLimitNegativ() ✔
+│  ├─ Streams_2_tenEvenRandomNumbers_Tests ✔
+│  │  └─ test200_tenEvenRandomNumbers_regular() ✔
+│  ├─ Streams_4_filteredNumbers_Tests ✔
+│  │  ├─ test400_filteredNumbers_50evenNumbers_regular() ✔
+│  │  ├─ test410_filteredNumbers_50divisibleBy3Numbers_regular() ✔
+│  │  ├─ test420_filteredNumbers_50primeNumbers_regular() ✔
+│  │  ├─ test430_filteredNumbers_different_even_numbers_returned() ✔
+│  │  ├─ test431_filteredNumbers_different_div_by_three_numbers_returned() ✔
+│  │  ├─ test432_filteredNumbers_different_prime_numbers_returned() ✔
+│  │  ├─ test490_filteredNumbers_50evenNumbers_illegalFilter_null() ✔
+│  │  ├─ test491_filteredNumbers_50evenNumbers_illegalFilter_empty() ✔
+│  │  ├─ test492_filteredNumbers_50evenNumbers_illegalFilter_unknown() ✔
+│  │  └─ test495_filteredNumbers_50evenNumbers_illegalLimit_negativ() ✔
+│  ├─ Numbers_2_sum_positive_even_Tests ✔
+│  │  ├─ test200_sum_positive_even_numbers_regular() ✔
+│  │  ├─ test201_sum_positive_even_numbers_regular() ✔
+│  │  ├─ test202_sum_positive_even_numbers_regular() ✔
+│  │  └─ test203_sum_positive_even_numbers_regular() ✔
+│  ├─ Numbers_5_find_last_Tests ✔
+│  │  ├─ test500_find_last_regular() ✔
+│  │  ├─ test501_find_last_regular() ✔
+│  │  ├─ test502_find_last_regular() ✔
+│  │  └─ test503_find_last_regular() ✔
+│  ├─ Numbers_1_sum_Tests ✔
+│  │  ├─ test100_sum_regular() ✔
+│  │  ├─ test101_sum_regular() ✔
+│  │  ├─ test102_sum_regular() ✔
+│  │  └─ test103_sum_regular() ✔
+│  ├─ Numbers_8b_find_all_sums_XL_Tests ✔
+│  │  ├─ test824_find_all_sums_XL_24_numbers() ✔
+│  │  ├─ test825_find_all_sums_XL_25_numbers() ✔
+│  │  ├─ test826_find_all_sums_XL_26_numbers() ✔
+│  │  ├─ test827_find_all_sums_XL_27_numbers() ✔
+│  │  ├─ test828_find_all_sums_XL_28_numbers() ✔
+│  │  ├─ test829_find_all_sums_XL_29_numbers() ✔
+│  │  ├─ test830_find_all_sums_XL_30_numbers() ✔
+│  │  ├─ test840_find_all_sums_XL_numb_3_999() ✔
+│  │  └─ test841_find_all_sums_XL_numb_3_1000() ✔
+│  ├─ Streams_3_tenSortedEvenRandomNumbers_Tests ✔
+│  │  └─ test300_tenSortedEvenRandomNumbers_regular() ✔
+│  └─ Streams_8_calculateOrderValue_Tests ✔
+│     ├─ test800_calculateValue_regular() ✔
+│     ├─ test801_calculateValue_regular() ✔
+│     ├─ test810_calculateValue_emptyOrders() ✔
+│     └─ test890_calculateValue_irregular_orders_Null() ✔
+├─ JUnit Vintage ✔
+└─ JUnit Platform Suite ✔
+
+Test run finished after 546 ms
+[        22 containers found      ]
+[         0 containers skipped    ]
+[        22 containers started    ]
+[         0 containers aborted    ]
+[        22 containers successful ]
+[         0 containers failed     ]
+[        78 tests found           ]
+[         0 tests skipped         ]
+[        78 tests started         ]
+[         0 tests aborted         ]
+[        78 tests successful      ]  <-- 78 tests passed
+[         0 tests failed          ]  <--  0 tests failed

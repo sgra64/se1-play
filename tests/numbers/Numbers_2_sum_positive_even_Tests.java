@@ -12,25 +12,34 @@ import static org.junit.jupiter.api.Assertions.*;
 public class Numbers_2_sum_positive_even_Tests {
 
     /*
-     * tested object is an instance of the Numbers class
+     * Tested object as instance of the {@link Numbers} class.
+     * Must not be static due to parallel execution of test methods.
      */
-    private static Numbers testObj;
+    private Numbers testObj;
 
     /*
-     * tested object is an instance of the Numbers class
+     * Immutable test data (can be static).
      */
     private static NumbersData testData;
 
 
     /**
-     * Static setup method executed once for all tests. Creates
-     * the test object.
+     * Static setup method executed once befor all tests, often
+     * used to setup immutable test data that can be static.
      * @throws Exception when test creation fails
      */
     @BeforeAll
     public static void setUpBeforeTests() throws Exception {
-        testObj = Numbers.getInstance();
         testData = new NumbersData();
+    }
+
+    /**
+     * Setup method executed before each @Test method is executed.
+     * @throws Exception if any exception occurs
+     */
+    @BeforeEach
+    public void setUpBeforeEach() throws Exception {
+        testObj = Numbers.getInstance();
     }
 
     @Test

@@ -14,38 +14,41 @@ import static org.junit.jupiter.api.Assertions.*;
 public class Numbers_8b_find_all_sums_XL_Tests {
 
     /*
-     * tested object is an instance of the Numbers class
+     * Tested object as instance of the {@link Numbers} class.
+     * Must not be static due to parallel execution of test methods.
      */
-    private static Numbers testObj;
+    private Numbers testObj;
 
     /*
-     * tested object is an instance of the Numbers class
+     * Immutable test data (can be static).
      */
     private static NumbersData testData;
 
 
-    // numb_2[]
-    final int[] nbr_2 = limit(testData.getArr("numb_2"), 24);
+    /*
+     * Immutable test data, numb_2[].
+     */
+    private final int[] nbr_2 = limit(testData.getArr("numb_2"), 24);
 
-    // numb_2[] + 225
+    // immutable test data, numb_2[] + 225
     final int[] nbr_2_225 = addNumbers(nbr_2, 225);
 
-    // numb_2[] + 225 + 463
+    // immutable test data, numb_2[] + 225 + 463
     final int[] nbr_2_225_463 = addNumbers(nbr_2, 225, 463);
 
-    // numb_2[] + 225 + 463 + 286
+    // immutable test data, numb_2[] + 225 + 463 + 286
     final int[] nbr_2_225_463_286 = addNumbers(nbr_2, 225, 463, 286);
 
-    // numb_2[] + 225 + 463 + 286 + 596
+    // immutable test data, numb_2[] + 225 + 463 + 286 + 596
     final int[] nbr_2_225_463_286_569 = addNumbers(nbr_2, 225, 463, 286, 569);
 
-    // numb_2[] + 225 + 463 + 286 + 596 + 384
+    // immutable test data, numb_2[] + 225 + 463 + 286 + 596 + 384
     final int[] nbr_2_225_463_286_569_384 = addNumbers(nbr_2, 225, 463, 286, 569, 384);
 
-    // numb_1[] + 225 + 463 + 286 + 596 + 384 + 9 = 30 numbers
+    // immutable test data, numb_1[] + 225 + 463 + 286 + 596 + 384 + 9 = 30 numbers
     final int[] nbr_2_225_463_286_569_384_9 = addNumbers(nbr_2, 225, 463, 286, 569, 384, 9);
 
-    // numb_3[]
+    // immutable test data, numb_3[]
     final int[] nbr_3 = testData.getArr("numb_3");
 
 
@@ -65,14 +68,22 @@ public class Numbers_8b_find_all_sums_XL_Tests {
     }
 
     /**
-     * Static setup method executed once for all tests. Creates
-     * the test object.
+     * Static setup method executed once befor all tests, often
+     * used to setup immutable test data that can be static.
      * @throws Exception when test creation fails
      */
     @BeforeAll
     public static void setUpBeforeTests() throws Exception {
-        testObj = Numbers.getInstance();
         testData = new NumbersData();
+    }
+
+    /**
+     * Setup method executed before each @Test method is executed.
+     * @throws Exception if any exception occurs
+     */
+    @BeforeEach
+    public void setUpBeforeEach() throws Exception {
+        testObj = Numbers.getInstance();
     }
 
     @Test

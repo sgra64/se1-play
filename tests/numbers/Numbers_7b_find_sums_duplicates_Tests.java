@@ -12,26 +12,28 @@ import static org.junit.jupiter.api.Assertions.*;
 public class Numbers_7b_find_sums_duplicates_Tests {
 
     /*
-     * tested object is an instance of the Numbers class
+     * Tested object as instance of the {@link Numbers} class.
+     * Must not be static due to parallel execution of test methods.
      */
-    private static Numbers testObj;
+    private Numbers testObj;
+
+    /*
+     * Immutable test data, arrays with duplicates (can be static).
+     */
+    private static final int[] n10 = new int[] {5, 5, 1, 1, 1, 5, 1, 5, 5, 1, 1, 5};
+    private static final int[] n11 = new int[] {3, 3, 3, 3, 3, 1, 1, 3};
+    private static final int[] n12 = new int[] {3, 5, 5, 1, 1, 1, 5, 1, 5, 5, 1, 1, 5, 3};
+    private static final int[] n13 = new int[] {5, 4, 3, 2, 2, 3, 5, 1, 5, 1, 5, 1, 1, 5};
 
 
     /**
-     * Static setup method executed once for all tests. Creates
-     * the test object.
-     * @throws Exception when test creation fails
+     * Setup method executed before each @Test method is executed.
+     * @throws Exception if any exception occurs
      */
-    @BeforeAll
-    public static void setUpBeforeTests() throws Exception {
+    @BeforeEach
+    public void setUpBeforeEach() throws Exception {
         testObj = Numbers.getInstance();
     }
-
-    // arrays with duplicates
-    int[] n10 = new int[] {5, 5, 1, 1, 1, 5, 1, 5, 5, 1, 1, 5};
-    int[] n11 = new int[] {3, 3, 3, 3, 3, 1, 1, 3};
-    int[] n12 = new int[] {3, 5, 5, 1, 1, 1, 5, 1, 5, 5, 1, 1, 5, 3};
-    int[] n13 = new int[] {5, 4, 3, 2, 2, 3, 5, 1, 5, 1, 5, 1, 1, 5};
 
     @Test
     @Order(710)

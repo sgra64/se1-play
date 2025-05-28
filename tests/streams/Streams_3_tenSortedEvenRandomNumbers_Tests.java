@@ -11,18 +11,18 @@ import static org.junit.jupiter.api.Assertions.*;
 public class Streams_3_tenSortedEvenRandomNumbers_Tests {
 
     /*
-     * tested object implements the Streams interface
+     * Tested object as instance of the {@link Streams} class.
+     * Must not be static due to parallel execution of test methods.
      */
-    private static Streams testObj;
+    private Streams testObj;
 
 
     /**
-     * Static setup method executed once for all tests. Creates
-     * the test object.
-     * @throws Exception when test creation fails
+     * Setup method executed before each @Test method is executed.
+     * @throws Exception if any exception occurs
      */
-    @BeforeAll
-    public static void setUpBeforeClass() throws Exception {
+    @BeforeEach
+    public void setUpBeforeEach() throws Exception {
         testObj = Streams.getInstance();
     }
 
@@ -35,7 +35,7 @@ public class Streams_3_tenSortedEvenRandomNumbers_Tests {
         assertEquals(10, actual.size());
         //
         boolean testAllNumbers = actual.stream()
-                .map(n -> n > 0 && n < 1000 && n % 2 == 0)
+                .map(n -> n >= 0 && n < 1000 && n % 2 == 0)
                 .reduce(true, (accumulator, n) -> accumulator && n);
         //
         assertTrue(testAllNumbers);

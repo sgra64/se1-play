@@ -10,13 +10,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class Streams_4_filteredNumbers_Tests {
 
-    /*
-     * tested object implements the Streams interface
+    /**
+     * Immutable set of three-digit prime numbers to validate the "prime3"
+     * filter function.
+     * See, https://prime-numbers.info/list/first-1000-primes
      */
-    private static Streams testObj;
-
-    // https://prime-numbers.info/list/first-1000-primes
-    private final Set<Integer> threeDigitPrimes = Arrays.asList(
+    private static final Set<Integer> threeDigitPrimes = Arrays.asList(
         /* 2,  3,   5,   7,  11,  13,  17,  19,  23,  29,
          31,  37,  41,  43,  47,  53,  59,  61,  67,  71,
          73,  79,  83, 89, 97,*/ 101, 103, 107, 109, 113,
@@ -37,18 +36,26 @@ public class Streams_4_filteredNumbers_Tests {
         //
         .stream().collect(Collectors.toSet());
 
-    private String even = "even";
-    private String div3 = "div3";
-    private String prime3 = "prime3";
+    /**
+     * Names of filter functions.
+     */
+    private static final String even = "even";
+    private static final String div3 = "div3";
+    private static final String prime3 = "prime3";
+
+    /*
+     * Tested object as instance of the {@link Streams} class.
+     * Must not be static due to parallel execution of test methods.
+     */
+    private Streams testObj;
 
 
     /**
-     * Static setup method executed once for all tests. Creates
-     * the test object.
-     * @throws Exception when test creation fails
+     * Setup method executed before each @Test method is executed.
+     * @throws Exception if any exception occurs
      */
-    @BeforeAll
-    public static void setUpBeforeClass() throws Exception {
+    @BeforeEach
+    public void setUpBeforeEach() throws Exception {
         testObj = Streams.getInstance();
     }
 
@@ -62,7 +69,7 @@ public class Streams_4_filteredNumbers_Tests {
         //
         // verify all numbers are even
         boolean testAllNumbers = actual.stream()
-            .map(n -> n > 0 && n % 2 == 0)
+            .map(n -> n >= 0 && n < 1000 && n % 2 == 0)
             .reduce(true, (accumulator, n) -> accumulator && n);
         //
         assertTrue(testAllNumbers);
@@ -78,7 +85,7 @@ public class Streams_4_filteredNumbers_Tests {
         //
         // verify all numbers are divisible by 3
         boolean testAllNumbers = actual.stream()
-            .map(n -> n > 0 && n % 3 == 0)
+            .map(n -> n >= 0 && n < 1000 && n % 3 == 0)
             .reduce(true, (accumulator, n) -> accumulator && n);
         //
         assertTrue(testAllNumbers);
@@ -93,7 +100,7 @@ public class Streams_4_filteredNumbers_Tests {
         //
         // verify all numbers are three-digit prime numbers
         boolean testAllNumbers = actual.stream()
-            .map(n -> threeDigitPrimes.contains(n))
+            .map(n -> n >= 0 && n < 1000 && threeDigitPrimes.contains(n))
             .reduce(true, (accumulator, n) -> accumulator && n);
         //
         assertTrue(testAllNumbers);

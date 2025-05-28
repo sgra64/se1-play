@@ -10,20 +10,23 @@ import static org.junit.jupiter.api.Assertions.*;
 public class Streams_8_calculateOrderValue_Tests {
 
     /*
-     * tested object implements the Streams interface
+     * Value of orders defined in the {@link Streams} interface.
      */
-    private static Streams testObj;
+    private final long expectedOrderValue = 20562L;
 
-    private final long orderValue = 20562L;
+    /*
+     * Tested object as instance of the {@link Streams} class.
+     * Must not be static due to parallel execution of test methods.
+     */
+    private Streams testObj;
 
 
     /**
-     * Static setup method executed once for all tests. Creates
-     * the test object.
-     * @throws Exception when test creation fails
+     * Setup method executed before each @Test method is executed.
+     * @throws Exception if any exception occurs
      */
-    @BeforeAll
-    public static void setUpBeforeClass() throws Exception {
+    @BeforeEach
+    public void setUpBeforeEach() throws Exception {
         testObj = Streams.getInstance();
     }
 
@@ -32,7 +35,7 @@ public class Streams_8_calculateOrderValue_Tests {
     void test800_calculateValue_regular() {
         //
         long actual = testObj.calculateOrderValue(Streams.orders);
-        assertEquals(orderValue, actual);
+        assertEquals(expectedOrderValue, actual);
     }
 
     @Test
@@ -45,7 +48,7 @@ public class Streams_8_calculateOrderValue_Tests {
             new Streams.Order("Glas",  12,  249)    // 12x  249 = 2988
         ));
         long actual = testObj.calculateOrderValue(extendedOrders);
-        long expected = orderValue + 2596 + 2988;
+        long expected = expectedOrderValue + 2596 + 2988;
         assertEquals(expected, actual);
     }
 

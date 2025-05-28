@@ -10,18 +10,18 @@ import static org.junit.jupiter.api.Assertions.*;
 public class Streams_6_sortedNames_Tests {
 
     /*
-     * tested object implements the Streams interface
+     * Tested object as instance of the {@link Streams} class.
+     * Must not be static due to parallel execution of test methods.
      */
-    private static Streams testObj;
+    private Streams testObj;
 
 
     /**
-     * Static setup method executed once for all tests. Creates
-     * the test object.
-     * @throws Exception when test creation fails
+     * Setup method executed before each @Test method is executed.
+     * @throws Exception if any exception occurs
      */
-    @BeforeAll
-    public static void setUpBeforeClass() throws Exception {
+    @BeforeEach
+    public void setUpBeforeEach() throws Exception {
         testObj = Streams.getInstance();
     }
 

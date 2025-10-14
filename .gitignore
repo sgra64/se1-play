@@ -8,7 +8,7 @@
 # ignore .gitignore file and git submodules
 .gitignore
 .gitmodules
-.env*
+.env
 .vscode
 libs
 
@@ -55,6 +55,7 @@ logs/
 .classpath
 .project
 .settings
+.coderunner_launch
 
 # ignore IntelliJ IDE project files
 .iml

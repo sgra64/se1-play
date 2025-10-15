@@ -58,8 +58,22 @@ git commit -m "add git submodule: '.vscode', update .gitmodules"
 
 git submodule add -f https://github.com/sgra64/gitmodule-libs libs
 git commit -m "add git submodule: 'libs', update .gitmodules"
-
+# 
 (cd libs; source install.sh && install -f)
+
+# in case of ERROR with 'install', replace [*gitmodule-libs*] with
+# [*gitmodule-libs-jars*], which includes .jar files
+# 
+git submodule deinit -f libs    # de-install the 'libs' submodule
+rm -rf .git/modules/libs        # remove submodule from .git/modules
+git rm -f libs                  # remove entry in .gitmodules
+git reset HEAD~1                # remove prior gitmodule commit
+# 
+# install the alternative git-module 'gitmodule-libs-jars' under 'libs'
+git submodule add -f -- https://github.com/sgra64/gitmodule-libs-jars libs
+git commit -m "add git submodule: 'libs-jars', update .gitmodules"
+# 
+
 tar xvf ../se1-play-src.tar src
 git apply module-info.patch && rm module-info.patch
 
@@ -511,7 +525,41 @@ curl --version || wget --version
 
 Follow instructions in
 [*gitmodule-libs*](https://github.com/sgra64/gitmodule-libs)
-to install libraries and verify libraries have properly been installed:
+to install libraries over the network.
+
+`>>>>>>`
+
+If you encounter *ERRORS* running the *install* command, replace the
+*git submodule*
+[*gitmodule-libs*](https://github.com/sgra64/gitmodule-libs)
+with *git submodule*:
+[*gitmodule-libs-jars*](https://github.com/sgra64/gitmodule-libs-jars),
+which contains the *.jar* files directly and does not require *install*:
+
+<!-- 
+https://stackoverflow.com/questions/1260748/how-do-i-remove-a-submodule
+ -->
+```sh
+# IN CASE OF ERROR running the install command -> deinstall the 'libs' module
+cd <project-dir>                    # cd to the project directory (if not there)
+
+git submodule deinit -f libs        # de-install the 'libs' submodule
+
+rm -rf .git/modules/libs            # remove submodule from .git/modules
+
+git rm -f libs                      # remove entry in .gitmodules
+
+# remove prior gitmodule commit: 'add git submodule: 'libs', update .gitmodules'
+git reset HEAD~1
+
+# install the alternative git-module 'gitmodule-libs-jars' under 'libs'
+git submodule add -f -- https://github.com/sgra64/gitmodule-libs-jars libs
+git commit -m "add git submodule: 'libs-jars', update .gitmodules"
+```
+
+`<<<<<<`
+
+Verify libraries have properly been installed:
 
 ```sh
 find libs                           # list content of 'libs' folder
@@ -536,7 +584,7 @@ libs/junit/apiguardian-api-1.1.2.jar
 libs/junit/junit-jupiter-api-5.9.3.jar
 libs/junit/junit-platform-commons-1.9.3.jar
 libs/junit/opentest4j-1.2.0.jar
-libs/junit-platform-console-standalone-1.9.2.jar    <-- JUnit test runner that executes JUnit tests
+libs/junit-platform-console-standalone-1.9.2.jar    <-- JUnit test runner that runs JUnit tests
 
 libs/logging                                        <-- logging package
 libs/logging/log4j-api-2.23.1.jar
@@ -548,10 +596,9 @@ libs/lombok/lombok-1.18.36.jar
 libs/README.md
 ```
 
-Java code is distributed as `.jar` files from large global repositories such as the
-[*Maven Central Repository*](https://mvnrepository.com/).
-In order to use libraries, they must be included in the `CLASSPATH`, which is done
-in sourcing.
+All world-wide, publicly available Java packages are distributed as `.jar` files
+from a large central *"artifact repository"*, called the:
+[*Maven Repository*](https://mvnrepository.com/).
 
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -1809,3 +1856,4 @@ mk run A BC DEF                         # run the program
 
 mk run-tests                            # run tests
 ```
+

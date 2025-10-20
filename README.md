@@ -1273,7 +1273,7 @@ src/tests/application/Application_0_always_pass_Tests.java
 
 Fill in content for file: `Application_0_always_pass_Tests.java`:
 
-<!-- @@ src/tests/application.Application_0_always_pass_Tests.java @BEGIN -->
+<!-- @@ src/tests/application/Application_0_always_pass_Tests.java @BEGIN -->
 ```java
 package application;
 
@@ -1348,7 +1348,7 @@ public class Application_0_always_pass_Tests {
     }
 }
 ```
-<!-- @@ src/tests/application.Application_0_always_pass_Tests.java @END -->
+<!-- @@ src/tests/application/Application_0_always_pass_Tests.java @END -->
 
 Remove the comment in file *module-info.java* to require *org.junit.jupiter.api :*
 

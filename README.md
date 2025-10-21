@@ -74,7 +74,7 @@ Project "*se1-play*" is created in several steps:
 
 1. [Package as Stand-alone *.jar*](#12-package-as-stand-alone-jar)
 
-1. [Clean Project Build](#13-clean-project-build)
+1. [Clean Project Build and *Continuous Integration (CI)*](#13-clean-project-build-and-continuous-integration-ci)
 
 1. [Push to Remote Repository](#14-push-to-remote-repository)
 
@@ -1237,10 +1237,10 @@ a787431 (tag: root) root commit (empty)
 [*JUnit Tests*](https://www.codeflow.site/de/article/junit-assertions#_4_junit_5_assertions)
 test individual code units ("*units-under-test*") in isolation to other units.
 
-A simple test class under a `src/tests` is used to demonstrate unit tests.
-Junit tests should run properly in the terminal and in the IDE.
+A simple test class under `src/tests` is used to demonstrate unit tests.
+As code, unit tests should run in both, in the terminal and in the IDE.
 
-Create the new tests folder and JUnit test class in the project directory:
+Create the tests folder and JUnit test class in the project directory:
 
 ```sh
 mkdir -p src/tests/application          # create 'tests' folder for package 'application'
@@ -1264,7 +1264,9 @@ src/tests/application/Application_0_always_pass_Tests.java
 
 &nbsp;
 
-Fill in content for file: `Application_0_always_pass_Tests.java`:
+Fill in content for file: `Application_0_always_pass_Tests.java`. Understand
+annotations: `@BeforeAll`, `@BeforeEach`, `@AfterEach`, `@AfterAll`, `@Test`
+and `@Order(n)`.
 
 <!-- @@ src/tests/application/Application_0_always_pass_Tests.java @BEGIN -->
 ```java
@@ -1301,15 +1303,6 @@ public class Application_0_always_pass_Tests {
     }
 
     /**
-     * Method is executed after each @Test method
-     * @throws Exception if any exception occurs
-     */
-    @AfterEach
-    public void tearDownAfterEach() throws Exception {
-        System.out.println("tearDownAfterEach() runs after each @Test method");
-    }
-
-    /**
      * First @Test method (always passes).
      */
     @Test
@@ -1332,6 +1325,15 @@ public class Application_0_always_pass_Tests {
     }
 
     /**
+     * Method is executed after each @Test method
+     * @throws Exception if any exception occurs
+     */
+    @AfterEach
+    public void tearDownAfterEach() throws Exception {
+        System.out.println("tearDownAfterEach() runs after each @Test method");
+    }
+
+    /**
      * Method is executed once after all @Test methods have finished.
      * @throws Exception if any exception occurs
      */
@@ -1342,6 +1344,9 @@ public class Application_0_always_pass_Tests {
 }
 ```
 <!-- @@ src/tests/application/Application_0_always_pass_Tests.java @END -->
+
+
+&nbsp;
 
 Remove the comment in file *module-info.java* to require *org.junit.jupiter.api :*
 
@@ -1380,7 +1385,7 @@ project environment:
  - created files:
     - .classpath
     - .project
-    - .coderunner_launch
+    - .vscode/launch-coderunner
  - created functions:
     - show cmd [args] cmd [args] ...
     - mk [--show] cmd [args] cmd [args] ...
@@ -1399,7 +1404,8 @@ under the `tests` folder and compiled output directed `-d` to the `target/test-c
 
 ```
 compile-tests:
-  javac -cp $JUNIT_CLASSPATH $(find src/tests -name '*.java') -d target/test-classes
+  javac -cp $JUNIT_CLASSPATH $(find src/tests -name '*.java') \
+    -d target/test-classes
 ```
 
 Compare the `src` folder to the new `target` folder containing the compiled output:
@@ -1408,7 +1414,7 @@ Compare the `src` folder to the new `target` folder containing the compiled outp
 find src target         # output 'target' and 'bin' folders
 ```
 ```
-src/
+src
 src/main
 src/main/application
 src/main/application/Application.java
@@ -1479,28 +1485,36 @@ Test run finished after 133 ms
 [         0 tests skipped         ]
 [         2 tests started         ]
 [         0 tests aborted         ]
-[         2 tests successful      ]
-[         0 tests failed          ]
+[         2 tests successful      ]     <-- 2 tests successful
+[         0 tests failed          ]     <-- 0 tests failed
 ``` -->
 
 <img src="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/markup/img/junit-run-2.png" width="360"/>
 
 
-When tests are passing, tests can be committed:
+&nbsp;
+
+Make sure tests also run in the IDE:
+
+<img src="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/markup/img/vscode-4-unit-tests.png" width="800"/>
+
+
+&nbsp;
+
+Commit tests when tests are passing:
 
 ```sh
-git add src/tests                   # stage test files
-git commit -m "add unit tests"      # commit test files
+git add src/tests                           # stage test files
+git commit -m "add src/tests unit tests"    # commit test files
 
 git log --oneline                           # show commit log/history
 ```
 ```
-3f49067 (HEAD -> main) add unit tests
-c71ab76 add src
-f3c1706 add git submodule: 'libs', update .gitmodules
-f1cdf73 add git submodule: '.vscode', update .gitmodules
-e340ec6 add git submodule: '.env', add .gitmodules
-2f68f2b (tag: root) root commit (empty)
+a54d147 (HEAD -> main) add src/tests unit tests
+abacbd8 add src/main
+3bdf0ff add .git-modules
+1f53d2f add .gitignore
+a787431 (tag: root) root commit (empty)
 ```
 
 
@@ -1511,11 +1525,11 @@ e340ec6 add git submodule: '.env', add .gitmodules
 ## 10. *Javadoc*
 
 *Javadoc* is *Java's* documentation method and toolset based on
-[*Java doc strings*](https://de.wikipedia.org/wiki/Javadoc)
-that are included in Java comments.
+[*Java doc strings*](https://de.wikipedia.org/wiki/Javadoc), which are
+provided as Java comments.
 
-The `javadoc` compiler parses `.java` files and "*compiles*" HTML documentation
-from *Java doc strings*.
+The `javadoc` compiler parses `.java` files and "*compiles*" *Java doc strings*
+to HTML.
 
 ```sh
 mk javadoc                  # generate javadoc in the 'docs' folder (new)
@@ -1536,25 +1550,25 @@ Output of the `javadoc` compiler:
 ```
 Loading source files for package application...
 Constructing Javadoc information...
-Creating destination directory: "docs\"
+Creating destination directory: "target/docs\"
 Building index for all the packages and classes...
 Standard Doclet version 21+35-LTS-2513
 Building tree for all the packages and classes...
-Generating docs\se1.play\application\Application.html...
-Generating docs\se1.play\application\package-summary.html...
-Generating docs\se1.play\application\package-tree.html...
-Generating docs\se1.play\module-summary.html...
-Generating docs\overview-tree.html...
+Generating target\docs\se1.play\application\Application.html...
+Generating target\docs\se1.play\application\package-summary.html...
+Generating target\docs\se1.play\application\package-tree.html...
+Generating target\docs\se1.play\module-summary.html...
+Generating target\docs\overview-tree.html...
 Building index for all classes...
-Generating docs\allclasses-index.html...
-Generating docs\allpackages-index.html...
-Generating docs\index-all.html...
-Generating docs\search.html...
-Generating docs\index.html...
-Generating docs\help-doc.html...
+Generating target\docs\allclasses-index.html...
+Generating target\docs\allpackages-index.html...
+Generating target\docs\index-all.html...
+Generating target\docs\search.html...
+Generating target\docs\index.html...
+Generating target\docs\help-doc.html...
 ```
 
-Output is compiled to the `target/docs` folder and can be visualized with
+Output is compiled to the `target/docs` folder and can be displayed in
 a web-browser from the `index.html` file.
 
 ```sh
@@ -1585,10 +1599,10 @@ Navigate through: `application` -> `Application`:
 <img src="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/markup/img/javadoc-2.png" width="800"/>
 
 Make sure, your name appears as *Author* - adjust in: `src/application/package-info.java`
-and recompuile *Javadoc*.
+and recompile *Javadoc*.
 
-Since *Javadoc* is generated (compiled) content, it is not committed into the
-*git* repository. Source files have already been committed. 
+Since *Javadoc* is generated (compiled) content, it is not committed to the
+*git* repository. Java source files have already been committed. 
 
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -1597,11 +1611,11 @@ Since *Javadoc* is generated (compiled) content, it is not committed into the
 
 ## 11. Package as *.jar*
 
-"*Packaging*" means packing compiled code (`.class` files) as a `.jar` (Java archive)
-file for release and distribution.
+"*Packaging*" means packing compiled code (`.class` files) into a `.jar`
+(Java archive) file for release and distribution.
 
-Packaging required a so-called MANIFEST.MF file, which will be created in under
-path `src/resources/META-INF`:
+Packaging requires a so-called MANIFEST.MF file, created under path
+`src/resources/META-INF`:
 
 ```sh
 mkdir -p src/resources/META-INF
@@ -1626,18 +1640,17 @@ git commit -m "add META-INF/MANIFEST.MF"
 git log --oneline                           # show commit log/history
 ```
 ```
-c47b359 (HEAD -> main) add META-INF/MANIFEST.MF
-3f49067 add unit tests
-c71ab76 add src
-f3c1706 add git submodule: 'libs', update .gitmodules
-f1cdf73 add git submodule: '.vscode', update .gitmodules
-e340ec6 add git submodule: '.env', add .gitmodules
-2f68f2b (tag: root) root commit (empty)
+ffbc5d1 (HEAD -> main) add META-INF/MANIFEST.MF
+a54d147 add src/tests unit tests
+abacbd8 add src/main
+3bdf0ff add .git-modules
+1f53d2f add .gitignore
+a787431 (tag: root) root commit (empty)
 ```
 
-Packaging invokes the `jar` command to package libraries from `libs`
-and compiled Java code from `target/classes` to a resulting file
-`application-1.0.0-SNAPSHOT.jar` placed in the `bin` folder:
+Packaging invokes the `jar` command to collect compiled Java code from
+`target/classes` and libraries from `libs` assemble a resulting file
+`application-1.0.0-SNAPSHOT.jar` placed in the `target` folder:
 
 ```sh
 mk package          # package 'target/classes' to the final '.jar'
@@ -1646,7 +1659,6 @@ mk package          # package 'target/classes' to the final '.jar'
 ```
 package:
   jar -c -v -f "target/application-1.0.0-SNAPSHOT.jar" \
-    --manifest=target/resources/META-INF/MANIFEST.MF \
     -C target/classes . $(packaged_content) &&
     [ -f ${P[target-jar]} ] &&
       echo -e "-->\\ncreated: ${P[target-jar]}" ||
@@ -1655,9 +1667,9 @@ package:
 added manifest
 added module-info: module-info.class
 adding: application/(in = 0) (out= 0)(stored 0%)
-adding: application/Application.class(in = 1913) (out= 940)(deflated 50%)
+adding: application/Application.class(in = 2107) (out= 1003)(deflated 52%)
 adding: application/package-info.class(in = 117) (out= 101)(deflated 13%)
-adding: application/package_info.class(in = 333) (out= 260)(deflated 21%)
+adding: application/package_info.class(in = 408) (out= 293)(deflated 28%)
 -->
 created: target/application-1.0.0-SNAPSHOT.jar
 ```
@@ -1672,32 +1684,20 @@ Output shows the packaged `.jar` file `application-1.0.0-SNAPSHOT.jar`:
 
 ```
 total 16
-drwxr-xr-x 1 svgr2 Kein    0 Oct 15 00:14 .
-drwxr-xr-x 1 svgr2 Kein    0 Oct 15 00:09 ..
--rw-r--r-- 1 svgr2 Kein 2240 Oct 15 00:12 application-1.0.0-SNAPSHOT.jar
-drwxr-xr-x 1 svgr2 Kein    0 Oct 15 00:09 classes
-drwxr-xr-x 1 svgr2 Kein    0 Oct 15 00:14 docs
-drwxr-xr-x 1 svgr2 Kein    0 Oct 15 00:14 test-classes
+drwxr-xr-x 1 svgr2 Kein    0 Oct 21 22:19 .
+drwxr-xr-x 1 svgr2 Kein    0 Oct 21 20:54 ..
+-rw-r--r-- 1 svgr2 Kein 2570 Oct 21 22:19 application-1.0.0-SNAPSHOT.jar
+drwxr-xr-x 1 svgr2 Kein    0 Oct 21 21:04 classes
+drwxr-xr-x 1 svgr2 Kein    0 Oct 21 21:22 docs
+drwxr-xr-x 1 svgr2 Kein    0 Oct 21 21:04 test-classes
 ```
 
-The *MANFEST.MF* file specifies the main class to used when the
-*.jar* file is executed. The class information is supplied during packaging
-and can be seen in the "compiled" version of *MANFEST.MF* in `target`:
-
-```sh
-cat target/resources/META-INF/MANIFEST.MF       # show "compiled" MANFEST.MF
-```
-```
-Manifest-Version: 1.0
-Created-By: Software Engineering project
-Main-Class: application.Application             <-- 'Main-Class' has been inserted
-Class-Path: resources
-```
-
-Run `application-1.0.0-SNAPSHOT.jar`:
+Run `application-1.0.0-SNAPSHOT.jar`. Mind that the *.jar* file is not
+*"executed"* directly, but passed as *classpath* (`-cp`) requiring passing
+the class with the *main()* function:
 
 ```sh
-java -jar target/application-1.0.0-SNAPSHOT.jar 1 23 456
+java -cp target/application-1.0.0-SNAPSHOT.jar application.Application 1 23 456
 ```
 ```
 Hello, se1-play
@@ -1715,13 +1715,12 @@ mk run-jar 1 23 456
 run-jar: [1 23 456]
   java -jar "target/application-1.0.0-SNAPSHOT.jar" 1 23 456
 ---
-Hello, se1-play
- - arg: 1
- - arg: 23
- - arg: 456
+no main manifest attribute, in target/application-1.0.0-SNAPSHOT.jar
 ```
 
-The `.jar` can now be released and distributed.
+The *.jar* does not run directly without the class with the *main()* function
+provided. This is fixed in the next step when the *.jar* is packaged as a
+*stand-alone .jar*
 
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -1730,7 +1729,51 @@ The `.jar` can now be released and distributed.
 
 ## 12. Package as Stand-alone *.jar*
 
-to follow...
+The *MANFEST.MF* file specifies the class with the *main()* function in a
+*.jar* file. The class information in the *MANFEST.MF* file is injected
+during packaging in the *"copied"* version of *MANFEST.MF* under
+`target/resources/META-INF/MANIFEST.MF`:
+
+```sh
+wipe --all                                      # rebuild project environment
+source .env/env.sh                              # with MANIFEST.MF
+
+mk package                                      # re-package with MANFEST.MF
+```
+```
+package:
+  jar -c -v -f "target/application-1.0.0-SNAPSHOT.jar" \
+    --manifest=target/resources/META-INF/MANIFEST.MF \      <-- include MANIFEST.MF
+    -C target/classes . $(packaged_content) &&
+    [ -f ${P[target-jar]} ] &&
+      echo -e "-->\\ncreated: ${P[target-jar]}" ||
+      echo -e "-->\\nno compiled classes or manifest, no .jar created"
+```
+
+Show the supplemented *MANFEST.MF:*
+
+```sh
+cat target/resources/META-INF/MANIFEST.MF       # show MANFEST.MF supplemented with line:
+                                                # "Main-Class: application.Application"
+```
+```
+Manifest-Version: 1.0
+Created-By: Software Engineering project
+Main-Class: application.Application             <-- 'Main-Class' has been injected
+Class-Path: resources
+```
+
+Run *stand-alone* *.jar:*
+
+```sh
+java -jar target/application-1.0.0-SNAPSHOT.jar 1 23 456
+```
+```
+Hello, se1-play
+ - arg: 1
+ - arg: 23
+ - arg: 456
+```
 
 <!-- 
 Output shows the packaged files:
@@ -1761,9 +1804,74 @@ adding: application/package_info.class(in = 333) (out= 260)(deflated 21%)
 
 &nbsp;
 
-## 13. Clean Project Build
+## 13. Clean Project Build and *Continuous Integration (CI)*
 
-to follow...
+A *"clean project build"* first removes all content that previously has been
+created (*"clean"* stage). Next, all artifacts are rebuilt (*"build"* stage).
+
+Using `mk`, the *build* command performs steps for the clean project build:
+
+- `clean` - remove all previously built content from the project.
+
+- `compile` - compile **.java* source code from *src/main* to *.class* files.
+
+- `compile-tests` - compile tests from *src/tests* to *.class* files.
+
+- `run-tests` - run unit tests.
+
+- `package` - package compiled code, properties and MANIFEST.MF to a finally
+    releasable (distributable) *.jar* file in *target*.
+
+Show the commands of a *clean project build:*
+
+```sh
+show build
+```
+```
+build:
+  mk clean compile compile-tests run-tests package
+```
+
+Run the *clean project build:*
+
+```sh
+mk build
+```
+```
+build:
+  mk clean compile compile-tests run-tests package
+```
+
+The *build process* should always run without error, particularly before
+commits are made. When *build* fails, the project can be reset to the state
+of the last commint and the project should *build* again.
+
+In professional software development, *project builds* are not only performed
+on developer's laptops, but also on *build servers*, which are dedicated
+server machines that continously or over-night fetch code from the source
+repository and perform build- and test processes (test: perform unit tests).
+
+Broken *builds* or *tests* are instantly detected independently of developer
+activity.
+
+Read article by *Robert Sheldon* and *Cameron McKenzie:*
+[*"What is a build server?"*](https://www.techtarget.com/searchsoftwarequality/definition/Build-Server)
+and understand the concept of
+[*Continuous Integration (CI)*]() from the article.
+
+
+<img src="https://www.techtarget.com/rms/onlineimages/continuous_integration-f.png" width="600"/>
+
+From the article:
+
+<!-- block-quote: put '>' in front -->
+> "The *build server* is a key component of *continuous integration*, which
+    is the practice of automatically and regularly integrating code changes
+    from multiple developers working with the same codebase.
+    *Continuous integration* is typically part of a larger *continuous
+    integration/continuous delivery (CI/CD)* framework.
+    *Continuous delivery* is concerned with deploying the software to
+    *testing*, *staging* and *production* environments."
 
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -1772,7 +1880,131 @@ to follow...
 
 ## 14. Push to Remote Repository
 
-to follow...
+Use your account at
+[*BHT GitLab*](https://gitlab.bht-berlin.de/) or
+[*GitHub*](https://github.com)
+(or another remote repository) to host the remote repository for the project.
+
+A *Remote repository* is the server-version of *git*, which
+
+- hosts multiple (many) user accounts and *git* repositories for those
+    user accounts,
+
+- receives *git commands* for hosted *git* repositories over the network,
+
+- provides a web-user-interface for account maintenance and basic repository
+    interations, such as creating new repositories, granting access, etc.
+
+Each *"remote repository"* is a fully-fledged *git* repository operates on
+the same principles and understands the same operations as a local *git*
+repository.
+
+*"Adding a remote"* to a local *git* repository means to register the URI
+of the remote *git* repository to a local repository.
+
+Create a new remote repository: `se1-play` in your account at *BHT GitLab*
+or *GitHub*. Each repository will have a unique URI. Understand the
+difference between formats:
+
+- *SSH:* `git@github.com:<user-account>/se1-play.git`
+
+- *HTTPS:* `https://github.com/<user-account>/se1-play.git`
+
+*SSH* URI should be preferred. They assume a *public SSH key* is registered
+with your account and a corresponding *private SSH key* exists on your
+laptop in the *HOME* directory.
+
+Verify you have a *public/private SSH key pair* in your *HOME* directory:
+
+```sh
+ls -la $HOME                # show content of the $HOME directory
+```
+
+The command lists your *HOME* directory, which should show a dotfile entry
+`.ssh`, which is the directory that stores your *public/private SSH key pairs*:
+
+```
+drwxr-xr-x 1 svgr2 Kein     0 Oct  9 13:20 .ssh
+```
+
+```sh
+ls -la $HOME/.ssh           # show content of $HOME/.ssh
+```
+```
+total 46
+drwxr-xr-x 1 svgr2 Kein    0 Oct  9 13:20 .
+drwxr-xr-x 1 svgr2 Kein    0 Oct 21 03:02 ..
+-rw-r--r-- 1 svgr2 Kein 1679 Oct  9 13:20 id_rsa        <-- private ssh-key
+-rw-r--r-- 1 svgr2 Kein  415 Oct  9 13:20 id_rsa.pub    <-- public ssh-key
+```
+
+If you don't have `.ssh` in your $HOME directory, create a *public/private SSH
+key pair:*
+
+```sh
+ssh-keygen                  # create public/private SSH key pair in $HOME/.ssh
+```
+
+Register your *public(!)* key at the remote git repository account (usually
+under: account - settings). Find the *"SSH and GPG keys"* page and add a
+new *SSH* key by copying the *public(!)* key into the registration field.
+
+```sh
+cat $HOME/.ssh/id_rsa.pub   # print public ssh key
+```
+
+Copy the entire text into the *SSH key* registration field:
+
+```
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDsYvrIXtxlPGjByzFbB2S/AgjFzaWCBQ+cot7rrXDLMWJHH+uyWNbh0QpXGtTPm43XXH6hx004ew3cv52k5atqeJgkKGPLb3Zzp9Kg1yVQg5u2dntuzPW8ghwLKdVkHPoYLSLrj/ivYXYqrqsahJ0Nt0QSgjNQ/BUJvLaWXpXGP2EKT5f2S5un61Sdw0u37z5n/KnGOUtwAcG+cJn7b/5BP7REC+HI6v8/RLtCN36vN7Mz+nUio2btFIFmkxSjnxj8G/y4318V8mf7p1W7jTZ9Pcc2ku41yz9JNBl/E4YyVJvEjTO/4yEJ/4AYSDnkL2g57chRhliw5pmVtzONCwX7 xxxxxxx@bht-berlin.de
+```
+
+With this done, register the *SSH-URI* of the remote repository at your local
+git repository (in the `se1-play` project).
+
+```sh
+# Obtain the URI from your remote repository, preferably
+# - git@github.com:<user-account>/se1-play.git or
+# - https://github.com/<user-account>/se1-play.git
+# 
+# and register under the name "origin" with the local git repository:
+
+git remote add origin git@github.com:<user-account>/se1-play.git
+
+# show the registered remote repository:
+git remote -v
+```
+```
+origin  git@github.com:<user-account>/se1-play.git (fetch)
+origin  git@github.com:<user-account>/se1-play.git (push)
+```
+
+With the remote *"orign"* being set-up, the local *main-branch* can be pushed
+to the remote repository.
+Flag `--` turns the local *main* branch to a *"tracking branch"* of the
+associated remote *main* branch as the *"tracked branch"*:
+
+```sh
+# push local branch 'main' to the remote and link as 'tracking' branch
+# to the remote 'tracked' branch 'remote/origin/main'
+git push --set-upstream origin main
+```
+
+If the push is successfull, all local commits made during this assignment
+on the *main* branch have been copied (pushed) to the *main* branch in the
+remote. Refresh the repository web-site and committed files should appear.
+
+*Git* exchanges commits between linked local and remote branches establishing
+a *"global commit order"*. Every developer *"tracking"* a remote branch will
+eventually have the same commit order. Commits on tracked branches only
+*"move forward"*, which means once a commit is published, it cannot
+(should not) be withdrawn (forced pushes using `-f` of altered commit chains
+break the *global commit order* of the branch).
+
+*Git* repositories can form distributed networks accross which commits made
+to branches can be shared. *Git* follows a *"lazy"* policy to synchronize
+shared branches: nothing happens automatically, a tracking branch must
+explicitely *"pull"* changes (new commits) made by others.
 
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -1784,17 +2016,22 @@ to follow...
 Wipe and re-source the project before launching *VSCode:*
 
 ```sh
+cd <project-dir>        # cd into the project directory
+
+# make sure you are in the project directory (which has .git)
+[ -d .git ] && echo "Yes, I am in the project directory" ||
+    echo "Sorry, I am lost. I am at $(pwd)"
+
 wipe --all              # remove project environment variable and files
 
-source .env/env.sh      # re-source the project
+source .env/env.sh      # source the project
 ```
 
-Launch *VSCode* from the project directory from the "*sourced*" shell process to make
-environment variables accessible in *VSCode*, which will discover the new project and
-open the editor.
+Launch *VSCode* from the project directory only and after "*sourcing*" such
+that environment variables have been created and passed to *VSCode*.
 
 ```sh
-code .                  # launch VSCode in the project directory
+code .                  # only then launch VSCode in the project directory
 ```
 
 If you see a message: *"code - command not found"*, *VSCode* is not on your
@@ -1822,6 +2059,7 @@ to pass the project location and environment variables to *VSCode*.
 Starting *VSCode* from an icon misses this information causing *VSCode* to potentially
 misunderstand the project causing errors later on.
 
+<!-- 
 When *VSCode* starts for the first time, it may take some time to discover the project:
 
 <img src="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/markup/img/vscode-1.png" width="800"/>
@@ -1849,4 +2087,4 @@ mk run A BC DEF                         # run the program
 
 mk run-tests                            # run tests
 ```
-
+ -->

@@ -71,7 +71,6 @@ temp/
 # ignore images and markup files and directories
 **/img
 **/markup
-*.md
 
 # ignore OSX system files
 .DS_Store

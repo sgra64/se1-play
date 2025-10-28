@@ -25,10 +25,11 @@ The project is structured into several parts:
     [*IDE*](https://en.wikipedia.org/wiki/Integrated_development_environment),
 
 - `.env (*)` - folder with the *sourcing script:* `env.sh` to set up the project
-    environment with environment variables, e.g. *CLASSPATH* and project files
-    that configure the IDE, e.g. files:
-
-    - `.project` and `.classpath`,
+    environment with
+    
+    - environment variables such as *CLASSPATH*, *MODULEPATH*, etc. and
+    
+    - project files that configure the IDE, e.g. files: `.project` and `.classpath`,
 
 - `.git` - folder of the local *git* repository.
     [*Git*](https://en.wikipedia.org/wiki/Git) is a popular software management or
@@ -56,7 +57,7 @@ Project "*se1-play*" is created in several steps:
 
 1. [Create a *.gitignore* - File](#3-create-a-gitignore---file)
 
-1. [Import *git*-Submodules](#4-import-git-submodules)
+1. [Import *git*-Submodules: *.env*, *.vscode*, *libs*](#4-import-git-submodules-env-vscode-libs)
 
 1. [Inspect: *libs*](#5-inspect-libs)
 
@@ -280,7 +281,7 @@ git log --oneline                   # show the commit log (commit history)
 
 &nbsp;
 
-## 4. Import *git*-Submodules
+## 4. Import *git*-Submodules: *.env*, *.vscode*, *libs*
 
 [*Git Submodules*](https://git-scm.com/docs/git-submodule)
 (read the: [*article*](https://www.freecodecamp.org/news/how-to-use-git-submodules/))
@@ -288,10 +289,11 @@ is a mechanism to import content into a project that is maintained outside by
 other people/teams in separate *git* repositories .
 
 Git submodules should be imported and maintained inside a git project on
-a separate branch, which we create off the root commit of the *main* branch:
+a separate branch, which we create off the commit that contains *.gitignore*
+on the *main* branch:
 
 ```sh
-git switch -c git-modules root      # create (-c) new branch: 'git-modules' off
+git switch -c git-modules           # create (-c) new branch: 'git-modules' off
                                     # the commit tagged as 'root'
 
 git branch              # show branches that currently exist in the git repository
@@ -301,9 +303,9 @@ git branch              # show branches that currently exist in the git reposito
   main
 ```
 
-The `*` marks the branch that is currently active, which means that this
-branch will receive the following commits.
-
+The `*` marks the branch that is currently active, which means this branch will
+receive subsequent commits.
+<!-- 
 We install the *.gitignore* file from the *main* branch and commit to the new
 branch *git-modules:*
 
@@ -311,6 +313,7 @@ branch *git-modules:*
 git checkout main -- .gitignore     # check-out '.gitignore' from the main branch
 git commit -m "add .gitignore"      # commit with message: "add .gitignore"
 ```
+-->
 
 We import three *git* *sub-modules* into the *se1-play* project:
 
@@ -325,16 +328,23 @@ command. After import (add), *git-modules* are committed to branch *git-modules*
 the currently active branch:
 
 ```sh
-# import submodule '.env' from the remote 'gitmodule-env.sh.git' repository
+# import git submodule '.env' from the remote 'gitmodule-env.sh.git' repository
 git submodule add -f -- https://github.com/sgra64/gitmodule-env.sh.git .env
+# 
+# remove 'README.md' from submodule '.env'
+(cd .env && git rm README.md && git commit -m "remove README.md")
+# 
+# commit submodule '.env' on branch 'git-modules'
 git commit -m "add git submodule: '.env', add .gitmodules"
 
-# import submodule '.vscode' from the remote 'gitmodule-vscode-java.git' repository
+# import git submodule '.vscode' from the remote 'gitmodule-vscode-java.git' repository
 git submodule add -f -- https://github.com/sgra64/gitmodule-vscode-java.git .vscode
+(cd .vscode && git rm README.md && git commit -m "remove README.md")
 git commit -m "add git submodule: '.vscode', update .gitmodules"
 
-# import submodule '.libs' from the remote 'gitmodule-libs-jars.git' repository
+# import git submodule '.libs' from the remote 'gitmodule-libs-jars.git' repository
 git submodule add -f -- https://github.com/sgra64/gitmodule-libs-jars.git libs
+(cd libs && git rm README.md && git commit -m "remove README.md")
 git commit -m "add git submodule: 'libs', update .gitmodules"
 ```
 ```
@@ -1611,46 +1621,12 @@ Since *Javadoc* is generated (compiled) content, it is not committed to the
 
 ## 11. Package as *.jar*
 
-"*Packaging*" means packing compiled code (`.class` files) into a `.jar`
-(Java archive) file for release and distribution.
-
-Packaging requires a so-called MANIFEST.MF file, created under path
-`src/resources/META-INF`:
-
-```sh
-mkdir -p src/resources/META-INF
-touch src/resources/META-INF/MANIFEST.MF
-```
-
-Fill content into file `MANIFEST.MF`:
-
-<!-- @@ src/resources/META-INF/MANIFEST.MF @BEGIN -->
-```
-Manifest-Version: 1.0
-Created-By: Software Engineering project
-```
-<!-- @@ src/resources/META-INF/MANIFEST.MF @END -->
-
-Commit file `MANIFEST.MF`:
-
-```sh
-git add src/resources
-git commit -m "add META-INF/MANIFEST.MF"
-
-git log --oneline                           # show commit log/history
-```
-```
-ffbc5d1 (HEAD -> main) add META-INF/MANIFEST.MF
-a54d147 add src/tests unit tests
-abacbd8 add src/main
-3bdf0ff add .git-modules
-1f53d2f add .gitignore
-a787431 (tag: root) root commit (empty)
-```
+"*Packaging*" means collecting compiled code (`.class` files) in a `.jar`
+(Java archive) file to release or distribute the developed software.
 
 Packaging invokes the `jar` command to collect compiled Java code from
-`target/classes` and libraries from `libs` assemble a resulting file
-`application-1.0.0-SNAPSHOT.jar` placed in the `target` folder:
+`target/classes` and assemble a resulting file `application-1.0.0-SNAPSHOT.jar`
+placed in the `target` folder:
 
 ```sh
 mk package          # package 'target/classes' to the final '.jar'
@@ -1692,9 +1668,11 @@ drwxr-xr-x 1 svgr2 Kein    0 Oct 21 21:22 docs
 drwxr-xr-x 1 svgr2 Kein    0 Oct 21 21:04 test-classes
 ```
 
-Run `application-1.0.0-SNAPSHOT.jar`. Mind that the *.jar* file is not
-*"executed"* directly, but passed as *classpath* (`-cp`) requiring passing
-the class with the *main()* function:
+Run `application-1.0.0-SNAPSHOT.jar`. Mind that the *.jar* file is passed on
+the *classpath* (`-cp`) requiring the class with the *main()* function to
+execute to be specified explicitely (this will be a difference to a
+*stand-alone .jar*, which includes which class with the *main()* function
+to execute):
 
 ```sh
 java -cp target/application-1.0.0-SNAPSHOT.jar application.Application 1 23 456
@@ -1729,6 +1707,42 @@ provided. This is fixed in the next step when the *.jar* is packaged as a
 
 ## 12. Package as Stand-alone *.jar*
 
+Packaging a *stand-alone .jar* requires the information of the class with the
+*main()* function to executea be included in the *.jar* file in a file called
+`MANIFEST.MF`, which we create in the project under the path
+`src/resources/META-INF`:
+
+```sh
+mkdir -p src/resources/META-INF
+touch src/resources/META-INF/MANIFEST.MF
+```
+
+Fill content into file `MANIFEST.MF`:
+
+<!-- @@ src/resources/META-INF/MANIFEST.MF @BEGIN -->
+```
+Manifest-Version: 1.0
+Created-By: Software Engineering project
+```
+<!-- @@ src/resources/META-INF/MANIFEST.MF @END -->
+
+Commit file `MANIFEST.MF`:
+
+```sh
+git add src/resources
+git commit -m "add META-INF/MANIFEST.MF"
+
+git log --oneline                           # show commit log/history
+```
+```
+ffbc5d1 (HEAD -> main) add META-INF/MANIFEST.MF
+a54d147 add src/tests unit tests
+abacbd8 add src/main
+3bdf0ff add .git-modules
+1f53d2f add .gitignore
+a787431 (tag: root) root commit (empty)
+```
+
 The *MANFEST.MF* file specifies the class with the *main()* function in a
 *.jar* file. The class information in the *MANFEST.MF* file is injected
 during packaging in the *"copied"* version of *MANFEST.MF* under
@@ -1743,14 +1757,31 @@ mk package                                      # re-package with MANFEST.MF
 ```
 package:
   jar -c -v -f "target/application-1.0.0-SNAPSHOT.jar" \
-    --manifest=target/resources/META-INF/MANIFEST.MF \      <-- include MANIFEST.MF
+    --manifest=target/resources/META-INF/MANIFEST.MF \      <-- new MANIFEST.MF included
     -C target/classes . $(packaged_content) &&
     [ -f ${P[target-jar]} ] &&
       echo -e "-->\\ncreated: ${P[target-jar]}" ||
       echo -e "-->\\nno compiled classes or manifest, no .jar created"
 ```
 
-Show the supplemented *MANFEST.MF:*
+Show that MANIFEST.MF is now included in the .jar file:
+
+```sh
+jar tvf target/application-1.0.0-SNAPSHOT.jar
+```
+
+```
+     0 Wed Oct 22 12:08:50 CEST 2025 META-INF/
+   193 Wed Oct 22 12:08:50 CEST 2025 META-INF/MANIFEST.MF   <-- new MANIFEST.MF included
+   267 Wed Oct 22 12:08:48 CEST 2025 module-info.class
+     0 Wed Oct 22 12:08:48 CEST 2025 application/
+  1913 Wed Oct 22 12:08:48 CEST 2025 application/Application.class
+   333 Wed Oct 22 12:08:48 CEST 2025 application/package_info.class
+   318 Wed Oct 22 12:08:48 CEST 2025 resources/application.properties
+  2253 Wed Oct 22 12:08:48 CEST 2025 resources/log4j2.properties
+```
+
+Show the content of *MANFEST.MF:*
 
 ```sh
 cat target/resources/META-INF/MANIFEST.MF       # show MANFEST.MF supplemented with line:
@@ -1763,7 +1794,7 @@ Main-Class: application.Application             <-- 'Main-Class' has been inject
 Class-Path: resources
 ```
 
-Run *stand-alone* *.jar:*
+Run the new *stand-alone .jar:*
 
 ```sh
 java -jar target/application-1.0.0-SNAPSHOT.jar 1 23 456

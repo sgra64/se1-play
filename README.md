@@ -984,21 +984,24 @@ Fill content into file `src/main/module-info.java` with your IDE:
 <!-- @@ src/main/module-info.java @BEGIN -->
 ```java
 /**
- * Modules have been introduced in Java 9 (in 2017) to compose software from
- * modularized projects. Prior, only packages within a project could be used.
- *
- * {@code module-info.java} indicates a <i>modularized</i> Java project. It
- * includes the module name: {@link se1.play}, external modules required by
- * this module and project packages opened and exported to other modules.
- * Opening a package makes it accessible to tools such as JUnit test runners.
- * Exporting a package makes it accessible to other modules.
- *
- * Locations of <i>required</i> modules must be provided via {@code MODULEPATH}.
- *
+ * Modules have been introduced in Java 9 (in 2017) to build software from modular
+ * projects. Prior, applications could be built only from packages within a project.
+ * <p>
+ * See Jakob Jenkov's article:
+ * <a href="https://jenkov.com/tutorials/java/modules.html"><i>Java Modules</i></a>.
+ * </p><p>
+ * {@code module-info.java} indicates a <i>modular</i> Java project. It includes
+ * the module name: {@link se1_play}, external modules required by this module and
+ * packages exported to other modules. Opening a package makes it accessible to
+ * tools such as JUnit test runners. Javadoc requires packages open or exported.
+ * </p><p>
+ * Locations of <i>required</i> modules are provided by the {@code MODULEPATH}
+ * environment variable.
+ * </p>
  * @version <code style=color:green>{@value application.package_info#Version}</code>
  * @author <code style=color:blue>{@value application.package_info#Author}</code>
  */
-module se1.play {
+module se1_play {
 
     /*
      * Make package {@code application} accessible to other modules at compile
@@ -1006,13 +1009,13 @@ module se1.play {
      */
     exports application;
 
-    /* Open package to JUnit test runner. */
+    /* Open package to JUnit test runner and Javadoc compiler. */
     opens application;
 
     /*
      * External module required by this module (JUnit-5 module for JUnit testing).
      */
-    //requires org.junit.jupiter.api;
+    // requires org.junit.jupiter.api;
 }
 ```
 <!-- @@ src/main/module-info.java @END -->
@@ -1549,10 +1552,13 @@ Output shows the command calling the `javadoc` compiler with output directed `-d
 
 ```
 javadoc:
-  javadoc $(eval echo $JDK_JAVADOC_OPTIONS) \
-    $(builtin cd src/main &&
-       find -type d | sed -e 's!^[\./]*!!' -e 's!/!.!g') &&
-    echo -e "-->\\ncreated javadoc in: ${P[docs]}"
+  rm -rf target/docs &&
+  javadoc --source-path src/main -d target/docs \
+    --module-path "$MODULEPATH" -version -author -Xdoclint:-missing \
+    -noqualifier "java.*:application.*" \
+    application &&
+    echo -e "-->\\ncreated javadoc in: target/docs"
+
 ```
 
 Output of the `javadoc` compiler:

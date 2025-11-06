@@ -7,27 +7,26 @@ import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
+/**
+ * Test class of an instance that implements the {@link Streams} interface.
+ * Method under test: {@code List<Order> sortOrdersByValue(List<Order> orders)}.
+ */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class Streams_9_sortByOrderValue_Tests {
 
     /*
-     * Tested object as instance of the {@link Streams} class.
-     * Must not be static due to parallel execution of test methods.
+     * tested object, instance that implements the {@link Streams} interface
      */
-    private Streams testObj;
-
+    private final Streams testObj;
 
     /**
-     * Setup method executed before each @Test method is executed.
-     * @throws Exception if any exception occurs
+     * Constructor to initialize test instance.
      */
-    @BeforeEach
-    public void setUpBeforeEach() throws Exception {
-        testObj = Streams.getInstance();
+    Streams_9_sortByOrderValue_Tests() {
+        this.testObj = Streams.getInstance();
     }
 
-    @Test
-    @Order(900)
+    @Test @Order(900)
     void test900_sortByOrderValue_regular() {
         //
         var expected = List.of(4, 6, 5, 3, 1, 0, 2).stream()
@@ -40,8 +39,7 @@ public class Streams_9_sortByOrderValue_Tests {
         assertEquals(expected, actual);
     }
 
-    @Test
-    @Order(901)
+    @Test @Order(901)
     void test901_sortByOrderValue_regular() {
         //
         var extendedOrders = new ArrayList<Streams.Order>(Streams.orders);
@@ -60,8 +58,7 @@ public class Streams_9_sortByOrderValue_Tests {
         assertEquals(expected, actual);
     }
 
-    @Test
-    @Order(910)
+    @Test @Order(910)
     void test910_sortByOrderValue_emptyOrders() {
         //
         var emptyOrders = new ArrayList<Streams.Order>();
@@ -69,8 +66,7 @@ public class Streams_9_sortByOrderValue_Tests {
         assertEquals(0L, actual);
     }
 
-    @Test
-    @Order(990)
+    @Test @Order(990)
     void test990_sortByOrderValue_irregular_orders_Null() {
         //
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {

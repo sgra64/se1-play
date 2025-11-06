@@ -6,27 +6,26 @@ import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
+/**
+ * Test class of an instance that implements the {@link Streams} interface.
+ * Method under test: {@code List<String> sortedNamesByLength(List<String> names)}.
+ */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class Streams_7_sortedNamesByLength_Tests {
 
     /*
-     * Tested object as instance of the {@link Streams} class.
-     * Must not be static due to parallel execution of test methods.
+     * tested object, instance that implements the {@link Streams} interface
      */
-    private Streams testObj;
-
+    private final Streams testObj;
 
     /**
-     * Setup method executed before each @Test method is executed.
-     * @throws Exception if any exception occurs
+     * Constructor to initialize test instance.
      */
-    @BeforeEach
-    public void setUpBeforeEach() throws Exception {
-        testObj = Streams.getInstance();
+    Streams_7_sortedNamesByLength_Tests() {
+        this.testObj = Streams.getInstance();
     }
 
-    @Test
-    @Order(700)
+    @Test @Order(700)
     void test700_sortedNamesByLength_regular() {
         //
         List<String> expected = List.of(
@@ -41,8 +40,7 @@ public class Streams_7_sortedNamesByLength_Tests {
         assertEquals(expected, actual);
     }
 
-    @Test
-    @Order(710)
+    @Test @Order(710)
     void test710_sortedNamesByLength_emptyNames() {
         //
         List<String> expected = List.of();
@@ -53,8 +51,7 @@ public class Streams_7_sortedNamesByLength_Tests {
         assertEquals(expected, actual);
     }
 
-    @Test
-    @Order(790)
+    @Test @Order(790)
     void test790_sortedNamesByLength_irregular_names_Null() {
         //
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {

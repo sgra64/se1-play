@@ -7,6 +7,10 @@ import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
+/**
+ * Test class of an instance that implements the {@link Streams} interface.
+ * Method under test: {@code List<Integer> filteredNumbers(String filter, int limit)}.
+ */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class Streams_4_filteredNumbers_Tests {
 
@@ -44,23 +48,18 @@ public class Streams_4_filteredNumbers_Tests {
     private static final String prime3 = "prime3";
 
     /*
-     * Tested object as instance of the {@link Streams} class.
-     * Must not be static due to parallel execution of test methods.
+     * tested object, instance that implements the {@link Streams} interface
      */
-    private Streams testObj;
-
+    private final Streams testObj;
 
     /**
-     * Setup method executed before each @Test method is executed.
-     * @throws Exception if any exception occurs
+     * Constructor to initialize test instance.
      */
-    @BeforeEach
-    public void setUpBeforeEach() throws Exception {
-        testObj = Streams.getInstance();
+    Streams_4_filteredNumbers_Tests() {
+        this.testObj = Streams.getInstance();
     }
 
-    @Test
-    @Order(400)
+    @Test @Order(400)
     void test400_filteredNumbers_50evenNumbers_regular() {
         //
         // 50 even numbers
@@ -75,8 +74,7 @@ public class Streams_4_filteredNumbers_Tests {
         assertTrue(testAllNumbers);
     }
 
-    @Test
-    @Order(410)
+    @Test @Order(410)
     void test410_filteredNumbers_50divisibleBy3Numbers_regular() {
         //
         // 50 numbers divisible by 3
@@ -91,8 +89,7 @@ public class Streams_4_filteredNumbers_Tests {
         assertTrue(testAllNumbers);
     }
 
-    @Test
-    @Order(420)
+    @Test @Order(420)
     void test420_filteredNumbers_50primeNumbers_regular() {
         //
         List<Integer> actual = testObj.filteredNumbers(prime3, 50);
@@ -106,8 +103,7 @@ public class Streams_4_filteredNumbers_Tests {
         assertTrue(testAllNumbers);
     }
 
-    @Test
-    @Order(430)
+    @Test @Order(430)
     void test430_filteredNumbers_different_even_numbers_returned() {
         int limit = 5;
         List<Integer> l1 = testObj.filteredNumbers(even, limit);
@@ -126,8 +122,7 @@ public class Streams_4_filteredNumbers_Tests {
         assertTrue(different);
     }
 
-    @Test
-    @Order(431)
+    @Test @Order(431)
     void test431_filteredNumbers_different_div_by_three_numbers_returned() {
         int limit = 5;
         List<Integer> l1 = testObj.filteredNumbers(div3, limit);
@@ -146,8 +141,7 @@ public class Streams_4_filteredNumbers_Tests {
         assertTrue(different);
     }
 
-    @Test
-    @Order(432)
+    @Test @Order(432)
     void test432_filteredNumbers_different_prime_numbers_returned() {
         int limit = 5;
         // three-digit prime numbers
@@ -167,8 +161,7 @@ public class Streams_4_filteredNumbers_Tests {
         assertTrue(different);
     }
 
-    @Test
-    @Order(490)
+    @Test @Order(490)
     void test490_filteredNumbers_50evenNumbers_illegalFilter_null() {
         //
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
@@ -178,8 +171,7 @@ public class Streams_4_filteredNumbers_Tests {
         assertEquals("filter null, empty or unknown: \"null\"", thrown.getMessage());
     }
 
-    @Test
-    @Order(491)
+    @Test @Order(491)
     void test491_filteredNumbers_50evenNumbers_illegalFilter_empty() {
         var thrown = assertThrows(IllegalArgumentException.class, () -> {
             // Code under test is supposed to throw exception for illegal index
@@ -188,8 +180,7 @@ public class Streams_4_filteredNumbers_Tests {
         assertEquals("filter null, empty or unknown: \"\"", thrown.getMessage());
     }
 
-    @Test
-    @Order(492)
+    @Test @Order(492)
     void test492_filteredNumbers_50evenNumbers_illegalFilter_unknown() {
         var thrown = assertThrows(IllegalArgumentException.class, () -> {
             // Code under test is supposed to throw exception for illegal index
@@ -198,8 +189,7 @@ public class Streams_4_filteredNumbers_Tests {
         assertEquals("filter null, empty or unknown: \"no-key\"", thrown.getMessage());
     }
 
-    @Test
-    @Order(495)
+    @Test @Order(495)
     void test495_filteredNumbers_50evenNumbers_illegalLimit_negativ() {
         var thrown = assertThrows(IllegalArgumentException.class, () -> {
             // Code under test is supposed to throw exception for illegal limit

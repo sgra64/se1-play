@@ -7,27 +7,26 @@ import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
+/**
+ * Test class of an instance that implements the {@link Streams} interface.
+ * Method under test: {@code Stream<Integer> tenSortedEvenRandomNumbers()}.
+ */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class Streams_3_tenSortedEvenRandomNumbers_Tests {
 
     /*
-     * Tested object as instance of the {@link Streams} class.
-     * Must not be static due to parallel execution of test methods.
+     * tested object, instance that implements the {@link Streams} interface
      */
-    private Streams testObj;
-
+    private final Streams testObj;
 
     /**
-     * Setup method executed before each @Test method is executed.
-     * @throws Exception if any exception occurs
+     * Constructor to initialize test instance.
      */
-    @BeforeEach
-    public void setUpBeforeEach() throws Exception {
-        testObj = Streams.getInstance();
+    Streams_3_tenSortedEvenRandomNumbers_Tests() {
+        this.testObj = Streams.getInstance();
     }
 
-    @Test
-    @Order(300)
+    @Test @Order(300)
     void test300_tenSortedEvenRandomNumbers_regular() {
         //
         List<Integer> actual = testObj.tenSortedEvenRandomNumbers().toList();

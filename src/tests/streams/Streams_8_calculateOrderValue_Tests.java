@@ -6,6 +6,10 @@ import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
+/**
+ * Test class of an instance that implements the {@link Streams} interface.
+ * Method under test: {@code long calculateOrderValue(List<Order> orders)}.
+ */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class Streams_8_calculateOrderValue_Tests {
 
@@ -15,31 +19,25 @@ public class Streams_8_calculateOrderValue_Tests {
     private final long expectedOrderValue = 20562L;
 
     /*
-     * Tested object as instance of the {@link Streams} class.
-     * Must not be static due to parallel execution of test methods.
+     * tested object, instance that implements the {@link Streams} interface
      */
-    private Streams testObj;
-
+    private final Streams testObj;
 
     /**
-     * Setup method executed before each @Test method is executed.
-     * @throws Exception if any exception occurs
+     * Constructor to initialize test instance.
      */
-    @BeforeEach
-    public void setUpBeforeEach() throws Exception {
-        testObj = Streams.getInstance();
+    Streams_8_calculateOrderValue_Tests() {
+        this.testObj = Streams.getInstance();
     }
 
-    @Test
-    @Order(800)
+    @Test @Order(800)
     void test800_calculateValue_regular() {
         //
         long actual = testObj.calculateOrderValue(Streams.orders);
         assertEquals(expectedOrderValue, actual);
     }
 
-    @Test
-    @Order(801)
+    @Test @Order(801)
     void test801_calculateValue_regular() {
         //
         var extendedOrders = new ArrayList<Streams.Order>(Streams.orders);
@@ -52,8 +50,7 @@ public class Streams_8_calculateOrderValue_Tests {
         assertEquals(expected, actual);
     }
 
-    @Test
-    @Order(810)
+    @Test @Order(810)
     void test810_calculateValue_emptyOrders() {
         //
         var emptyOrders = new ArrayList<Streams.Order>();
@@ -61,8 +58,7 @@ public class Streams_8_calculateOrderValue_Tests {
         assertEquals(0L, actual);
     }
 
-    @Test
-    @Order(890)
+    @Test @Order(890)
     void test890_calculateValue_irregular_orders_Null() {
         //
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {

@@ -6,27 +6,26 @@ import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
+/**
+ * Test class of an instance that implements the {@link Streams} interface.
+ * Method under test: {@code List<String> sortedNames(List<String> names, int limit)}.
+ */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class Streams_6_sortedNames_Tests {
 
     /*
-     * Tested object as instance of the {@link Streams} class.
-     * Must not be static due to parallel execution of test methods.
+     * tested object, instance that implements the {@link Streams} interface
      */
-    private Streams testObj;
-
+    private final Streams testObj;
 
     /**
-     * Setup method executed before each @Test method is executed.
-     * @throws Exception if any exception occurs
+     * Constructor to initialize test instance.
      */
-    @BeforeEach
-    public void setUpBeforeEach() throws Exception {
-        testObj = Streams.getInstance();
+    Streams_6_sortedNames_Tests() {
+        this.testObj = Streams.getInstance();
     }
 
-    @Test
-    @Order(600)
+    @Test @Order(600)
     void test600_sortedNames_regular() {
         //
         int limit = 8;
@@ -40,8 +39,7 @@ public class Streams_6_sortedNames_Tests {
         assertEquals(expected, actual);
     }
 
-    @Test
-    @Order(601)
+    @Test @Order(601)
     void test601_sortedNames_regular() {
         //
         int limit = 12;
@@ -56,8 +54,7 @@ public class Streams_6_sortedNames_Tests {
         assertEquals(expected, actual);
     }
 
-    @Test
-    @Order(610)
+    @Test @Order(610)
     void test610_sortedNames_emptyNames() {
         //
         List<String> expected = List.of();
@@ -67,8 +64,7 @@ public class Streams_6_sortedNames_Tests {
         assertEquals(expected, actual);
     }
 
-    @Test
-    @Order(690)
+    @Test @Order(690)
     void test690_sortedNames_irregularNamesNull() {
         //
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
@@ -77,8 +73,7 @@ public class Streams_6_sortedNames_Tests {
         assertEquals("names argument is null.", thrown.getMessage());
     }
 
-    @Test
-    @Order(691)
+    @Test @Order(691)
     void test691_sortedNames_irregularLimitNegativ() {
         //
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
@@ -87,8 +82,7 @@ public class Streams_6_sortedNames_Tests {
         assertEquals("limit argument is negative: -10.", thrown.getMessage());
     }
 
-    @Test
-    @Order(692)
+    @Test @Order(692)
     void test692_sortedNames_irregularNamesNullAndLimitNegativ() {
         //
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {

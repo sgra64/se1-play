@@ -4,8 +4,8 @@
 # Project: *se1-play*
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-The assignment demonstates the structure and the tools of a professionally
-engineered Java project.
+The assignment demonstates structure and tools used in a professional
+*Java* project.
 
 The project is structured into several parts:
 
@@ -13,7 +13,7 @@ The project is structured into several parts:
 
 - `src/tests` - folder with unit test code (*JUnit* tests),
 
-- `src/resources` - folder with none-Java source and properties files,
+- `src/resources` - folder with none-*Java* source and generated content,
 
 - `target` - folder with compiled (`.class`) and packaged (`.jar`) files,
 
@@ -25,11 +25,11 @@ The project is structured into several parts:
     [*IDE*](https://en.wikipedia.org/wiki/Integrated_development_environment),
 
 - `.env (*)` - folder with the *sourcing script:* `env.sh` to set up the project
-    environment with
+    environment with:
     
     - environment variables such as *CLASSPATH*, *MODULEPATH*, etc. and
     
-    - project files that configure the IDE, e.g. files: `.project` and `.classpath`,
+    - project files that configure the IDE, files: `.project` and `.classpath`,
 
 - `.git` - folder of the local *git* repository.
     [*Git*](https://en.wikipedia.org/wiki/Git) is a popular software management or
@@ -37,10 +37,10 @@ The project is structured into several parts:
 
 - `.gitmodules` file that describes
     [*Git Submodules*](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
-    used in the project. Packages marked with `(*)` are git submodules and
-    maintained outside this project.
+    used in the project. Packages marked with `(*)` are *git submodules* that
+    are imported into this project.
 
-- `.gitignore` file with name patterns for *git* to ignore.
+- `.gitignore` file with patterns of file and directory names for *git* to ignore.
 
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -61,25 +61,27 @@ Project "*se1-play*" is created in several steps:
 
 1. [Inspect: *libs*](#5-inspect-libs)
 
-1. [*"Sourcing"* the Project](#6-sourcing-the-project)
+1. [Adding Java Code](#6-adding-java-code)
 
-1. [Add Java Code](#7-add-java-code)
+1. [*"Sourcing"* the Project](#7-sourcing-the-project)
 
-1. [Project *Build* and *Run*](#8-project-build-and-run)
+1. [Open Project with *VSCode*](#8-open-project-with-vscode)
 
-1. [*JUnit* Tests](#9-junit-tests)
+1. [Project *Build* and *Run*](#9-project-build-and-run)
 
-1. [*Javadoc*](#10-javadoc)
+1. [*JUnit* Tests](#10-junit-tests)
 
-1. [Package as *.jar*](#11-package-as-jar)
+1. [*Javadoc*](#11-javadoc)
 
-1. [Package as Stand-alone *.jar*](#12-package-as-stand-alone-jar)
+1. [Package as *.jar*](#12-package-as-jar)
 
-1. [Clean Project Build and *Continuous Integration (CI)*](#13-clean-project-build-and-continuous-integration-ci)
+1. [Package as Stand-alone *.jar*](#13-package-as-stand-alone-jar)
 
-1. [Push to Remote Repository](#14-push-to-remote-repository)
+1. [Clean Project Build](#14-clean-project-build)
 
-1. [Remarks to *VSCode*](#15-remarks-to-vscode)
+1. [Push to Remote Repository](#15-push-to-remote-repository)
+
+1. [Remarks to *VSCode*](#16-remarks-to-vscode)
 
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -116,21 +118,22 @@ structure is called the project *"scaffold" :*
    |   +--launch-terminal.json  # terminal launch settings
    |
    +-<libs>             # git-module with libraries required by the project
-   |  +--install.sh     # install-script for libraries
+   |  |
+   |  +-<jackson>           # library to process JSON data in Java
+   |  +-<jacoco>            # code-coverage library for Java
+   |  +-<jspecify>          # library with @Nullable annotations (used by JUnit6)
    |  |
    |  |  # JUnit test-runner and .jar files for unit tests
-   |  +--junit-platform-console-standalone-1.9.2.jar
-   |  +-<junit>
+   |  +--junit-platform-console-standalone-6.1.0-M1.jar
+   |  +-<junit>             # junit library
    |  |  +--apiguardian-api-1.1.2.jar
-   |  |  +--junit-jupiter-api-5.12.2.jar
-   |  |  +--junit-platform-commons-1.9.2.jar
+   |  |  +--junit-jupiter-api-6.1.0-M1.jar
+   |  |  +--junit-platform-commons-6.1.0-M1.jar
    |  |  +--opentest4j-1.3.0.jar
    |  |
-   |  +-<jackson>           # package to process JSON data in Java
-   |  +-<jacoco>            # code-coverage package for Java
-   |  +-<junit>             # JUnit package for Java
-   |  +-<logging>           # logging package for Java
-   |  +-<lombok>            # code-injection package for Java
+   |  +-<log4j>             # logging library for Java
+   |  +-<lombok>            # code-injection library for Java
+   |  +-<runtime-SE>        # runtime library used for SE1-projects
    |
    +-<src>              # <src> contains the project source code
    |  |
@@ -139,12 +142,12 @@ structure is called the project *"scaffold" :*
    |  +-<tests>             # <src/tests> Unit tests
    |  |
    |  +-<resources>         # <src/resources> none-Java sources, properties files
-   |     +--application.properties  # application configuration
-   |     +--log4j2.properties       # logger configuration
+   |     +--application.properties  # application configuration file
+   |     +--log4j2.properties       # log4j logging configuration file
    |     +-<META-INF>
-   |        +--MANIFEST.MF  # packaging information for created .jar
+   |        +--MANIFEST.MF  # packaging information included in packaged .jar
    |
-   +-<target>           # <target> contains artifacts generated during the project build process
+   +-<target>           # contains artifacts generated during the project build process
    |  |
    |  +-<classes>           # compiled source code (*.class files compiled from src/main)
    |  |
@@ -152,7 +155,8 @@ structure is called the project *"scaffold" :*
    |  |
    |  +-<resources>         # content copied from src/resources
    |  |
-   |  +-<docs>              # folder with compiled javadoc (html)
+   |  +-<javadoc>           # folder with compiled javadoc (html)
+   |  |  +--index.html      # file to open in browser
    |  |
    |  +-<coverage>          # folder with code coverage results
    |  |  +--jacoco.exec
@@ -168,10 +172,8 @@ structure is called the project *"scaffold" :*
 
 ## 2. Project Location and Initialization
 
-Find a place on your laptop for the `workspaces` directory and create the
-project directory `se1-play` within.
-
-For example, create the `workspaces` directory in your *HOME* directory:
+Create a new directory `workspaces` in your *HOME*-directory directory and
+create the project directory `se1-play` within:
 
 ```sh
 cd                          # change to the HOME directory (cd: change directory)
@@ -210,16 +212,56 @@ The first step within the *se1-play* project is to create a local *git*
 repository with an empty root commit:
 
 ```sh
-git init                    # initialize local git repository
+git init --initial-branch=main      # initialize local git repository
+```
 
+If you have never created a local *git* repository on your laptop, you may be
+asked to create a local *git* configuration file first.
+File [`$HOME/.gitconfig`](https://github.com/sgra64/dotfiles/blob/main/.gitconfig)
+is created in your *HOME*-directory with commands:
+
+```sh
+git config --global user.name "your name"
+git config --global user.email "your@email.com"
+```
+
+Show content of file *$HOME/.gitconfig*:
+
+```sh
+cat $HOME/.gitconfig        # show '.gitconfig' file
+```
+```
+[user]
+    name = Sven Graupner                <-- your name
+    email = sgraupner@bht-berlin.de     <-- your email address
+
+[core]
+    ignorecase = true       # ignore upper/lower case in file names
+    autocrlf = false        # disable crlf conversion on checkout
+    filemode = false        # ignore filemode (rwx) changes
+    eol = lf                # always use newline '\n' as end-of-line
+
+[init]
+        defaultBranch = main
+```
+
+**Important:** specifically for *Windows* laptops, put entries under `[core]`
+and `[init]` into your *$HOME/.gitconfig* file.
+
+Back to the *se1-play* project. Show the project content with the new local
+*git* repository:
+
+```sh
 ls -la                      # show project directory
 ```
 ```
 total 8
 drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:31 .
 drwxr-xr-x 1 svgr2 Kein    0 Apr  6 18:29 ..
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:19 .git      <-- local git repository created
+drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:19 .git      <-- new local git repository
 ```
+
+Next, create an empty root commit and tag as *"root"*:
 
 ```sh
 git commit --allow-empty -m "root commit (empty)"       # create empty root commit
@@ -228,10 +270,8 @@ git tag root                                            # tag commit as 'root'
 git log --oneline                                       # show the new commit
 ```
 ```
-52f8547 (HEAD -> main, tag: root) root commit (empty)   <-- empty root commit
+e9c43c5 (HEAD -> main, tag: root) root commit (empty)   <-- empty root commit
 ```
-
-The project has now a local *git* repository with an empty root commit.
 
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -240,9 +280,9 @@ The project has now a local *git* repository with an empty root commit.
 
 ## 3. Create a *.gitignore* - File
 
-A *.gitignore* file should always be created first in a new project. Mind the
+A *.gitignore* file should always be created for a new *git* project. Mind the
 `.` (dot) in front of the name" `.gitignore`, which is a "*dot file*".
-Avoid traling extensions such as `.txt`, which some editors create.
+Avoid extensions such as `.txt`, which some editors may create.
 
 Install [*.gitignore*](.gitignore) in the project directory with an editor or
 by download using the
@@ -266,14 +306,14 @@ drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:19 .git
 Commit the new *.gitignore* file:
 
 ```sh
-git add -f .gitignore               # stage the '.gitignore' file
+git add -f .gitignore               # stage the '.gitignore' file (mind '-f', with force)
 git commit -m "add .gitignore"      # commit the '.gitignore' file with message (-m)
 
 git log --oneline                   # show the commit log (commit history)
 ```
 ```
-7eacbb9 (HEAD -> main) add .gitignore                   <-- new commit
-52f8547 (tag: root) root commit (empty)                 <-- initial root commit
+dcf9764 (HEAD -> main) add .gitignore                   <-- new commit
+e9c43c5 (tag: root) root commit (empty)                 <-- initial root commit
 ```
 
 
@@ -305,15 +345,6 @@ git branch              # show branches that currently exist in the git reposito
 
 The `*` marks the branch that is currently active, which means this branch will
 receive subsequent commits.
-<!-- 
-We install the *.gitignore* file from the *main* branch and commit to the new
-branch *git-modules:*
-
-```sh
-git checkout main -- .gitignore     # check-out '.gitignore' from the main branch
-git commit -m "add .gitignore"      # commit with message: "add .gitignore"
-```
--->
 
 We import three *git* *sub-modules* into the *se1-play* project:
 
@@ -325,8 +356,133 @@ We import three *git* *sub-modules* into the *se1-play* project:
 
 *Git-modules* are imported from remote repositories with the *git submodules add*
 command. After import (add), *git-modules* are committed to branch *git-modules*,
-the currently active branch:
+the currently active branch.
 
+The first imported module is from the repository:
+[*gitmodule-env.sh*](https://github.com/sgra64/gitmodule-env.sh):
+
+```sh
+# import git submodule '.env' from the remote 'gitmodule-env.sh.git' repository
+git submodule add -f -- https://github.com/sgra64/gitmodule-env.sh.git .env
+```
+
+Show the new content:
+
+```sh
+ls -la                  # show imported content
+```
+```
+total 17
+drwxr-xr-x 1    0 Apr 19 19:33 ./
+drwxr-xr-x 1    0 Apr 19 18:56 ../
+drwxr-xr-x 1    0 Apr 19 19:33 .env/            <-- imported module
+drwxr-xr-x 1    0 Apr 19 19:33 .git/
+-rw-r--r-- 1 1074 Apr 19 19:30 .gitignore
+-rw-r--r-- 1   86 Apr 19 19:33 .gitmodules      <-- new file with git-modules configurations
+```
+
+Remove file *.gitmodules* from the tracking index to avoid removal when
+switching branches later:
+
+```sh
+# remove file from the tracking index to avoid removal when switching branches
+git rm --cached .gitmodules
+
+git status              # show git status of the project
+```
+```
+On branch git-modules
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        new file:   .env
+```
+
+Green coloring indicates that the git-module have already been staged.
+Commit git-modules to branch *git-modules*:
+
+```sh
+# commit git-modules (already staged)
+git commit -m "git submodules: .env"
+
+# show the commit log
+git log --oneline
+```
+```
+5cf0596 (HEAD -> git-modules) git submodule: .env
+dcf9764 (main) add .gitignore
+e9c43c5 (tag: root) root commit (empty)
+```
+
+
+&nbsp;
+
+Import two more modules:
+[*gitmodule-vscode-java*](https://github.com/sgra64/gitmodule-vscode-java) and
+[*gitmodule-libs-jars*](https://github.com/sgra64/gitmodule-libs-jars):
+
+```sh
+# import git submodule '.vscode' from the remote 'gitmodule-vscode-java.git' repository
+git submodule add -f -- https://github.com/sgra64/gitmodule-vscode-java.git .vscode
+
+git rm --cached .gitmodules && git commit -m "git submodule: .vscode"
+
+
+# import git submodule '.libs' from the remote 'gitmodule-libs-jars.git' repository
+git submodule add -f -- https://github.com/sgra64/gitmodule-libs-jars.git libs
+
+git rm --cached .gitmodules && git commit -m "git submodule: libs"
+```
+
+Show the new content:
+
+```sh
+ls -la                  # show imported content
+```
+```
+total 17
+drwxr-xr-x 1    0 Apr 19 19:33 ./
+drwxr-xr-x 1    0 Apr 19 18:56 ../
+drwxr-xr-x 1    0 Apr 19 19:33 .env/            <-- imported module '.env'
+drwxr-xr-x 1    0 Apr 19 19:33 .git/
+-rw-r--r-- 1 1074 Apr 19 19:30 .gitignore
+-rw-r--r-- 1   86 Apr 19 19:33 .gitmodules      <-- new file with git-modules configurations
+drwxr-xr-x 1    0 Apr 19 19:42 .vscode/         <-- imported module '.vscode'
+drwxr-xr-x 1    0 Apr 19 19:42 libs/            <-- imported module '.libs'
+```
+
+Show content of file *.gitmodules*, which contains the URLs of the
+imported repositories:
+
+```sh
+cat .gitmodules
+```
+```
+[submodule ".env"]
+    path = .env
+    url = https://github.com/sgra64/gitmodule-env.sh.git
+[submodule ".vscode"]
+    path = .vscode
+    url = https://github.com/sgra64/gitmodule-vscode-java.git
+[submodule "libs"]
+    path = libs
+    url = https://github.com/sgra64/gitmodule-libs-jar.git
+```
+
+Show the complete git commit log:
+
+```sh
+# show the commit log
+git log --oneline
+```
+```
+99f8ede (HEAD -> git-modules) git submodule: libs   <-- branch 'git-modules'
+adc62d6 git submodule: .vscode
+5cf0596 git submodule: .env
+dcf9764 (main) add .gitignore                       <-- branch 'main' points here
+e9c43c5 (tag: root) root commit (empty)
+```
+
+<!-- 
 ```sh
 # import git submodule '.env' from the remote 'gitmodule-env.sh.git' repository
 git submodule add -f -- https://github.com/sgra64/gitmodule-env.sh.git .env
@@ -346,75 +502,12 @@ git commit -m "add git submodule: '.vscode', update .gitmodules"
 git submodule add -f -- https://github.com/sgra64/gitmodule-libs-jars.git libs
 (cd libs && git rm README.md && git commit -m "remove README.md")
 git commit -m "add git submodule: 'libs', update .gitmodules"
-```
-```
-Cloning into 'C:/Sven1/svgr2/workspaces/1-SE/xxx/.env'...
-remote: Enumerating objects: 20, done.
-remote: Counting objects: 100% (20/20), done.
-remote: Compressing objects: 100% (15/15), done.
-remote: Total 20 (delta 4), reused 20 (delta 4), pack-reused 0 (from 0)
-Receiving objects: 100% (20/20), 23.05 KiB | 2.56 MiB/s, done.
-Resolving deltas: 100% (4/4), done.
---
-[git-modules 22d9403] add git submodule: '.env', add .gitmodules
- 2 files changed, 4 insertions(+)
- create mode 160000 .env
- create mode 100644 .gitmodules
-...
-Cloning into 'C:/Sven1/svgr2/workspaces/1-SE/se1-play/.vscode'...
-...
-Cloning into 'C:/Sven1/svgr2/workspaces/1-SE/se1-play/libs'...
-```
+``` -->
 
-New folders `.env`, `.vscode` and `libs` and a new file `.gitmodules` have been
-created in the project directory:
 
-```sh
-ls -la                      # show new content of the 'se1-play' project directory
-```
-```
-total 21
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:17 .
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 18:29 ..
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:06 .env          <-- new submodule '.env'
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:17 .git
--rw-r--r-- 1 svgr2 Kein 1214 Apr  6 19:31 .gitignore
--rw-r--r-- 1 svgr2 Kein  295 Apr  6 19:17 .gitmodules   <-- new '.gitmodules' file
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:11 .vscode       <-- new submodule '.vscode'
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 19:17 libs          <-- new submodule '.libs'
-```
+&nbsp;
 
-Show the `.gitmodules` file:
-
-```sh
-cat .gitmodules             # show content of the '.gitmodules' file
-```
-```
-[submodule ".env"]
-        path = .env
-        url = https://github.com/sgra64/gitmodule-env.sh.git
-[submodule ".vscode"]
-        path = .vscode
-        url = https://github.com/sgra64/gitmodule-vscode-java.git
-[submodule "libs"]
-        path = libs
-        url = https://github.com/sgra64/gitmodule-libs-jars.git
-```
-
-The commit-log shows three commits for the three submodules:
-
-```sh
-git log --oneline           # show commit log
-```
-```
-56c00e1 (HEAD -> main) add git submodule: 'libs', update .gitmodules
-20528c5 add git submodule: '.vscode', update .gitmodules
-c825831 add git submodule: '.env', add .gitmodules
-77b0b98 add .gitignore
-081f946 (tag: root) root commit (empty)
-```
-
-Test that *git-modules* have properly been registered:
+Test that *git-modules* have properly been imported:
 
 ```sh
 git submodule               # list registered sub-modules
@@ -441,35 +534,13 @@ Entering 'libs'
 Already up to date.
 ```
 
-Check for modifications in *sub-modules*:
-
-```sh
-git submodule foreach git status
-```
-```
-Entering '.env'
-On branch main
-Your branch is up to date with 'origin/main'.
-nothing to commit, working tree clean
-
-Entering '.vscode'
-On branch main
-Your branch is up to date with 'origin/main'.
-nothing to commit, working tree clean
-
-Entering 'libs'
-On branch main
-Your branch is up to date with 'origin/main'.
-nothing to commit, working tree clean
-```
-
 Switch back to the *main* branch:
 
 ```sh
 git switch main             # switch back to the main branch
 ```
 
-Accept warnings:
+Ignore warnings when switching back to the *main* branch:
 
 ```
 warning: unable to rmdir '.env': Directory not empty
@@ -478,7 +549,7 @@ warning: unable to rmdir 'libs': Directory not empty
 Switched to branch 'main'
 ```
 
-The current branch should now be *main*:
+The current branch is now *main*:
 
 ```sh
 git branch                  # show current branch
@@ -488,22 +559,20 @@ git branch                  # show current branch
 * main                      <-- main is the active branch (*)
 ```
 
-Check-out and commit the *.gitmodules* file:
+Imported modules and file *.gitmodules* is present on the *main* branch:
 
 ```sh
-git checkout git-modules -- .gitmodules     # check-out '.gitmodules' from branch 'git-modules'
-git commit -m "add .git-modules"            # commit with message: "add .git-modules"
-```
-
-The commit log now shows three commits:
-
-```sh
-git log --oneline           # show commit log
+ls -la
 ```
 ```
-3bdf0ff (HEAD -> main) add .git-modules
-1f53d2f add .gitignore
-a787431 (tag: root) root commit (empty)
+drwxr-xr-x 1    0 Apr 19 19:42 ./
+drwxr-xr-x 1    0 Apr 19 18:56 ../
+drwxr-xr-x 1    0 Apr 19 19:33 .env/            <-- module '.env'
+drwxr-xr-x 1    0 Apr 19 19:52 .git/
+-rw-r--r-- 1 1074 Apr 19 19:30 .gitignore
+-rw-r--r-- 1  267 Apr 19 19:42 .gitmodules      <-- file '.gitmodules'
+drwxr-xr-x 1    0 Apr 19 19:42 .vscode/         <-- git-module '.vscode'
+drwxr-xr-x 1    0 Apr 19 19:42 libs/            <-- git-module 'libs'
 ```
 
 
@@ -513,339 +582,55 @@ a787431 (tag: root) root commit (empty)
 
 ## 5. Inspect: *libs*
 
-<!-- 
-```sh
-# Fetch branch 'libs' from the repository (use the http-link, if the
-# git@-link does not work)
-# 
-git clone -b libs --single-branch git@github.com:sgra64/se1-play.git libs
-``` -->
-<!-- *Sub-module* `libs` does not contain actual *.jar* packages, but script
-*install.sh* to install them.
-
-Show the content of the `libs` folder:
-
-```sh
-find libs                           # list content of 'libs' folder
-```
-```
-libs
-libs/.bom               <-- 'bills-of-material' file with content to install
-libs/.git
-libs/.gitignore
-libs/install.sh         <-- script to source the 'install' command
-libs/README.md
-```
-
-Make sure you have *curl* or *wget* on your laptop for installation:
-
-```sh
-curl --version || wget --version
-```
-
-Follow instructions in
-[*gitmodule-libs*](https://github.com/sgra64/gitmodule-libs)
-to install libraries over the network.
-
-`>>>>>>`
-
-If you encounter *ERRORS* running the *install* command, replace the
-*git submodule*
-[*gitmodule-libs*](https://github.com/sgra64/gitmodule-libs)
-with *git submodule*:
-[*gitmodule-libs-jars*](https://github.com/sgra64/gitmodule-libs-jars),
-which contains the *.jar* files directly and does not require *install*:
-
-<! -- 
-https://stackoverflow.com/questions/1260748/how-do-i-remove-a-submodule
- -- >
-```sh
-# IN CASE OF ERROR running the install command -> deinstall the 'libs' module
-cd <project-dir>                    # cd to the project directory (if not there)
-
-git submodule deinit -f libs        # de-install the 'libs' submodule
-
-rm -rf .git/modules/libs            # remove submodule from .git/modules
-
-git rm -f libs                      # remove entry in .gitmodules
-
-# remove prior gitmodule commit: 'add git submodule: 'libs', update .gitmodules'
-git reset HEAD~1
-
-# install the alternative git-module 'gitmodule-libs-jars' under 'libs'
-git submodule add -f -- https://github.com/sgra64/gitmodule-libs-jars libs
-git commit -m "add git submodule: 'libs-jars', update .gitmodules"
-```
-
-`<<<<<<` -->
-
 Verify libraries have properly been installed:
 
 ```sh
-find libs                           # list content of 'libs' folder
+find libs/                           # list content of 'libs' folder
 ```
 ```
-libs
-libs/.bom               <-- 'bills-of-material' file with content to install
+libs/
 libs/.git
-libs/.gitignore
-libs/install.sh         <-- script to source the 'install' command
-
-libs/jackson                                        <-- 'jackson' JSON package for Java
-libs/jackson/jackson-annotations-2.13.0.jar
-libs/jackson/jackson-core-2.13.0.jar
-libs/jackson/jackson-databind-2.13.0.jar
-libs/jacoco                                         <-- 'jacoco' for code coverage analysis
+libs/jackson                                        <-- 'jackson' JSON libraries for Java
+libs/jackson/jackson-annotations-2.21.jar
+libs/jackson/jackson-core-2.21.0.jar
+libs/jackson/jackson-databind-2.21.0.jar
+libs/jacoco                                         <-- 'jacoco' libraries for code coverage analysis
 libs/jacoco/jacocoagent.jar
 libs/jacoco/jacococli.jar
-libs/jars-content.txt
-libs/junit                                          <-- 'junit' for JUnit tests
+libs/jspecify                                       <-- 'jspecify' library with @Nullable annotations
+libs/jspecify/jspecify-1.0.0.jar
+libs/junit                                          <-- 'junit' library for JUnit tests
 libs/junit/apiguardian-api-1.1.2.jar
-libs/junit/junit-jupiter-api-5.9.3.jar
-libs/junit/junit-platform-commons-1.9.3.jar
-libs/junit/opentest4j-1.2.0.jar
-libs/junit-platform-console-standalone-1.9.2.jar    <-- JUnit test runner that runs JUnit tests
-
-libs/logging                                        <-- logging package
-libs/logging/log4j-api-2.23.1.jar
-libs/logging/log4j-core-2.23.1.jar
-libs/logging/log4j-slf4j2-impl-2.23.1.jar
-libs/logging/slf4j-api-2.0.16.jar
-libs/lombok                                         <-- 'lombok' code injection package
-libs/lombok/lombok-1.18.36.jar
-libs/README.md
-```
-
-*Jar* files are distributed from a large central *"artifact repository"*, called the:
-[*Maven Repository*](https://mvnrepository.com/). See
-[*junit-jupiter-api-5.9.3.jar*](https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api)
-as an example.
-
-
-<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-
-&nbsp;
-
-## 6. *"Sourcing"* the Project
-
-*"Sourcing"* is jargon referring to executing a script with the
-[*source*](https://superuser.com/questions/46139/what-does-source-do)
-command in the context of the same *shell* process (not a sub-process).
-
-*"Sourcing a Project"* means executing the instructions in the
-*"sourced script"* that set up the environment of the project.
-Scripts are ususally called `.env` or `env.sh`. In this project,
-the source script
-[*env.sh*](https://github.com/sgra64/se1-play/blob/env/env.sh) resides in the
-[*.env*](https://github.com/sgra64/se1-play/tree/env)
-*git module*.
-
-The script will:
-
-- set environment variables for the *shell* process:
-
-  - `CLASSPATH`, `JDK_JAVAC_OPTIONS`, `JDK_JAVADOC_OPTIONS`, `JAR_PACKAGE_LIBS`
-
-- create project files for the *VSCode* IDE:
-
-  - `.classpath`, `.project`, `.vscode/launch-coderunner` and
-
-- create functions used for the *build* process:
-
-  - `show cmd [args] cmd [args] ...` -- show build commands,
-    - example: `show` all commands or `show compile compile-tests package`
-  
-  - `mk [--show] cmd [args] cmd [args] ...` -- execute build commands,
-    - example: `mk clean compile compile-tests package`
-  
-  - `wipe [--all|-a]` -- unset project environment variables and functions.
-
-    - `--all | -a` -- including project files
-
-*Environment variables* and *functions* are set for the *executing shell* and
-only last for the existence of that *shell* process (terminal).
-
-When the *shell* process ends, e.g. when the terminal is closed, *functions*
-and *environment variables* are lost (project files will remain). They need to
-be *re-sourced* when a new terminal is opened (and *shell* process created).
-
-It is important that IDE like *VSCode* respond to environment variables, e.g.
-`CLASSPATH`. Therefore, it is advised to source the project before *VSCode*
-is launched from the project directory. The *shell* process will pass
-environment variables to *VSCode*. For this reason, we have not yet started
-*VSCode* in the project.
-
-*Source* the project in the project folder executing the `env.sh` script in `.env`:
-
-```sh
-source .env/env.sh          # source the project (execute script 'env.sh' in '.env')
-```
-
-Output shows the created environment:
-
-```
-----------------------------
- - created environment variables:
-    - CLASSPATH
-    - JDK_JAVAC_OPTIONS
-    - JDK_JAVADOC_OPTIONS
-    - JAR_PACKAGE_LIBS
- - created files:
-    - .classpath
-    - .project
-    - .vscode/launch-coderunner
- - created functions:
-    - show cmd [args] cmd [args] ...
-    - mk [--show] cmd [args] cmd [args] ...
-    - wipe [--all|-a]
-----------------------------
-```
-
-The new function: `show` prints new commands that are now available
-for *building* the project.
-
-```sh
-show                    # show commands for the build process
-```
-```
-build:
-  mk clean compile compile-tests run-tests package
-
-compile:
-  javac $(find  -name '*.java') -d target/classes
-
-compile-tests:
-  echo no tests present
-
-run:
-  echo no main class to execute
-
-run-tests:
-  echo no tests present
-
-package:
-  jar -c -v -f "target/application-1.0.0-SNAPSHOT.jar" \
-    -C target/classes . $(packaged_content) &&
-    [ -f ${P[target-jar]} ] &&
-      echo -e "-->\\ncreated: ${P[target-jar]}" ||
-      echo -e "-->\\nno compiled classes or manifest, no .jar created"
-
-run-jar:
-  java -jar "target/application-1.0.0-SNAPSHOT.jar"
-
-javadoc:
-  echo no source files present
-
-clean:
-  : nothing to clean
-```
-
-New environment variables that have been created in the executing *shell*
-process can be listed:
-
-```sh
-# show value of the 'CLASSPATH' environment variable
-echo $CLASSPATH                         # print CLASSPATH (as long ';' or ':' separated list)
-
-echo $CLASSPATH | tr '[:;]' '\n'        # pretty-print ClASSPATH
-```
-
-Output is a `:` (`;` on Windows) - separated list with paths pointing to folders with
-`.class` files or `.jar` files:
-
-```
-target/classes;libs/jackson/jackson-annotations-2.19.0.jar;libs/jackson/jackson-core-2.19.0.jar;libs/jackson/jackson-databind-2.19.0.jar;libs/junit/junit-jupiter-api-5.12.2.jar;libs/log4j/log4j-api-2.24.3.jar;libs/log4j/log4j-core-2.24.3.jar;libs/log4j/log4j-slf4j2-impl-2.24.3.jar;libs/log4j/slf4j-api-2.0.17.jar;libs/lombok/lombok-1.18.38.jar
-
-target/classes
-libs/jackson/jackson-annotations-2.19.0.jar
-libs/jackson/jackson-core-2.19.0.jar
-libs/jackson/jackson-databind-2.19.0.jar
-libs/junit/junit-jupiter-api-5.12.2.jar
+libs/junit/junit-jupiter-api-6.1.0-M1.jar
+libs/junit/junit-platform-commons-6.1.0-M1.jar
+libs/junit/opentest4j-1.3.0.jar
+libs/junit-platform-console-standalone-6.1.0-M1.jar     <-- 'junit' test runner
+libs/log4j                                          <-- 'log4j' logging libraries
 libs/log4j/log4j-api-2.24.3.jar
 libs/log4j/log4j-core-2.24.3.jar
 libs/log4j/log4j-slf4j2-impl-2.24.3.jar
 libs/log4j/slf4j-api-2.0.17.jar
-libs/lombok/lombok-1.18.38.jar
+libs/lombok
+libs/lombok/lombok-1.18.44.jar                      <-- 'lombok' code injection library
+libs/README.md
+libs/runtime-SE
+libs/runtime-SE/runtimeSE-1.0.0-RELEASE.jar         <-- SE-1 runtime library
 ```
 
-New project configuration files have also appeared in the project directory:
-
-```sh
-ls -la . .vscode
-```
-```
-total 30
-drwxr-xr-x 1    0 Oct 21 12:33 ./
-drwxr-xr-x 1    0 Oct 21 11:56 ../
--rw-r--r-- 1 1318 Oct 21 12:33 .classpath               <-- created
-drwxr-xr-x 1    0 Oct 21 12:00 .env/
-drwxr-xr-x 1    0 Oct 21 12:28 .git/
--rw-r--r-- 1 1262 Oct 21 12:07 .gitignore
--rw-r--r-- 1  272 Oct 21 12:28 .gitmodules
--rw-r--r-- 1  380 Oct 21 12:33 .project                 <-- created
-drwxr-xr-x 1    0 Oct 21 12:33 .vscode/
-drwxr-xr-x 1    0 Oct 21 12:02 libs/
-```
-
-Function `wipe` removes all created environment variables. They can be rebuilt
-any time:
-
-```sh
-wipe                    # unset all created environment variables
-```
-```
-wiping:
- - unset CLASSPATH, JDK_JAVAC_OPTIONS, JDK_JAVADOC_OPTIONS, JAR_PACKAGE_LIBS
-```
-```sh
-wipe --all              # in addition, created project files are removed
-```
-```
- wiping:
- - unset CLASSPATH, JDK_JAVAC_OPTIONS, JDK_JAVADOC_OPTIONS, JAR_PACKAGE_LIBS
- - rm -rf target .classpath .project .vscode/launch-coderunner
- - unset -f command show mk wipe prepare_manifest packaged_content
-```
-
-Environment variables are no longer set:
-
-```sh
-# show value of the 'CLASSPATH' environment variable
-echo $CLASSPATH
-```
-```
-                        <-- empty output
-```
-<!-- 
-To shorten access to the sourcing script, a
-[*symbolic link*](https://www.freecodecamp.org/news/linux-ln-how-to-create-a-symbolic-link-in-linux-example-bash-command/)
-can be created pointing to `.env/env.sh`:
-
-```sh
-ln -s .env/env.sh env.sh        # create symbolic link to the source script
-
-ls -la
-```
-```
-total 30
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 21:19 .
-drwxr-xr-x 1 svgr2 Kein    0 Apr  6 18:29 ..
-lrwxrwxrwx 1 svgr2 Kein   11 Apr  6 21:19 env.sh -> .env/env.sh     <-- new symbolic link
-...
-``` -->
-
-Re-source the project:
-
-```sh
-source .env/env.sh      # re-source the project
-```
+*Jar* files are distributed from a large central *"artifact repository"*, called the:
+[*Maven Repository*](https://mvnrepository.com/). See example
+[*junit-jupiter-api*](https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api)
+with version
+[*junit-jupiter-api-6.1.0-M1*](https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api/6.1.0-M1),
+which includes the downloadable
+[*jar*](https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-api/6.1.0-M1/junit-jupiter-api-6.1.0-M1.jar)-file
 
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
 &nbsp;
 
-## 7. Add Java Code
+## 6. Adding Java Code
 
 Java source code is maintained under the `src/main` folder. This project is
 created as a
@@ -900,104 +685,327 @@ drwxr-xr-x 1 svgr2 Kein    0 Oct 21 12:02 libs
 drwxr-xr-x 1 svgr2 Kein    0 Oct 21 12:55 src           <-- new 'src' folder
 ```
 
-Insert source files into the structure. Make sure to create source files
-in the correct sub-folders.
+Install three source files into the `"src"` - directory:
 
-If you are unsure to create files in proper locations, you can "*touch*"
-(create as empty files) files before adding content:
+- [`src/main/module-info.java`](https://github.com/sgra64/se1-play/blob/main/src/main/module-info.java) - the module description of the project.
+
+- [`src/main/application/package-info.java`](https://github.com/sgra64/se1-play/blob/main/src/main/application/package-info.java) - the description of the *application* package.
+
+- [`src/main/application/Application.java`](https://github.com/sgra64/se1-play/blob/main/src/main/application/Application.java) - a class with the `main()` method.
+
+Install from the remote repository:
 
 ```sh
-touch src/main/module-info.java                 # create empty file 'module-info.java' in 'src/main'
+# define variable 'url' with the download URL
+url="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/main"
 
-touch src/main/application/Application.java     # create 'Application.java' in 'src/main/application'
+curl -o src/main/module-info.java $url/src/main/module-info.java
 
-touch src/main/application/package-info.java    # create 'package-info.java' in 'src/main/application'
+curl -o src/main/application/package-info.java $url/src/main/application/package-info.java
 
-find src                                        # show new files
+curl -o src/main/application/Application.java $url/src/main/application/Application.java
+
+# show new files
+find src/
 ```
+
 ```
 src
 src/main/application
-src/main/application/Application.java           <-- new file 'Application.java' in 'src/application'
-src/main/application/package-info.java          <-- new file 'package-info.java' in 'src/application'
-src/main/module-info.java                       <-- new file 'module-info.java' in 'src'
+src/main/application/Application.java       <-- new file in 'src/application'
+src/main/application/package-info.java      <-- new file in 'src/application'
+src/main/module-info.java                   <-- new file 'module-info.java' in 'src'
 ```
 
-<!-- 
-```sh
-vim src/main/module-info.java                   # open file for editing in the 'vim' editor
-```
 
-You can use any editor, but beware of launching *VSCode* is the project before it is being sourced.
-Since the project environment has not yet been set up, *VSCode* will likely not understand the
-project structure and create the cache with wrong content, which will cause malfunction later and
-the need to manually fix the cache.
-
-Learn the most basic
-[*vim commands*](https://www.freecodecamp.org/news/vim-beginners-guide/)
-to add content to the files:
-
-1. Open the file, e.g. `vim src/module-info.java`.
-
-1. Hit key `i` to switch to *insert* mode (*INSERT* will appear in the lower left corner).
-
-1. Copy text and paste into the editor. Inserted text will appear in the editor.
-
-1. Hit the `ESC` key to end *insert* mode.
-    Then, hit key `:` to switch to *command-line mode* (cursor jumps to the lower left
-    corner) and enter commands: `w` (write) and `q` (quit) or short: `:wq`, which will
-    write the content to the file and quit *vim*.
-
-Check that content has arrived in the file:
-
-```sh
-cat src/module-info.java                    # output content of the file
-```
-Output will show the content of the file. -->
-
-Next, fill Java source code into the created in files using your IDE.
-
-Lanuch the IDE from the project directory, for *VSCode :*
-
-```sh
-# make sure you are in the project directory, command 'ls -la'
-# should list the '.git' folder
-ls -la
-
-# launch VSCode only if you saw the '.git' folder with 'ls -la'
-# if you don't see '.git', change to the project directory
-# ONLY then, start VSCode in the current (.) directory
-# MIND the dot (.):
-# 
-code .              # start VSCode in the current project directory ('.')
-```
-
-*VSCode* should start and open the project.
-
-Other IDE are less sensitive to where they are started.
-
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
 &nbsp;
 
-Fill content into file `src/main/module-info.java` with your IDE:
+## 7. *"Sourcing"* the Project
+
+*"Sourcing"* is jargon referring to executing a script with the
+[*"source"*](https://superuser.com/questions/46139/what-does-source-do)
+command in the context of the same *shell* process (not a sub-process).
+
+*"Sourcing a Project"* means executing the  *"sourcing script"*
+[`env.sh`](https://github.com/sgra64/se1-play/blob/env/env.sh) that
+resides in the
+[`.env`](https://github.com/sgra64/se1-play/tree/env)
+*git module*.
+
+The script will:
+
+- set environment variables for the *shell* process:
+
+  - `CLASSPATH`, `MODULEPATH`, `JDK_JAVAC_OPTIONS`, `JDK_JAVADOC_OPTIONS`,
+    `JAR_PACKAGE_LIBS`
+
+- create project files for the *VSCode* IDE:
+
+  - `.classpath`, `.project`, `.vscode/launch-coderunner` and
+
+- create functions used for the *build* process:
+
+  - `show cmd [args] cmd [args] ...` -- show build commands,
+    - example: `show` all commands or `show compile compile-tests package`
+  
+  - `mk [--show] cmd [args] cmd [args] ...` -- execute build commands,
+    - example: `mk clean compile compile-tests package`
+  
+  - `wipe [--all|-a]` -- unset project environment variables and functions.
+
+    - `--all | -a` -- remove everything including project files.
+
+*Environment variables* and *functions* are set for the *executing shell* and
+only last for the existence of that *shell* process (terminal).
+
+When the *shell* process ends, e.g. when the terminal is closed, *functions*
+and *environment variables* are lost (project files will remain). They need to
+be *re-sourced* when a new terminal is opened (and *shell* process created).
+
+It is important that IDE like *VSCode* respond to environment variables, e.g.
+`CLASSPATH`. Therefore, it is advised to source the project before *VSCode*
+is launched from the project directory. The *shell* process will pass
+environment variables to *VSCode*. For this reason, we have not yet started
+*VSCode* in the project.
+
+*Source* the project in the project folder executing the `env.sh` script in `.env`:
+
+```sh
+source .env/env.sh          # source the project (execute script 'env.sh' in '.env')
+```
+
+Output shows the created environment:
+
+```
+----------------------------
+ - created environment variables:
+    - CLASSPATH
+    - MODULEPATH
+    - JDK_JAVAC_OPTIONS
+    - JDK_JAVADOC_OPTIONS
+    - JAR_PACKAGE_LIBS
+ - created files:
+    - .classpath
+    - .project
+    - .vscode/launch-coderunner
+ - created functions:
+    - show cmd [args] cmd [args] ...
+    - mk [--show] cmd [args] cmd [args] ...
+    - wipe [--all|-a]
+----------------------------
+--> success
+```
+
+The new function: `show` prints new commands that are now available
+for *building* the project.
+
+```sh
+show                    # show commands for the build process
+```
+```
+build:
+  mk clean compile compile-tests run-tests package
+
+compile:
+  javac $(find src/main -name '*.java') -d target/classes
+
+compile-tests:
+  echo no tests present
+
+run:
+  java -p $MODULEPATH -m "se1_play/application.Application"
+
+run-tests:
+  echo no tests present
+
+package:
+  jar -c -v -f "target/application-1.0.0-SNAPSHOT.jar" \
+    -C target/classes . $(packaged_content) &&
+    [ -f ${P[target-jar]} ] &&
+      echo -e "-->\\ncreated: target/application-1.0.0-SNAPSHOT.jar" ||
+      echo -e "-->\\nno compiled classes or manifest, no .jar created"
+
+run-jar:
+  java -jar "target/application-1.0.0-SNAPSHOT.jar"
+
+javadoc:
+  rm -rf target/javadoc &&
+  javadoc --source-path src/main -d target/javadoc \
+    --module-path "$MODULEPATH" -version -author -Xdoclint:-missing \
+    -noqualifier "java.*:application.*" \
+    application &&
+    echo -e "-->\\ncreated javadoc in: 'target/javadoc/index.html'"
+
+clean:
+  : nothing to clean
+```
+
+New environment variables that have been created in the executing *shell*
+process can be listed:
+
+```sh
+# show value of the 'CLASSPATH' environment variable
+echo $CLASSPATH                         # print CLASSPATH (as long ';' or ':' separated list)
+
+echo $CLASSPATH | tr '[:;]' '\n'        # pretty-print ClASSPATH
+
+echo $MODULEPATH                        # new environment variable
+```
+
+Output is a `:` (`;` on Windows) - separated list with paths pointing to folders with
+`.class` files or `.jar` files:
+
+```
+# CLASSPATH:
+target/classes;libs/jackson/jackson-annotations-2.21.jar;libs/jackson/jackson-core-2.21.0.jar;libs/jackson/jackson-databind-2.21.0.jar;libs/jspecify/jspecify-1.0.0.jar;libs/junit/junit-jupiter-api-6.1.0-M1.jar;libs/log4j/log4j-api-2.24.3.jar;libs/log4j/log4j-core-2.24.3.jar;libs/log4j/log4j-slf4j2-impl-2.24.3.jar;libs/log4j/slf4j-api-2.0.17.jar;libs/lombok/lombok-1.18.44.jar;libs/runtime-SE/runtimeSE-1.0.0-RELEASE.jar
+
+target/classes
+libs/jackson/jackson-annotations-2.21.jar
+libs/jackson/jackson-core-2.21.0.jar
+libs/jackson/jackson-databind-2.21.0.jar
+libs/jspecify/jspecify-1.0.0.jar
+libs/junit/junit-jupiter-api-6.1.0-M1.jar
+libs/log4j/log4j-api-2.24.3.jar
+libs/log4j/log4j-core-2.24.3.jar
+libs/log4j/log4j-slf4j2-impl-2.24.3.jar
+libs/log4j/slf4j-api-2.0.17.jar
+libs/lombok/lombok-1.18.44.jar
+libs/runtime-SE/runtimeSE-1.0.0-RELEASE.jar
+
+# MODULEPATH:
+target/classes;libs/jackson;libs/jspecify;libs/junit;libs/log4j;libs/lombok;libs/runtime-SE
+```
+
+New project configuration files have also appeared in the project directory:
+
+```sh
+ls -la . .vscode
+```
+```
+total 30
+drwxr-xr-x 1    0 Apr 19 21:29 ./
+drwxr-xr-x 1    0 Apr 19 18:56 ../
+-rw-r--r-- 1 2906 Apr 19 21:29 .classpath               <-- created
+drwxr-xr-x 1    0 Apr 19 20:54 .env/
+drwxr-xr-x 1    0 Apr 19 20:54 .git/
+-rw-r--r-- 1 1074 Apr 19 20:54 .gitignore
+-rw-r--r-- 1  272 Apr 19 20:54 .gitmodules
+-rw-r--r-- 1  380 Apr 19 21:29 .project                 <-- created
+drwxr-xr-x 1    0 Apr 19 21:29 .vscode/
+drwxr-xr-x 1    0 Apr 19 20:54 libs/
+drwxr-xr-x 1    0 Apr 19 21:25 src/
+```
+
+Function `wipe` removes all created environment variables. They can be rebuilt
+any time:
+
+```sh
+wipe                    # unset all created environment variables
+```
+```
+wiping:
+ - unset CLASSPATH, MODULEPATH, JDK_JAVAC_OPTIONS, JDK_JAVADOC_OPTIONS,
+   JAR_PACKAGE_LIBS
+```
+```sh
+wipe --all              # in addition, created project files are removed
+```
+```
+wiping:
+ - rm -rf .classpath .project .vscode/launch-coderunner
+ - unset -f command show mk wipe prepare_manifest packaged_content
+```
+
+Environment variables are no longer set:
+
+```sh
+# show value of the 'CLASSPATH' environment variable
+echo $CLASSPATH
+```
+```
+                        <-- empty output
+```
+<!-- 
+To shorten access to the sourcing script, a
+[*symbolic link*](https://www.freecodecamp.org/news/linux-ln-how-to-create-a-symbolic-link-in-linux-example-bash-command/)
+can be created pointing to `.env/env.sh`:
+
+```sh
+ln -s .env/env.sh env.sh        # create symbolic link to the source script
+
+ls -la
+```
+```
+total 30
+drwxr-xr-x 1 svgr2 Kein    0 Apr  6 21:19 .
+drwxr-xr-x 1 svgr2 Kein    0 Apr  6 18:29 ..
+lrwxrwxrwx 1 svgr2 Kein   11 Apr  6 21:19 env.sh -> .env/env.sh     <-- new symbolic link
+...
+``` -->
+
+Re-source the project:
+
+```sh
+source .env/env.sh      # re-source the project
+```
+
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+&nbsp;
+
+## 8. Open Project with *VSCode*
+
+*VSCode* **must always be started** from within the project directory. *VSCode*
+handles one project in one IDE/Editor instance. You cannot have multiple projects
+open in the same *VSCode* IDE/Editor instance!
+
+Verify that you are in the project directory:
+
+```sh
+pwd                         # print working directory
+
+ls -la
+```
+```
+.../workspaces/se1-play     <-- pwd shows path ending with 'workspaces/se1-play'
+
+total 33                    <-- 'ls -la' shows the content of the project directory
+# 
+drwxr-xr-x 1 svgr2 Kein    0 Apr 19 21:36 .
+drwxr-xr-x 1 svgr2 Kein    0 Apr 19 18:56 ..
+-rw-r--r-- 1 svgr2 Kein 2906 Apr 19 21:34 .classpath
+drwxr-xr-x 1 svgr2 Kein    0 Apr 19 20:54 .env
+drwxr-xr-x 1 svgr2 Kein    0 Apr 19 20:54 .git
+-rw-r--r-- 1 svgr2 Kein 1074 Apr 19 20:54 .gitignore
+-rw-r--r-- 1 svgr2 Kein  272 Apr 19 20:54 .gitmodules
+-rw-r--r-- 1 svgr2 Kein  660 Apr 19 21:36 .project
+drwxr-xr-x 1 svgr2 Kein    0 Apr 19 21:34 .vscode
+drwxr-xr-x 1 svgr2 Kein    0 Apr 19 20:54 libs
+drwxr-xr-x 1 svgr2 Kein    0 Apr 19 21:25 src
+```
+
+Start *VSCode* from the project directory:
+
+```sh
+# start VSCode IDE at this (dot, '.') directory, mind the dot '.'
+code .
+```
+
+It may take few seconds for *VSCode* to start and initialize the project. Mind
+messages shown in the lower-left corner of *VSCode*. Wait until *VSCode* has
+finished setup.
+
+Open file `src/main/module-info.java`:
 
 <!-- @@ src/main/module-info.java @BEGIN -->
+
 ```java
 /**
- * Modules have been introduced in Java 9 (in 2017) to build software from modular
- * projects. Prior, applications could be built only from packages within a project.
- * <p>
- * See Jakob Jenkov's article:
- * <a href="https://jenkov.com/tutorials/java/modules.html"><i>Java Modules</i></a>.
- * </p><p>
- * {@code module-info.java} indicates a <i>modular</i> Java project. It includes
- * the module name: {@link se1_play}, external modules required by this module and
- * packages exported to other modules. Opening a package makes it accessible to
- * tools such as JUnit test runners. Javadoc requires packages open or exported.
- * </p><p>
- * Locations of <i>required</i> modules are provided by the {@code MODULEPATH}
- * environment variable.
- * </p>
+ * <i>Module</i> {@link se1_play} is used during the <i>Software Engineering 1</i>
+ * course.
  * @version <code style=color:green>{@value application.package_info#Version}</code>
  * @author <code style=color:blue>{@value application.package_info#Author}</code>
  */
@@ -1013,7 +1021,7 @@ module se1_play {
     opens application;
 
     /*
-     * External module required by this module (JUnit-5 module for JUnit testing).
+     * External module required by this module (JUnit module for JUnit testing).
      */
     // requires org.junit.jupiter.api;
 }
@@ -1021,29 +1029,41 @@ module se1_play {
 <!-- @@ src/main/module-info.java @END -->
 
 
+Modules have been introduced in *Java 9* (2017) to build software from modular
+projects. Prior, applications could be built only from packages within a project.
+See *Jakob Jenkov's* article:
+[*Java Modules*](https://jenkov.com/tutorials/java/modules.html).
+
+The presence of a module description in file `module-info.java` indicates a
+*modular* Java project. It includes the module name: `se1_play`, external
+modules required by this module and packages exported from this module to
+other modules.
+Locations of *required* modules are provided by the `MODULEPATH` environment
+variable.
+
+*"Opening"* a package makes it accessible to tools such as *Javadoc* and the
+*JUnit test runner*. *Javadoc* requires packages open or exported.
+
+
 &nbsp;
 
-Fill content into file: `src/application/package-info.java` -- adjust the `Author`
-information with your name:
+Open file `src/main/application/package-info.java`:
 
 <!-- @@ src/main/application/package-info.java @BEGIN -->
+
 ```java
 /**
  * The {@link application} package includes classes with a {@code main()} -
- * function executable by the Java VM.
- *
+ * method as entry point for the <i>Java Virtual Machine (VM)</i>.
  * @version <code style=color:green>{@value application.package_info#Version}</code>
  * @author <code style=color:blue>{@value application.package_info#Author}</code>
  */
 package application;
 
-
 /**
- * Class {@code package_info} of the {@link application} package provides global
- * variables used in <i>Javadoc</i>.
- *
- * File {@code package-info.java} has been introduced with <i>Modules</i>
- * in Java 9 (2017) to provide package-level documentation.
+ * Define variables used in <i>Javadoc</i>. {@code package-info.java}
+ * has been introduced with <i>Modules</i> in <i>Java 9 (2017)</i> to
+ * provide package-level documentation.
  */
 class package_info {
 
@@ -1060,90 +1080,62 @@ class package_info {
 ```
 <!-- @@ src/main/application/package-info.java @END -->
 
+Files *package-info.java* have been introduced with *Java Modules* (2017) to
+provide a place to store package-level documentation (describing a package
+for *Javadoc*).
+
+The file may also include static variables such as *"Author"* and *"Version"*
+used in *Javadoc* doc strings.
+
 
 &nbsp;
 
-And fill in content for file: `src/application/Application.java`:
+Open file `src/main/application/Application.java`:
 
 <!-- @@ src/main/application/Application.java @BEGIN -->
 ```java
 package application;
 
-import java.util.Arrays;
-
 /**
- * Application class with a {@code main()} - function that parses command line
- * arguments.
- *
+ * Application class with the {@code main()} - method as entry point for the
+ * <i>Java Virtual Machine (VM)</i>.
  * @version <code style=color:green>{@value application.package_info#Version}</code>
  * @author <code style=color:blue>{@value application.package_info#Author}</code>
  */
 public class Application {
 
     /**
-     * {@code main()} - function as entry point for the Java VM.
-     * @param args arguments passed from the command line
+     * Entry point for the <i>Java Virtual Machine (VM)</i>.
+     * @param args arguments passed from the command line.
      */
     public static void main(String[] args) {
         var module = Application.class.getModule().getName();
         var greeting = String.format(module==null? "%s, se1-play" : "%s, %s (modular)", "Hello", module);
         System.out.println(greeting);
-
-        Arrays.stream(args)
-            .map(arg -> String.format(" - arg: %s", arg))
-            .forEach(System.out::println);
+        // 
+        for(String arg : args) {
+            String output = String.format(" - arg: %s", arg);
+            System.out.println(output);
+        }
+        // // 
+        // java.util.Arrays.stream(args)
+        //     .map(arg -> String.format(" - arg: %s", arg))
+        //     .forEach(System.out::println);
     }
 }
 ```
 <!-- @@ src/main/application/Application.java @END -->
 
-
-The project must be *re-sourced* to reflect the new content in the project
-environment:
-
-```sh
-wipe --all                  # wipe project environment
-
-source .env/env.sh
-```
-
-With the presence of file *module-info.java*, the project has been recognized
-as a modular project, shown by a new environment variable: *MODULEPATH*:
-
-```
-----------------------------
- - created environment variables:
-    - CLASSPATH
-    - MODULEPATH            <-- new environment variable due to 'module-info.java'
-    - JDK_JAVAC_OPTIONS
-    - JDK_JAVADOC_OPTIONS
-    - JAR_PACKAGE_LIBS
- - created files:
-    - .classpath
-    - .project
-    - .vscode/launch-coderunner
- - created functions:
-    - show cmd [args] cmd [args] ...
-    - mk [--show] cmd [args] cmd [args] ...
-    - wipe [--all|-a]
-----------------------------
-```
-
-```sh
-echo $CLASSPATH             # shows as before
-
-echo $MODULEPATH            # new environment variable
-```
-```
-target/classes;libs/jackson;libs/junit;libs/log4j;libs/lombok
-```
+Class *Application.java* has a `main(String[] args)` method as entry point
+for the *Java Virtual Machine (VM)*. It prints a greeting line and processes
+`String[] args` command line arguments.
 
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
 &nbsp;
 
-## 8. Project *Build* and *Run*
+## 9. Project *Build* and *Run*
 
 *"Project Build"* is the process of:
 
@@ -1178,16 +1170,17 @@ find src target         # output 'src' and 'target' folders
 src
 src/main
 src/main/application
-src/main/application/Application.java           <-- .java file in 'src' in package 'application'
+src/main/application/Application.java
 src/main/application/package-info.java
 src/main/module-info.java
-target
+
+target/
 target/classes
 target/classes/application
-target/classes/application/Application.class    <-- .class file in 'target' in package 'application'
+target/classes/application/Application.class    <-- compiled class for 'Application.java'
 target/classes/application/package-info.class
 target/classes/application/package_info.class
-target/classes/module-info.class
+target/classes/module-info.class                <-- compiled class for 'module-info.java'
 ```
 
 Try various methods to run the program:
@@ -1197,7 +1190,7 @@ java --class-path=target/classes application.Application 1 23 456
 
 java application.Application 1 23 456
 
-java -p "$MODULEPATH" -m se1.play/application.Application 1 23 456
+java -p "$MODULEPATH" -m se1_play/application.Application 1 23 456
 ```
 
 The program outputs the parameters passed as command line arguments
@@ -1225,19 +1218,37 @@ Hello, se1.play (modular)
  - arg: 456
 ```
 
-When this works, commit source files to the *main* branch (current):
+When this works, commit source files to the *main* branch (current).
+A commit always starts with staging the files to be committed:
 
 ```sh
 git add src/main                # stage 'src' file
+
+git status                      # show staged files
+```
+
+Staged files appear in green color:
+
+```
+On branch main
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        new file:   src/main/application/Application.java
+        new file:   src/main/application/package-info.java
+        new file:   src/main/module-info.java
+```
+
+Staged files can now be committed:
+
+```sh
 git commit -m "add src/main"    # commit 'src' file
 
 git log --oneline               # show commit log
 ```
 ```
-abacbd8 (HEAD -> main) add src/main                 <-- new commit
-3bdf0ff add .git-modules
-1f53d2f add .gitignore
-a787431 (tag: root) root commit (empty)
+fe284be (HEAD -> main) add src/main                 <-- new commit on branch 'main'
+dcf9764 add .gitignore
+e9c43c5 (tag: root) root commit (empty)
 ```
 
 
@@ -1245,7 +1256,7 @@ a787431 (tag: root) root commit (empty)
 
 &nbsp;
 
-## 9. *JUnit* Tests
+## 10. *JUnit* Tests
 
 [*JUnit Tests*](https://www.codeflow.site/de/article/junit-assertions#_4_junit_5_assertions)
 test individual code units ("*units-under-test*") in isolation to other units.
@@ -1364,7 +1375,7 @@ public class Application_0_always_pass_Tests {
 Remove the comment in file *module-info.java* to require *org.junit.jupiter.api :*
 
 ```java
-module se1.play {
+module se1_play {
 
     /*
      * External module required by this module (JUnit-5 module for JUnit testing).
@@ -1373,11 +1384,23 @@ module se1.play {
 }
 ```
 
-Wipe and re-source the project:
+Wipe and re-source the project. Wiping removes all environment variables, files
+and functions created during *sourcing*:
 
 ```sh
 wipe --all              # remove project environment variable and files
+```
+```
+wiping:
+ - unset CLASSPATH, MODULEPATH, JDK_JAVAC_OPTIONS, JDK_JAVADOC_OPTIONS,
+   JAR_PACKAGE_LIBS
+ - rm -rf target .classpath .project .vscode/launch-coderunner
+ - unset -f command show mk wipe prepare_manifest packaged_content
+```
 
+*Re-sourcing* rebuilds the environment, now taking unit tests into account:
+
+```sh
 source env.sh           # re-source the project to include the new 'tests' folder
 ```
 
@@ -1392,9 +1415,8 @@ project environment:
     - JDK_JAVAC_OPTIONS
     - JDK_JAVADOC_OPTIONS
     - JAR_PACKAGE_LIBS
-    - JUNIT_CLASSPATH       <-- new environment variable
-    - JUNIT_OPTIONS         <-- new environment variable
-    - JACOCO_AGENT_OPTIONS  <-- new environment variable
+    - JUNIT_CLASSPATH           <-- new environment variable
+    - JACOCO_AGENT_OPTIONS      <-- new environment variable
  - created files:
     - .classpath
     - .project
@@ -1433,18 +1455,19 @@ src/main/application
 src/main/application/Application.java
 src/main/application/package-info.java
 src/main/module-info.java
-src/tests
-src/tests/application                   <-- new test class (.java file)
+src/tests                               <-- new test classes (.java file)
+src/tests/application
 src/tests/application/Application_0_always_pass_Tests.java
-target/
+
+target
 target/classes
 target/classes/application
 target/classes/application/Application.class
 target/classes/application/package-info.class
 target/classes/application/package_info.class
 target/classes/module-info.class
-target/test-classes
-target/test-classes/application         <-- new compiled test .class files
+target/test-classes                     <-- new compiled test .class files
+target/test-classes/application
 target/test-classes/application/Application_0_always_pass_Tests.class
 ```
 
@@ -1461,7 +1484,7 @@ Output shows the command invoking the Java VM `java` with arguments:
 run-tests:
   java -cp $JUNIT_CLASSPATH \
     org.junit.platform.console.ConsoleLauncher $JUNIT_OPTIONS \
-    --scan-class-path
+  execute --scan-classpath
 ```
 
 Output of the test runner shows two passing tests from the test class
@@ -1479,15 +1502,21 @@ Thanks for using JUnit! Support its development at https://junit.org/sponsoring
 ```
 <!-- 
 ```
+setUpBeforeClass() runs once before any @Test method
+setUpBeforeEach() runs before each @Test method
+tearDownAfterEach() runs after each @Test method
+setUpBeforeEach() runs before each @Test method
+tearDownAfterEach() runs after each @Test method
+tearDownAfterClass() runs after all @Test methods have finished
 ╷
+├─ JUnit Platform Suite ✔
 ├─ JUnit Jupiter ✔
 │  └─ Application_0_always_pass_Tests ✔
 │     ├─ test_001_always_pass() ✔
 │     └─ test_002_always_pass() ✔
-├─ JUnit Vintage ✔
-└─ JUnit Platform Suite ✔
+└─ JUnit Vintage ✔
 
-Test run finished after 133 ms
+Test run finished after 255 ms
 [         4 containers found      ]
 [         0 containers skipped    ]
 [         4 containers started    ]
@@ -1507,27 +1536,97 @@ Test run finished after 133 ms
 
 &nbsp;
 
-Make sure tests also run in the IDE:
+Make sure tests also run in the IDE. You may need to 
+*Clean Java Language Server Workspace* to make *VSCode* to recognize tests:
+
+Type `<Ctrl> + <Shift> + <P>`, then type: `"Clean Java Language Server..."` and accept
+all further choices. This rebuilds the *VSCode's* state of the project.
+After that, the test icon should appear in *VSCode* and show the test.
+
+Run the test:
 
 <img src="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/markup/img/vscode-4-unit-tests.png" width="800"/>
 
 
 &nbsp;
 
-Commit tests when tests are passing:
+When the test is passing, commit tests. Show the changes to commit first.
+Red lines show new or modified content:
 
 ```sh
-git add src/tests                           # stage test files
-git commit -m "add src/tests unit tests"    # commit test files
+git status
+```
+```
+On branch main
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   src/main/module-info.java
 
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        src/tests/
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+
+Recall what changes were made to modified file *src/main/module-info.java*:
+
+```sh
+git diff src/main/module-info.java
+```
+
+The difference shows the the *org.junit.jupiter.api* actication:
+
+```diff
+diff --git a/src/main/module-info.java b/src/main/module-info.java
+index 24e46f9..a7703be 100644
+--- a/src/main/module-info.java
++++ b/src/main/module-info.java
+@@ -18,5 +18,5 @@ module se1_play {
+     /*
+      * External module required by this module (JUnit module for JUnit testing)
+.
+      */
+-    // requires org.junit.jupiter.api;
++    requires org.junit.jupiter.api;
+ }
+```
+
+Stage changes:
+
+```sh
+git add src/main/module-info.java src/tests
+
+git status
+```
+
+Staged files now appear in green:
+
+```
+On branch main
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        modified:   src/main/module-info.java
+        new file:   src/tests/application/Application_0_always_pass_Tests.java
+```
+
+Finally, commit staged files:
+
+```sh
+git commit -m "add src/tests unit tests"    # commit test files
+```
+
+The commit log now has 4 commits on the *main* branch:
+
+```sh
 git log --oneline                           # show commit log/history
 ```
 ```
-a54d147 (HEAD -> main) add src/tests unit tests
-abacbd8 add src/main
-3bdf0ff add .git-modules
-1f53d2f add .gitignore
-a787431 (tag: root) root commit (empty)
+5cf0f7f (HEAD -> main) add src/tests unit tests
+fe284be add src/main
+dcf9764 add .gitignore
+e9c43c5 (tag: root) root commit (empty)
 ```
 
 
@@ -1535,7 +1634,7 @@ a787431 (tag: root) root commit (empty)
 
 &nbsp;
 
-## 10. *Javadoc*
+## 11. *Javadoc*
 
 *Javadoc* is *Java's* documentation method and toolset based on
 [*Java doc strings*](https://de.wikipedia.org/wiki/Javadoc), which are
@@ -1552,13 +1651,12 @@ Output shows the command calling the `javadoc` compiler with output directed `-d
 
 ```
 javadoc:
-  rm -rf target/docs &&
-  javadoc --source-path src/main -d target/docs \
+  rm -rf target/javadoc &&
+  javadoc --source-path src/main -d target/javadoc \
     --module-path "$MODULEPATH" -version -author -Xdoclint:-missing \
     -noqualifier "java.*:application.*" \
     application &&
-    echo -e "-->\\ncreated javadoc in: target/docs"
-
+    echo -e "-->\\ncreated javadoc in: 'target/javadoc/index.html'"
 ```
 
 Output of the `javadoc` compiler:
@@ -1566,29 +1664,31 @@ Output of the `javadoc` compiler:
 ```
 Loading source files for package application...
 Constructing Javadoc information...
-Creating destination directory: "target/docs\"
+Creating destination directory: "target/javadoc\"
 Building index for all the packages and classes...
 Standard Doclet version 21+35-LTS-2513
 Building tree for all the packages and classes...
-Generating target\docs\se1.play\application\Application.html...
-Generating target\docs\se1.play\application\package-summary.html...
-Generating target\docs\se1.play\application\package-tree.html...
-Generating target\docs\se1.play\module-summary.html...
-Generating target\docs\overview-tree.html...
+Generating target\javadoc\se1_play\application\Application.html...
+Generating target\javadoc\se1_play\application\package-summary.html...
+Generating target\javadoc\se1_play\application\package-tree.html...
+Generating target\javadoc\se1_play\module-summary.html...
+Generating target\javadoc\overview-tree.html...
 Building index for all classes...
-Generating target\docs\allclasses-index.html...
-Generating target\docs\allpackages-index.html...
-Generating target\docs\index-all.html...
-Generating target\docs\search.html...
-Generating target\docs\index.html...
-Generating target\docs\help-doc.html...
+Generating target\javadoc\allclasses-index.html...
+Generating target\javadoc\allpackages-index.html...
+Generating target\javadoc\index-all.html...
+Generating target\javadoc\search.html...
+Generating target\javadoc\index.html...
+Generating target\javadoc\help-doc.html...
+-->
+created javadoc in: 'target/javadoc/index.html'
 ```
 
-Output is compiled to the `target/docs` folder and can be displayed in
+Output is compiled to the `target/javadoc` folder and can be displayed in
 a web-browser from the `index.html` file.
 
 ```sh
-ls -la target/docs              # show generated content of the 'docs' folder
+ls -la target/javadoc               # show generated content of the 'docs' folder
 ```
 ```
 total 146
@@ -1601,7 +1701,7 @@ drwxr-xr-x 1 svgr2 Kein     0 Apr  6 22:15 ..
 Open file `docs/index.html` in a web-browser, e.g. with:
 
 ```sh
-chrome target/docs/index.html   # open web-browser with Javadoc
+chrome target/javadoc/index.html    # open web-browser with Javadoc
 ```
 
 You may need to open the file in another way if the `chrome` command does not work.
@@ -1614,8 +1714,9 @@ Navigate through: `application` -> `Application`:
 
 <img src="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/markup/img/javadoc-2.png" width="800"/>
 
-Make sure, your name appears as *Author* - adjust in: `src/application/package-info.java`
-and recompile *Javadoc*.
+
+Make changes such that your name appears as *Author* - adjust in:
+`src/application/package-info.java` and recompile *Javadoc*.
 
 Since *Javadoc* is generated (compiled) content, it is not committed to the
 *git* repository. Java source files have already been committed. 
@@ -1625,7 +1726,7 @@ Since *Javadoc* is generated (compiled) content, it is not committed to the
 
 &nbsp;
 
-## 11. Package as *.jar*
+## 12. Package as *.jar*
 
 "*Packaging*" means collecting compiled code (`.class` files) in a `.jar`
 (Java archive) file to release or distribute the developed software.
@@ -1643,15 +1744,15 @@ package:
   jar -c -v -f "target/application-1.0.0-SNAPSHOT.jar" \
     -C target/classes . $(packaged_content) &&
     [ -f ${P[target-jar]} ] &&
-      echo -e "-->\\ncreated: ${P[target-jar]}" ||
+      echo -e "-->\\ncreated: target/application-1.0.0-SNAPSHOT.jar" ||
       echo -e "-->\\nno compiled classes or manifest, no .jar created"
 ---
 added manifest
 added module-info: module-info.class
 adding: application/(in = 0) (out= 0)(stored 0%)
-adding: application/Application.class(in = 2107) (out= 1003)(deflated 52%)
+adding: application/Application.class(in = 1110) (out= 667)(deflated 39%)
 adding: application/package-info.class(in = 117) (out= 101)(deflated 13%)
-adding: application/package_info.class(in = 408) (out= 293)(deflated 28%)
+adding: application/package_info.class(in = 408) (out= 292)(deflated 28%)
 -->
 created: target/application-1.0.0-SNAPSHOT.jar
 ```
@@ -1666,12 +1767,12 @@ Output shows the packaged `.jar` file `application-1.0.0-SNAPSHOT.jar`:
 
 ```
 total 16
-drwxr-xr-x 1 svgr2 Kein    0 Oct 21 22:19 .
-drwxr-xr-x 1 svgr2 Kein    0 Oct 21 20:54 ..
--rw-r--r-- 1 svgr2 Kein 2570 Oct 21 22:19 application-1.0.0-SNAPSHOT.jar
-drwxr-xr-x 1 svgr2 Kein    0 Oct 21 21:04 classes
-drwxr-xr-x 1 svgr2 Kein    0 Oct 21 21:22 docs
-drwxr-xr-x 1 svgr2 Kein    0 Oct 21 21:04 test-classes
+drwxr-xr-x 1 svgr2 Kein    0 Apr 19 23:21 .
+drwxr-xr-x 1 svgr2 Kein    0 Apr 19 22:57 ..
+-rw-r--r-- 1 svgr2 Kein 2234 Apr 19 23:21 application-1.0.0-SNAPSHOT.jar
+drwxr-xr-x 1 svgr2 Kein    0 Apr 19 23:05 classes
+drwxr-xr-x 1 svgr2 Kein    0 Apr 19 23:18 javadoc
+drwxr-xr-x 1 svgr2 Kein    0 Apr 19 23:05 test-classes
 ```
 
 Run `application-1.0.0-SNAPSHOT.jar`. Mind that the *.jar* file is passed on
@@ -1711,7 +1812,7 @@ provided. This is fixed in the next step when the *.jar* is packaged as a
 
 &nbsp;
 
-## 12. Package as Stand-alone *.jar*
+## 13. Package as Stand-alone *.jar*
 
 Packaging a *stand-alone .jar* requires the information of the class with the
 *main()* function to executea be included in the *.jar* file in a file called
@@ -1741,12 +1842,11 @@ git commit -m "add META-INF/MANIFEST.MF"
 git log --oneline                           # show commit log/history
 ```
 ```
-ffbc5d1 (HEAD -> main) add META-INF/MANIFEST.MF
-a54d147 add src/tests unit tests
-abacbd8 add src/main
-3bdf0ff add .git-modules
-1f53d2f add .gitignore
-a787431 (tag: root) root commit (empty)
+1e17517 (HEAD -> main) add META-INF/MANIFEST.MF
+5cf0f7f add src/tests unit tests
+fe284be add src/main
+dcf9764 add .gitignore
+e9c43c5 (tag: root) root commit (empty)
 ```
 
 The *MANFEST.MF* file specifies the class with the *main()* function in a
@@ -1766,7 +1866,7 @@ package:
     --manifest=target/resources/META-INF/MANIFEST.MF \      <-- new MANIFEST.MF included
     -C target/classes . $(packaged_content) &&
     [ -f ${P[target-jar]} ] &&
-      echo -e "-->\\ncreated: ${P[target-jar]}" ||
+      echo -e "-->\\ncreated: target/application-1.0.0-SNAPSHOT.jar" ||
       echo -e "-->\\nno compiled classes or manifest, no .jar created"
 ```
 
@@ -1777,14 +1877,13 @@ jar tvf target/application-1.0.0-SNAPSHOT.jar
 ```
 
 ```
-     0 Wed Oct 22 12:08:50 CEST 2025 META-INF/
-   193 Wed Oct 22 12:08:50 CEST 2025 META-INF/MANIFEST.MF   <-- new MANIFEST.MF included
-   267 Wed Oct 22 12:08:48 CEST 2025 module-info.class
-     0 Wed Oct 22 12:08:48 CEST 2025 application/
-  1913 Wed Oct 22 12:08:48 CEST 2025 application/Application.class
-   333 Wed Oct 22 12:08:48 CEST 2025 application/package_info.class
-   318 Wed Oct 22 12:08:48 CEST 2025 resources/application.properties
-  2253 Wed Oct 22 12:08:48 CEST 2025 resources/log4j2.properties
+     0 Sun Apr 19 23:24:40 CEST 2026 META-INF/
+   575 Sun Apr 19 23:24:40 CEST 2026 META-INF/MANIFEST.MF   <-- new MANIFEST.MF included
+   236 Sun Apr 19 23:24:34 CEST 2026 module-info.class
+     0 Sun Apr 19 23:24:34 CEST 2026 application/
+  1110 Sun Apr 19 23:24:34 CEST 2026 application/Application.class
+   117 Sun Apr 19 23:24:34 CEST 2026 application/package-info.class
+   408 Sun Apr 19 23:24:34 CEST 2026 application/package_info.class
 ```
 
 Show the content of *MANFEST.MF:*
@@ -1798,6 +1897,17 @@ Manifest-Version: 1.0
 Created-By: Software Engineering project
 Main-Class: application.Application             <-- 'Main-Class' has been injected
 Class-Path: resources
+    libs/jackson/jackson-annotations-2.21.jar   <-- libraries added to Class-Path fiels
+    libs/jackson/jackson-core-2.21.0.jar
+    libs/jackson/jackson-databind-2.21.0.jar
+    libs/jspecify/jspecify-1.0.0.jar
+    libs/junit/junit-jupiter-api-6.1.0-M1.jar
+    libs/log4j/log4j-api-2.24.3.jar
+    libs/log4j/log4j-core-2.24.3.jar
+    libs/log4j/log4j-slf4j2-impl-2.24.3.jar
+    libs/log4j/slf4j-api-2.0.17.jar
+    libs/lombok/lombok-1.18.44.jar
+    libs/runtime-SE/runtimeSE-1.0.0-RELEASE.jar
 ```
 
 Run the new *stand-alone .jar:*
@@ -1812,36 +1922,12 @@ Hello, se1-play
  - arg: 456
 ```
 
-<!-- 
-Output shows the packaged files:
-```
-libs/jackson/jackson-annotations-2.13.0.jar
-libs/jackson/jackson-core-2.13.0.jar
-libs/jackson/jackson-annotations-2.13.0.jar
-libs/jackson/jackson-core-2.13.0.jar
-libs/jackson/jackson-databind-2.13.0.jar
-libs/jackson/jackson-databind-2.13.0.jar
-libs/logging/log4j-api-2.23.1.jar
-libs/logging/log4j-api-2.23.1.jar
-libs/logging/log4j-core-2.23.1.jar
-libs/logging/log4j-core-2.23.1.jar
-libs/logging/log4j-slf4j2-impl-2.23.1.jar
-libs/logging/slf4j-api-2.0.16.jar
-libs/logging/log4j-slf4j2-impl-2.23.1.jar
-libs/logging/slf4j-api-2.0.16.jar
-added manifest
-added module-info: module-info.class
-adding: application/(in = 0) (out= 0)(stored 0%)
-adding: application/Application.class(in = 1913) (out= 940)(deflated 50%)
-adding: application/package_info.class(in = 333) (out= 260)(deflated 21%)
-``` -->
-
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
 &nbsp;
 
-## 13. Clean Project Build and *Continuous Integration (CI)*
+## 14. Clean Project Build
 
 A *"clean project build"* first removes all content that previously has been
 created (*"clean"* stage). Next, all artifacts are rebuilt (*"build"* stage).
@@ -1915,7 +2001,7 @@ From the article:
 
 &nbsp;
 
-## 14. Push to Remote Repository
+## 15. Push to Remote Repository
 
 Use your account at
 [*BHT GitLab*](https://gitlab.bht-berlin.de/) or
@@ -2048,7 +2134,7 @@ explicitely *"pull"* changes (new commits) made by others.
 
 &nbsp;
 
-## 15. Remarks to *VSCode*
+## 16. Remarks to *VSCode*
 
 Wipe and re-source the project before launching *VSCode:*
 
@@ -2125,3 +2211,67 @@ mk run A BC DEF                         # run the program
 mk run-tests                            # run tests
 ```
  -->
+
+
+
+<!--
+
+git init --initial-branch=main
+git commit --allow-empty -m "root commit (empty)"
+git tag root
+
+curl -o .gitignore https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/main/.gitignore
+git add -f .gitignore
+git commit -m "add .gitignore"
+
+git switch -c git-modules
+git submodule add -f -- https://github.com/sgra64/gitmodule-env.sh.git .env
+git rm --cached .gitmodules && git commit -m "git submodule: .env"
+
+git submodule add -f -- https://github.com/sgra64/gitmodule-vscode-java.git .vscode
+git rm --cached .gitmodules && git commit -m "git submodule: .vscode"
+
+git submodule add -f -- https://github.com/sgra64/gitmodule-libs-jars.git libs
+git rm --cached .gitmodules && git commit -m "git submodule: libs"
+
+git switch main
+
+mkdir -p src/main/application
+url="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/main"
+curl -o src/main/module-info.java $url/src/main/module-info.java
+curl -o src/main/application/Application.java $url/src/main/application/Application.java
+curl -o src/main/application/package-info.java $url/src/main/application/package-info.java
+
+git add src/main
+git commit -m "add src/main"
+
+mkdir -p src/tests/application
+curl -o src/tests/application/Application_0_always_pass_Tests.java \
+$url/src/tests/application/Application_0_always_pass_Tests.java
+
+# patch -p1 ...
+# git apply ...
+# 
+    git apply <<< "diff --git a/src/main/module-info.java b/src/main/module-info.java
+index 24e46f9..a7703be 100644
+--- a/src/main/module-info.java
++++ b/src/main/module-info.java
+@@ -18,5 +18,5 @@ module se1_play {
+     /*
+      * External module required by this module (JUnit module for JUnit testing).
+      */
+-    // requires org.junit.jupiter.api;
++    requires org.junit.jupiter.api;
+ }" && echo "patch successfully applied to 'module-info.java'" ||
+    echo "patch 'module-info.java' failed"
+
+git add src/main/module-info.java src/tests
+git commit -m "add src/tests unit tests"
+
+mkdir -p src/resources/META-INF
+curl -o src/resources/META-INF/MANIFEST.MF $url/src/resources/META-INF/MANIFEST.MF
+
+git add src/resources
+git commit -m "add META-INF/MANIFEST.MF"
+
+-->

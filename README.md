@@ -81,13 +81,17 @@ Project "*se1-play*" is created in several steps:
 
 1. [Package as Stand-alone *.jar*](#13-package-as-stand-alone-jar)
 
-1. [Clean Project Build](#14-clean-project-build)
+1. [*Clean Project Build* and *Run*](#14-clean-project-build-and-run)
 
-1. [Push to Remote Repository](#15-push-to-remote-repository)
+1. [*SE1-Runtime*](#15-se1-runtime)
 
-1. [Remarks to *VSCode*](#16-remarks-to-vscode)
+1. [Package: *optionals*](#16-package-optionals)
 
-1. [Summary](#17-summary)
+1. [Push to Remote Repository](#17-push-to-remote-repository)
+
+1. [Remarks to *VSCode*](#18-remarks-to-vscode)
+
+1. [Summary](#19-summary)
 
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -1012,7 +1016,6 @@ finished setup.
 Open file `src/main/module-info.java`:
 
 <!-- @@ src/main/module-info.java @BEGIN -->
-
 ```java
 /**
  * <i>Module</i> {@link se1_play} is used during the <i>Software Engineering 1</i>
@@ -1023,18 +1026,19 @@ Open file `src/main/module-info.java`:
 module se1_play {
 
     /*
-     * Make package {@code application} accessible to other modules at compile
+     * Make package {@link application} accessible to other modules at compile
      * and runtime (use <i>open</i> for compile-time access only).
      */
     exports application;
 
-    /* Open package to JUnit test runner and Javadoc compiler. */
+    /* Open package to JUnit test runner and the javadoc compiler. */
     opens application;
 
     /*
-     * External module required by this module (JUnit module for JUnit testing).
+     * External modules required by this module.
      */
     // requires org.junit.jupiter.api;
+    // requires transitive runtimeSE;
 }
 ```
 <!-- @@ src/main/module-info.java @END -->
@@ -1061,7 +1065,6 @@ variable.
 Open file `src/main/application/package-info.java`:
 
 <!-- @@ src/main/application/package-info.java @BEGIN -->
-
 ```java
 /**
  * The {@link application} package includes classes with a {@code main()} -
@@ -1108,15 +1111,14 @@ Open file `src/main/application/Application.java`:
 package application;
 
 /**
- * Application class with the {@code main()} - method as entry point for the
- * <i>Java Virtual Machine (VM)</i>.
+ * Class with {@code main()} method as entry point for the Java VM.
  * @version <code style=color:green>{@value application.package_info#Version}</code>
  * @author <code style=color:blue>{@value application.package_info#Author}</code>
  */
 public class Application {
 
     /**
-     * Entry point for the <i>Java Virtual Machine (VM)</i>.
+     * Method {@code main()} is the entry point for the <i>Java Virtual Machine (VM)</i>.
      * @param args arguments passed from the command line.
      */
     public static void main(String[] args) {
@@ -1124,11 +1126,13 @@ public class Application {
         var greeting = String.format(module==null? "%s, se1-play" : "%s, %s (modular)", "Hello", module);
         System.out.println(greeting);
         // 
+        // print arguments passed from the command line
         for(String arg : args) {
             String output = String.format(" - arg: %s", arg);
             System.out.println(output);
         }
-        // // 
+        // 
+        // print arguments passed from the command line as Java Stream
         // java.util.Arrays.stream(args)
         //     .map(arg -> String.format(" - arg: %s", arg))
         //     .forEach(System.out::println);
@@ -1587,7 +1591,7 @@ Recall what changes were made to modified file *src/main/module-info.java*:
 git diff src/main/module-info.java
 ```
 
-The difference shows the the *org.junit.jupiter.api* actication:
+The difference shows the the *org.junit.jupiter.api* activation:
 
 ```diff
 diff --git a/src/main/module-info.java b/src/main/module-info.java
@@ -1835,7 +1839,7 @@ mkdir -p src/resources/META-INF
 touch src/resources/META-INF/MANIFEST.MF
 ```
 
-Fill content into file `MANIFEST.MF`:
+Add content to file `MANIFEST.MF`:
 
 <!-- @@ src/resources/META-INF/MANIFEST.MF @BEGIN -->
 ```
@@ -1844,21 +1848,6 @@ Created-By: Software Engineering project
 ```
 <!-- @@ src/resources/META-INF/MANIFEST.MF @END -->
 
-Commit file `MANIFEST.MF`:
-
-```sh
-git add src/resources
-git commit -m "add META-INF/MANIFEST.MF"
-
-git log --oneline                           # show commit log/history
-```
-```
-1e17517 (HEAD -> main) add META-INF/MANIFEST.MF
-5cf0f7f add src/tests unit tests
-fe284be add src/main
-dcf9764 add .gitignore
-e9c43c5 (tag: root) root commit (empty)
-```
 
 The *MANFEST.MF* file specifies the class with the *main()* function in a
 *.jar* file. The class information in the *MANFEST.MF* file is injected
@@ -1933,12 +1922,28 @@ Hello, se1-play
  - arg: 456
 ```
 
+Commit file `MANIFEST.MF`:
+
+```sh
+git add src/resources
+git commit -m "add META-INF/MANIFEST.MF"
+
+git log --oneline                           # show commit log/history
+```
+```
+1e17517 (HEAD -> main) add META-INF/MANIFEST.MF
+5cf0f7f add src/tests unit tests
+fe284be add src/main
+dcf9764 add .gitignore
+e9c43c5 (tag: root) root commit (empty)
+```
+
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
 &nbsp;
 
-## 14. Clean Project Build
+## 14. *Clean Project Build* and *Run*
 
 A *"clean project build"* first removes all content that previously has been
 created (*"clean"* stage). Next, all artifacts are rebuilt (*"build"* stage).
@@ -2012,7 +2017,369 @@ From the article:
 
 &nbsp;
 
-## 15. Push to Remote Repository
+## 15. *SE1-Runtime*
+
+Java module `libs/runtime-SE/runtimeSE-1.0.*-RELEASE.jar` provides a simple
+runtime system with some basic functions that are not included in *Java*:
+
+1. Scanning for classes that implements the
+    [*Runner.java*](https://sgra64.github.io/se1-runtime/target/javadoc/runtimeSE/runtimeSE/Runner.html)
+    interface and invoking the `run(RuntimeSE runtime, String[] args)` for
+    launching the application.
+
+1. Advanced processing of command line arguments via the
+    [*CommandRunner.java*](https://sgra64.github.io/se1-runtime/target/javadoc/runtimeSE/runtimeSE/CommandRunner.html)
+    interface. Argument processing includes splitting command line arguments into
+    multiple runs (invocations of method
+    `run(RuntimeSE runtime, String command, CommandRunner.KVArgs args)`)
+    and parsing of named *key-value* - pairs passed via the command line, see the
+    [*KVArgs.java*](https://sgra64.github.io/se1-runtime/target/javadoc/runtimeSE/runtimeSE/CommandRunner.KVArgs.html) interface.
+
+1. Application configuration with
+    [*application.properties*](https://github.com/sgra64/se1-play/blob/main/src/resources/application.properties)
+    under path
+    [*src/resources*](https://github.com/sgra64/se1-play/blob/main/src/resources).
+
+1. Support of a minimal logging system, see interface
+    [*Logger.java*](https://sgra64.github.io/se1-runtime/target/javadoc/runtimeSE/runtimeSE/Logger.html).
+
+The features of the *SE1 Runtime* system are defined under path
+[*main/src/main/runtimeSE*](https://github.com/sgra64/se1-runtime/tree/main/src/main/runtimeSE)
+by interfaces:
+
+- [*RuntimeSE.java*](https://github.com/sgra64/se1-runtime/blob/main/src/main/runtimeSE/RuntimeSE.java)
+    with interface
+    [*Runner.java*](https://github.com/sgra64/se1-runtime/blob/main/src/main/runtimeSE/Runner.java),
+
+- [*CommandRunner.java*](https://github.com/sgra64/se1-runtime/blob/main/src/main/runtimeSE/CommandRunner.java)
+    with interface
+    [*KVArgs*](https://sgra64.github.io/se1-runtime/target/javadoc/runtimeSE/runtimeSE/CommandRunner.KVArgs.html),
+
+- [*Logger.java*](https://github.com/sgra64/se1-runtime/blob/main/src/main/runtimeSE/Logger.java),
+
+See also the
+[*runtimeSE Javadoc*](https://sgra64.github.io/se1-runtime/target/javadoc/runtimeSE/module-summary.html).
+
+
+&nbsp;
+
+To enable *runtime*, remove the comment in file *module-info.java* to require
+module *runtimeSE :*
+
+```java
+module se1_play {
+
+    requires transitive runtimeSE;      // <-- remove comment
+}
+```
+
+Next, change
+[*Application.java*](src/main/application/Application-runtime-java)
+such that:
+
+- it implements the interface
+    [*Runner*](https://sgra64.github.io/se1-runtime/target/javadoc/runtimeSE/runtimeSE/Runner.html),
+
+- the `main()` - method starts the *runtime* system and
+
+- new method `run()` is invoked by the *runtime* system:
+
+
+```java
+package application;
+
+import runtimeSE.Runner;
+import runtimeSE.RuntimeSE;
+import runtimeSE.Runner.Accessors;
+
+/**
+ * Class with {@code main()} method as entry point for the Java VM.
+ * @version <code style=color:green>{@value application.package_info#Version}</code>
+ * @author <code style=color:blue>{@value application.package_info#Author}</code>
+ */
+@Accessors(priority=0)
+public class Application implements Runner {
+
+    /**
+     * Method {@code main()} is the entry point for the <i>Java Virtual Machine (VM)</i>.
+     * @param args arguments passed from the command line.
+     */
+    public static void main(String[] args) {
+        // 
+        // Start {@code runtime} to load {@code application.properties},
+        // scan for classes that implement the {@link Runner} interface,
+        // create singleton instances of selected classes and invoke their
+        // {@code run(RuntimeSE runtime, String[] args)} method.
+        RuntimeSE.getInstance().startup(args);
+    }
+
+    /**
+     * Method invoked by the runtime. Application code starts here.
+     * @param runtime reference to the runtime singleton instance ({@link RuntimeSE}).
+     * @param args arguments passed from the command line.
+     */
+    @Override
+    public void run(RuntimeSE runtime, String[] args) {
+        // 
+        // fetch 'application.name' property from file 'application.properties'
+        String applicationName = runtime.properties().getProperty("application.name",
+            "unknown (no 'application.name' property)");
+
+        String applicationVersion = runtime.properties().getProperty("application.version",
+            "unknown version (no 'application.version' property)");
+        // 
+        String greeting = String.format("Hello, %s (version %s)", applicationName, applicationVersion);
+        System.out.println(greeting);
+
+        // print arguments passed from the command line
+        for(String arg : args) {
+            String output = String.format(" - arg: %s", arg);
+            System.out.println(output);
+        }
+        // 
+        // print arguments passed from the command line as Java Stream
+        // java.util.Arrays.stream(args)
+        //     .map(arg -> String.format(" - arg: %s", arg))
+        //     .forEach(System.out::println);
+    }
+}
+```
+
+The concept that we *don't invoke "our code"* from *main()*, but *our code "is invoked"*
+is also known as *"Inversion-of-Control"*, see Martin Folwer's original article
+[*"Inversion-of-Control"*](https://martinfowler.com/bliki/InversionOfControl.html)
+(2005).
+
+Frameworks implement the concept of *Inversion-of-Control*, including frameworks
+[*Spring*](https://spring.io/projects/spring-framework) and
+[*Spring Boot*](https://spring.io/projects/spring-boot).
+It offers flexibility, e.g. multiple classes can co-exist as entry point of
+applications and are selected by configuration (e.g. by `@Accessors(priority)`)
+while the *main()* method remains fixed in one class.
+
+Second, file
+[`src/resources/application.properties`](src/resources/application.properties)
+contains *key-value* pairs with application configuration information.
+In the *run()* method, variables *applicationName* and *applicationVersion*
+are fetched from a properties `application.name` and `application.version`:
+
+```properties
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# common 'application' configuration properties
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+application.name = 'SE-1 Play'
+application.version = 1.0.0
+application.args = A BB CCC
+
+# application.run.policy: all, first-only
+application.run.policy = first-only
+```
+
+If no arguments are passed from the command line, *args[]* can be provided
+by a property `application.args`:
+
+```sh
+mk run Hello World      # run with 'args[]' from the command line
+
+mk run                  # run with 'args[]' from 'application.args'
+```
+```
+Hello, 'SE-1 Play' (version 1.0.0)
+ - arg: Hello           <-- 'args[]' from command line
+ - arg: World
+
+ Hello, 'SE-1 Play' (version 1.0.0)
+ - arg: A               <-- 'args[]' from 'application.args'
+ - arg: BB
+ - arg: CCC
+```
+
+Commit changes:
+
+```sh
+git status                      # show changes made to the project
+
+--> commit changes with message: "updates to use module runtime"
+
+git log --oneline               # show commit log/history
+```
+```
+2fa4602 (HEAD -> main) updates to use module runtime
+1e17517 add META-INF/MANIFEST.MF
+5cf0f7f add src/tests unit tests
+fe284be add src/main
+dcf9764 add .gitignore
+e9c43c5 (tag: root) root commit (empty)
+```
+
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+&nbsp;
+
+## 16. Package: *optionals*
+
+Create a new package `optionals` with class `OptionalsRunner.java` to explore
+[*Optional&lt;T&gt;*](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html)
+from the lecture. *Optional&lt;T&gt;* was introduced with *Java 8* (2014).
+
+Add default arguments to `application.properties`:
+
+```properties
+optionals.args = Tasse Kanne Becher
+```
+
+Create class [`OptionalsRunner.java`](src/main/optionals/OptionalsRunner.java):
+
+```java
+package optionals;
+
+import java.util.Map;
+import java.util.Optional;
+
+import runtimeSE.Runner;
+import runtimeSE.RuntimeSE;
+import runtimeSE.Runner.Accessors;
+
+
+/**
+ * Demo that shows the use of <i>Optional&lt;T&gt;</i> in Java.
+ * 
+ * <i>Optional&lt;T&gt;</i> is a container class that contains one element
+ * or is empty, @see
+ * <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html"><i>Optional&lt;T&gt;</i></a>
+ */
+@Accessors(priority=1)
+public class OptionalsRunner implements Runner {
+
+    class Articles {
+        private final Map<String, Integer> prices;
+
+        Articles(Map<String, Integer> prices) {
+            this.prices = prices;
+        }
+
+        Integer getPrice(String article) {
+            return prices.get(article);
+        }
+
+        Optional<Integer> getPriceOpt(String article) {
+            return Optional.ofNullable(prices.get(article));
+        }
+    }
+
+    /*
+     * Prices are in Euro-Cent
+     */
+    private final Articles articles = new Articles(Map.of("Tasse", 999, "Kanne", 1999, "Becher", 749));
+
+
+    /**
+     * Method invoked by the runtime. Application code starts here.
+     * @param runtime reference to the runtime singleton instance ({@link RuntimeSE}).
+     * @param args arguments passed from the command line.
+     */
+    @Override
+    public void run(RuntimeSE runtime, String[] args) {
+        // 
+        for(String article : args) {
+            lookupBuggy(article);
+            // lookupFixedOldStyle(article);
+            // lookupOptional(article);
+            // lookupOptionalFunctional(article);
+        }
+    }
+
+    /**
+     * Buggy code that throws NullPointerException if Article is not found.
+     * NullPointerException occurs when Integer result returned from getPrice()
+     * is attemted to cast to int.
+     * 
+     * Throws Exception in thread "main" java.lang.NullPointerException:
+     * Cannot invoke "java.lang.Integer.intValue()" because the return value of
+     * "Articles.getPrice(String)" is null.
+     * @param article article to look up
+     */
+    void lookupBuggy(String article) {
+        // 
+        int price = articles.getPrice(article);
+        // 
+        System.out.println(String.format("Der Preis für '%s' ist: %d \u20ac-Cent.", article, price));
+    }
+
+    /**
+     * Correct Java code: test for null (old 2000'er Java code).
+     * @param article article to look up
+     */
+    void lookupFixedOldStyle(String article) {
+        // 
+        var priceInt = articles.getPrice(article);
+        // 
+        if(priceInt != null) { // must test for null, or crash with Nullpointer Exception
+            System.out.println(String.format("Der Preis für '%s' ist: %d \u20ac-Cent", article, priceInt));
+        } else {
+            System.out.println(String.format("Der Artikel '%s' konnte nicht gefunden werden.", article));
+        }
+    }
+
+    /**
+     * Correct code using Optional methods in if-statement (2015'er style).
+     * @param article article to look up
+     */
+    void lookupOptional(String article) {
+        // 
+        var priceOpt = articles.getPriceOpt(article);
+        // 
+        if(priceOpt.isPresent()) {
+            System.out.println(String.format("Der Preis für '%s' ist: %d \u20ac-Cent", article, priceOpt.get()));
+        } else {
+            System.out.println(String.format("Der Artikel '%s' konnte nicht gefunden werden.", article));
+        }
+    }
+
+    /**
+     * Modern code using Optional's functional methods (2020'er code).
+     * @param article article to look up
+     */
+    void lookupOptionalFunctional(String article) {
+        // 
+        String answer = articles.getPriceOpt(article)
+            .map(p -> String.format("Der Preis für '%s' ist: %d \u20ac-Cent", article, p))
+            .orElse(String.format("Der Artikel '%s' konnte nicht gefunden werden", article));
+        // 
+        System.out.println(answer);
+    }
+}
+```
+
+Explore and understand the hidden fatal error and the different coding styles
+of the solution.
+
+Commit changes:
+
+```sh
+git status                      # show changes made to the project
+
+--> commit changes with message: "add package optionals"
+
+git log --oneline               # show commit log/history
+```
+```
+ac7ed94 (HEAD -> main) add package optionals
+2fa4602 updates to use module runtime
+1e17517 add META-INF/MANIFEST.MF
+5cf0f7f add src/tests unit tests
+fe284be add src/main
+dcf9764 add .gitignore
+e9c43c5 (tag: root) root commit (empty)
+```
+
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+&nbsp;
+
+## 17. Push to Remote Repository
 
 Use your account at
 [*BHT GitLab*](https://gitlab.bht-berlin.de/) or
@@ -2145,7 +2512,7 @@ explicitely *"pull"* changes (new commits) made by others.
 
 &nbsp;
 
-## 16. Remarks to *VSCode*
+## 18. Remarks to *VSCode*
 
 Wipe and re-source the project before launching *VSCode:*
 
@@ -2228,7 +2595,7 @@ mk run-tests                            # run tests
 
 &nbsp;
 
-## 17. Summary
+## 19. Summary
 
 Script [*build.sh*](build.sh) summarizes commands to build the *se1-play*
 project.

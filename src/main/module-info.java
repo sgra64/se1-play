@@ -7,16 +7,17 @@
 module se1_play {
 
     /*
-     * Make package {@code application} accessible to other modules at compile
+     * Make package {@link application} accessible to other modules at compile
      * and runtime (use <i>open</i> for compile-time access only).
      */
     exports application;
 
-    /* Open package to JUnit test runner and Javadoc compiler. */
+    /* Open package to JUnit test runner and the javadoc compiler. */
     opens application;
 
     /*
-     * External module required by this module (JUnit module for JUnit testing).
+     * External modules required by this module.
      */
     // requires org.junit.jupiter.api;
+    // requires transitive runtimeSE;
 }

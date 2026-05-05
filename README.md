@@ -83,15 +83,17 @@ Project "*se1-play*" is created in several steps:
 
 1. [*Clean Project Build* and *Run*](#14-clean-project-build-and-run)
 
-1. [*SE1-Runtime*](#15-se1-runtime)
+1. [Enable *SE1-Runtime*](#15-enable-se1-runtime)
 
-1. [Package: *optionals*](#16-package-optionals)
+1. [Add Package: *optionals*](#16-add-package-optionals)
 
-1. [Push to Remote Repository](#17-push-to-remote-repository)
+1. [Push to a Remote Repository](#17-push-to-a-remote-repository)
 
 1. [Remarks to *VSCode*](#18-remarks-to-vscode)
 
-1. [Summary](#19-summary)
+1. [Final Evaluation (Abnahme)](#19-final-evaluation-abnahme)
+
+1. [Summary](#20-summary)
 
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -1595,16 +1597,16 @@ The difference shows the the *org.junit.jupiter.api* activation:
 
 ```diff
 diff --git a/src/main/module-info.java b/src/main/module-info.java
-index 24e46f9..a7703be 100644
+index 79c9727..9ba8e39 100644
 --- a/src/main/module-info.java
 +++ b/src/main/module-info.java
-@@ -18,5 +18,5 @@ module se1_play {
+@@ -18,6 +18,6 @@ module se1_play {
      /*
-      * External module required by this module (JUnit module for JUnit testing)
-.
+      * External modules required by this module.
       */
 -    // requires org.junit.jupiter.api;
 +    requires org.junit.jupiter.api;
+     // requires transitive runtimeSE;
  }
 ```
 
@@ -1730,11 +1732,26 @@ Navigate through: `application` -> `Application`:
 <img src="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/markup/img/javadoc-2.png" width="800"/>
 
 
-Make changes such that your name appears as *Author* - adjust in:
-`src/application/package-info.java` and recompile *Javadoc*.
+Make changes in:
+[*src/main/application/package-info.java*](src/main/application/package-info.java)
+such that your name appears as *Author* and recompile *Javadoc*.
 
-Since *Javadoc* is generated (compiled) content, it is not committed to the
-*git* repository. Java source files have already been committed. 
+The generated (compiled) *Javadoc* content under path *target/javadoc* is not
+committed to the *git* repository.
+
+The change to *package-info.java* is committed committed. Commit the change
+and show the commit log:
+
+```sh
+git log --oneline                           # show commit log/history
+```
+```
+ace56b4 (HEAD -> main) update application/package-info.java, javadoc @author
+5cf0f7f add src/tests unit tests
+fe284be add src/main
+dcf9764 add .gitignore
+e9c43c5 (tag: root) root commit (empty)
+```
 
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -1834,6 +1851,9 @@ Packaging a *stand-alone .jar* requires the information of the class with the
 `MANIFEST.MF`, which we create in the project under the path
 `src/resources/META-INF`:
 
+<!-- 
+MANIFEST.MF must have two lines with \n at the end, or 'mk package' will not
+properly append the following line 'Main-Class: application.Application'.
 ```sh
 mkdir -p src/resources/META-INF
 touch src/resources/META-INF/MANIFEST.MF
@@ -1841,12 +1861,33 @@ touch src/resources/META-INF/MANIFEST.MF
 
 Add content to file `MANIFEST.MF`:
 
-<!-- @@ src/resources/META-INF/MANIFEST.MF @BEGIN -->
+```
+Manifest-Version: 1.0
+Created-By: Software Engineering project
+
+```
+-->
+
+```sh
+# create directory path 'src/resources/META-INF'
+mkdir -p src/resources/META-INF
+
+# define variable 'url' to download file 'MANIFEST.MF'
+url="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/main"
+
+# download file 'MANIFEST.MF' (with exactly two lines)
+curl -o src/resources/META-INF/MANIFEST.MF $url/src/resources/META-INF/MANIFEST.MF
+
+# show content of new file
+cat src/resources/META-INF/MANIFEST.MF
+```
+
+Content of created file *MANIFEST.MF :*
+
 ```
 Manifest-Version: 1.0
 Created-By: Software Engineering project
 ```
-<!-- @@ src/resources/META-INF/MANIFEST.MF @END -->
 
 
 The *MANFEST.MF* file specifies the class with the *main()* function in a
@@ -1926,12 +1967,13 @@ Commit file `MANIFEST.MF`:
 
 ```sh
 git add src/resources
-git commit -m "add META-INF/MANIFEST.MF"
+git commit -m "add src/resources/META-INF/MANIFEST.MF, jar packaging"
 
 git log --oneline                           # show commit log/history
 ```
 ```
-1e17517 (HEAD -> main) add META-INF/MANIFEST.MF
+1e17517 (HEAD -> main) add src/resources/META-INF/MANIFEST.MF, jar packaging
+ace56b4 update application/package-info.java, javadoc @author
 5cf0f7f add src/tests unit tests
 fe284be add src/main
 dcf9764 add .gitignore
@@ -2017,7 +2059,7 @@ From the article:
 
 &nbsp;
 
-## 15. *SE1-Runtime*
+## 15. Enable *SE1-Runtime*
 
 Java module `libs/runtime-SE/runtimeSE-1.0.*-RELEASE.jar` provides a simple
 runtime system with some basic functions that are not included in *Java*:
@@ -2085,6 +2127,7 @@ such that:
 - new method `run()` is invoked by the *runtime* system:
 
 
+<!-- @@ src/main/application/Application.java @BEGIN -->
 ```java
 package application;
 
@@ -2144,6 +2187,8 @@ public class Application implements Runner {
     }
 }
 ```
+<!-- @@ src/main/application/Application.java @END -->
+
 
 The concept that we *don't invoke "our code"* from *main()*, but *our code "is invoked"*
 is also known as *"Inversion-of-Control"*, see Martin Folwer's original article
@@ -2199,13 +2244,14 @@ Commit changes:
 ```sh
 git status                      # show changes made to the project
 
---> commit changes with message: "updates to use module runtime"
+--> commit changes with message: "update module-info.java to require module 'runtime-SE'"
 
 git log --oneline               # show commit log/history
 ```
 ```
-2fa4602 (HEAD -> main) updates to use module runtime
-1e17517 add META-INF/MANIFEST.MF
+2fa4602 (HEAD -> main) update module-info.java to require module 'runtime-SE'
+1e17517 add src/resources/META-INF/MANIFEST.MF, jar packaging
+ace56b4 update application/package-info.java, javadoc @author
 5cf0f7f add src/tests unit tests
 fe284be add src/main
 dcf9764 add .gitignore
@@ -2217,7 +2263,7 @@ e9c43c5 (tag: root) root commit (empty)
 
 &nbsp;
 
-## 16. Package: *optionals*
+## 16. Add Package: *optionals*
 
 Create a new package `optionals` with class `OptionalsRunner.java` to explore
 [*Optional&lt;T&gt;*](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html)
@@ -2229,8 +2275,11 @@ Add default arguments to `application.properties`:
 optionals.args = Tasse Kanne Becher
 ```
 
-Create class [`OptionalsRunner.java`](src/main/optionals/OptionalsRunner.java):
+Create class [`OptionalsRunner.java`](src/main/optionals/OptionalsRunner.java)
+in the new pakage:
 
+
+<!-- @@ src/main/optionals/OptionalsRunner.java @BEGIN -->
 ```java
 package optionals;
 
@@ -2351,6 +2400,18 @@ public class OptionalsRunner implements Runner {
     }
 }
 ```
+<!-- @@ src/main/optionals/OptionalsRunner.java @END -->
+
+
+Enable the new package in the `opens` section of file *module-info.java :*
+
+```java
+module se1_play {
+
+    // export or open the new package 'optional'
+    exports optionals;
+}
+```
 
 Explore and understand the hidden fatal error and the different coding styles
 of the solution.
@@ -2360,14 +2421,15 @@ Commit changes:
 ```sh
 git status                      # show changes made to the project
 
---> commit changes with message: "add package optionals"
+--> commit changes with message: "add package 'optionals'"
 
 git log --oneline               # show commit log/history
 ```
 ```
-ac7ed94 (HEAD -> main) add package optionals
-2fa4602 updates to use module runtime
-1e17517 add META-INF/MANIFEST.MF
+ac7ed94 (HEAD -> main) add package 'optionals'
+2fa4602 update module-info.java to require module 'runtime-SE'
+1e17517 add src/resources/META-INF/MANIFEST.MF, jar packaging
+ace56b4 update application/package-info.java, javadoc @author
 5cf0f7f add src/tests unit tests
 fe284be add src/main
 dcf9764 add .gitignore
@@ -2379,7 +2441,7 @@ e9c43c5 (tag: root) root commit (empty)
 
 &nbsp;
 
-## 17. Push to Remote Repository
+## 17. Push to a Remote Repository
 
 Use your account at
 [*BHT GitLab*](https://gitlab.bht-berlin.de/) or
@@ -2595,74 +2657,79 @@ mk run-tests                            # run tests
 
 &nbsp;
 
-## 19. Summary
+## 19. Final Evaluation (Abnahme)
+
+For the final evaluation, please prepare two terminals showing the results of
+the following commands run in the project directory.
+
+In the first terminal, show that *"clean project build"* is working and the
+produced artifact (`.jar`) works properly for the *OptionalsRunner* example:
+
+```sh
+# show that 'clean project build' is working
+mk clean compile compile-tests run-tests package
+
+# show that the .jar produces correct results from 'OptionalsRunner'
+java -jar target/application-1.0.0-SNAPSHOT.jar Becher Kanne Messer
+```
+
+The expected output from running the `.jar` is:
+
+```
+Der Preis für 'Becher' ist: 749 €-Cent
+Der Preis für 'Kanne' ist: 1999 €-Cent
+Der Artikel 'Messer' konnte nicht gefunden werden
+```
+
+The full content of the first terminal is shown in the left figure below.
+
+In the second terminal, show that the project is at the right place in the
+*worspaces* directory and has the correct structure. Also show the branches
+from the *git*-repository as well as the linked remote repository:
+
+```sh
+# show proper project location in 'workspaces' directory
+pwd
+
+# show proper content of the project directory
+ls -la
+
+# show proper source code under 'src'
+find src
+
+# show branches: 'main' and 'git-modules'
+git log --decorate --oneline --graph --all
+
+# show link to the remote repository
+git remote -v
+
+# check your local project is up-to-date
+git pull && git push
+```
+
+The expected result is shown in the right figure.
+
+<table>
+<td valign="top">
+<img src="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/markup/img/final-test-build.png" width="360"/>
+</td>
+<td valign="top">
+<img src="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/markup/img/final-test-struct.png" width="360"/>
+</td>
+</table>
+
+
+Open *VSCode* and show the program and tests also run properly in the IDE:
+
+<img src="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/markup/img/final-test-vscode.png" width="720"/>
+
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+&nbsp;
+
+## 20. Summary
 
 Script [*build.sh*](build.sh) summarizes commands to build the *se1-play*
 project.
 
-<!--
-#!/bin/bash
-# commands to build the 'se1-play' project
-
-git init --initial-branch=main
-git commit --allow-empty -m "root commit (empty)"
-git tag root
-
-curl -o .gitignore https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/main/.gitignore
-git add -f .gitignore
-git commit -m "add .gitignore"
-
-git switch -c git-modules
-git submodule add -f -- https://github.com/sgra64/gitmodule-env.sh.git .env
-git rm --cached .gitmodules && git commit -m "git submodule: .env"
-
-git submodule add -f -- https://github.com/sgra64/gitmodule-vscode-java.git .vscode
-git rm --cached .gitmodules && git commit -m "git submodule: .vscode"
-
-git submodule add -f -- https://github.com/sgra64/gitmodule-libs-jars.git libs
-git rm --cached .gitmodules && git commit -m "git submodule: libs"
-
-git switch main
-
-mkdir -p src/main/application
-url="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/main"
-curl -o src/main/module-info.java $url/src/main/module-info.java
-curl -o src/main/application/Application.java $url/src/main/application/Application.java
-curl -o src/main/application/package-info.java $url/src/main/application/package-info.java
-
-git add src/main
-git commit -m "add src/main"
-
-mkdir -p src/tests/application
-curl -o src/tests/application/Application_0_always_pass_Tests.java \
-$url/src/tests/application/Application_0_always_pass_Tests.java
-
-# patch file 'module-info.java' removing the comment from line
-# // requires org.junit.jupiter.api
-# 
-# patch -p1 ...
-# git apply <patch> ...
-# 
-git apply <<< "diff --git a/src/main/module-info.java b/src/main/module-info.java
-index 24e46f9..a7703be 100644
---- a/src/main/module-info.java
-+++ b/src/main/module-info.java
-@@ -18,5 +18,5 @@ module se1_play {
-     /*
-      * External module required by this module (JUnit module for JUnit testing).
-      */
--    // requires org.junit.jupiter.api;
-+    requires org.junit.jupiter.api;
- }" && echo "patch successfully applied to 'module-info.java'" ||
-    echo "patch 'module-info.java' failed"
-
-git add src/main/module-info.java src/tests
-git commit -m "add src/tests unit tests"
-
-mkdir -p src/resources/META-INF
-curl -o src/resources/META-INF/MANIFEST.MF $url/src/resources/META-INF/MANIFEST.MF
-
-git add src/resources
-git commit -m "add META-INF/MANIFEST.MF"
-
--->

@@ -1,7 +1,7 @@
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-<!-- A1 (SE-2)
+<!-- B1 (SE-1)
 -->
-# Project: *se1-play*
+# B1: Project *"se1-play"*
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 The assignment demonstates the structure and tools used of a professional
@@ -63,7 +63,7 @@ Project "*se1-play*" is created in several steps:
 
 1. [Import *git*-Submodules: *.env*, *.vscode*, *libs*](#4-import-git-submodules-env-vscode-libs)
 
-1. [Inspect: *libs*](#5-inspect-libs)
+1. [Explore: *libs*](#5-explore-libs)
 
 1. [Adding Java Code](#6-adding-java-code)
 
@@ -597,7 +597,7 @@ drwxr-xr-x 1    0 Apr 19 19:42 libs/            <-- git-module 'libs'
 
 &nbsp;
 
-## 5. Inspect: *libs*
+## 5. Explore: *libs*
 
 Verify libraries have properly been installed:
 
@@ -2100,7 +2100,8 @@ by interfaces:
 - [*Logger.java*](https://github.com/sgra64/se1-runtime/blob/main/src/main/runtimeSE/Logger.java),
 
 See also the
-[*runtimeSE Javadoc*](https://sgra64.github.io/se1-runtime/target/javadoc/runtimeSE/module-summary.html).
+[*SE1 Runtime Javadoc*](https://sgra64.github.io/se1-runtime/target/javadoc/runtimeSE/module-summary.html) or the source code repository:
+[*https://github.com/sgra64/se1-runtime*](https://github.com/sgra64/se1-runtime).
 
 
 &nbsp;
@@ -2320,8 +2321,9 @@ public class OptionalsRunner implements Runner {
     /*
      * Prices are in Euro-Cent
      */
-    private final Articles articles = new Articles(Map.of("Tasse", 999, "Kanne", 1999, "Becher", 749));
-
+    private final Articles articles = new Articles(
+        Map.of("Tasse", 999, "Kanne", 1999, "Becher", 749)
+    );
 
     /**
      * Method invoked by the runtime. Application code starts here.
@@ -2330,6 +2332,10 @@ public class OptionalsRunner implements Runner {
      */
     @Override
     public void run(RuntimeSE runtime, String[] args) {
+        // 
+        System.out.println(String.format("Hello, %s (optionals)",
+            runtime.properties().getProperty("application.name", "")
+        ));
         // 
         for(String article : args) {
             lookupBuggy(article);
@@ -2409,7 +2415,7 @@ Enable the new package in the `opens` section of file *module-info.java :*
 module se1_play {
 
     // export or open the new package 'optional'
-    exports optionals;
+    opens optionals;
 }
 ```
 
@@ -2722,6 +2728,33 @@ The expected result is shown in the right figure.
 Open *VSCode* and show the program and tests also run properly in the IDE:
 
 <img src="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/markup/img/final-test-vscode.png" width="720"/>
+
+
+&nbsp;
+
+Show notes with answered questions:
+
+1. What is a *project scaffold* ?
+
+1. Which files are stored under *src*, *target*, *.vscode* and *libs* ?
+
+1. What is *"sourcing" of a project* ? How is *"sourcing"* performed?
+
+1. Name three examples of what gets constructed during *"sourcing"*.
+
+1. How does *assertions* in Unit tests work? Give an example.
+
+1. What is a *"clean project build"*? Name steps.
+
+1. What is the result of the *"project build"* process? Where is it created?
+
+1. What is a *"runtime"*, what is *"Inversion-of-Control"*?
+
+1. What is a *git commit* ? How are *git commits* created?
+
+1. What is a *"push conflict"* when a branch is pushed into a remote repository?
+
+<!-- 1. Under what conditions can *git commits* be removed? -->
 
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->

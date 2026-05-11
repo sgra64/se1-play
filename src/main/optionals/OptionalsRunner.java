@@ -37,8 +37,9 @@ public class OptionalsRunner implements Runner {
     /*
      * Prices are in Euro-Cent
      */
-    private final Articles articles = new Articles(Map.of("Tasse", 999, "Kanne", 1999, "Becher", 749));
-
+    private final Articles articles = new Articles(
+        Map.of("Tasse", 999, "Kanne", 1999, "Becher", 749)
+    );
 
     /**
      * Method invoked by the runtime. Application code starts here.
@@ -47,6 +48,10 @@ public class OptionalsRunner implements Runner {
      */
     @Override
     public void run(RuntimeSE runtime, String[] args) {
+        // 
+        System.out.println(String.format("Hello, %s (optionals)",
+            runtime.properties().getProperty("application.name", "")
+        ));
         // 
         for(String article : args) {
             lookupBuggy(article);

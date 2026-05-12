@@ -91,7 +91,7 @@ Project "*se1-play*" is created in several steps:
 
 1. [Remarks to *VSCode*](#18-remarks-to-vscode)
 
-1. [Final Evaluation (Abnahme)](#19-final-evaluation-abnahme)
+1. [Questions and Final Evaluation (Abnahme)](#19-questions-and-final-evaluation-abnahme)
 
 1. [Summary](#20-summary)
 
@@ -840,6 +840,7 @@ run-tests:
 package:
   jar -c -v -f "target/application-1.0.0-SNAPSHOT.jar" \
     -C target/classes . $(packaged_content) &&
+    rm -rf target/classes/runtimeSE target/classes/org &&
     [ -f ${P[target-jar]} ] &&
       echo -e "-->\\ncreated: target/application-1.0.0-SNAPSHOT.jar" ||
       echo -e "-->\\nno compiled classes or manifest, no .jar created"
@@ -1775,6 +1776,7 @@ mk package          # package 'target/classes' to the final '.jar'
 package:
   jar -c -v -f "target/application-1.0.0-SNAPSHOT.jar" \
     -C target/classes . $(packaged_content) &&
+    rm -rf target/classes/runtimeSE target/classes/org &&
     [ -f ${P[target-jar]} ] &&
       echo -e "-->\\ncreated: target/application-1.0.0-SNAPSHOT.jar" ||
       echo -e "-->\\nno compiled classes or manifest, no .jar created"
@@ -1906,6 +1908,7 @@ package:
   jar -c -v -f "target/application-1.0.0-SNAPSHOT.jar" \
     --manifest=target/resources/META-INF/MANIFEST.MF \      <-- new MANIFEST.MF included
     -C target/classes . $(packaged_content) &&
+    rm -rf target/classes/runtimeSE target/classes/org &&
     [ -f ${P[target-jar]} ] &&
       echo -e "-->\\ncreated: target/application-1.0.0-SNAPSHOT.jar" ||
       echo -e "-->\\nno compiled classes or manifest, no .jar created"
@@ -2020,7 +2023,7 @@ mk build
 ```
 ```
 build:
-  mk clean compile compile-tests run-tests package
+  mk clean compile compile-tests run-tests javadoc package
 ```
 
 The *build process* should always run without error, particularly before
@@ -2245,12 +2248,12 @@ Commit changes:
 ```sh
 git status                      # show changes made to the project
 
---> commit changes with message: "update module-info.java to require module 'runtime-SE'"
+--> commit changes with message: "require module 'runtime-SE' in module-info.java"
 
 git log --oneline               # show commit log/history
 ```
 ```
-2fa4602 (HEAD -> main) update module-info.java to require module 'runtime-SE'
+2fa4602 (HEAD -> main) require module 'runtime-SE' in module-info.java
 1e17517 add src/resources/META-INF/MANIFEST.MF, jar packaging
 ace56b4 update application/package-info.java, javadoc @author
 5cf0f7f add src/tests unit tests
@@ -2433,7 +2436,7 @@ git log --oneline               # show commit log/history
 ```
 ```
 ac7ed94 (HEAD -> main) add package 'optionals'
-2fa4602 update module-info.java to require module 'runtime-SE'
+2fa4602 require module 'runtime-SE' in module-info.java
 1e17517 add src/resources/META-INF/MANIFEST.MF, jar packaging
 ace56b4 update application/package-info.java, javadoc @author
 5cf0f7f add src/tests unit tests
@@ -2663,10 +2666,37 @@ mk run-tests                            # run tests
 
 &nbsp;
 
-## 19. Final Evaluation (Abnahme)
+## 19. Questions and Final Evaluation (Abnahme)
 
-For the final evaluation, please prepare two terminals showing the results of
-the following commands run in the project directory.
+
+Prepare notes with answered questions:
+
+1. What is a *project scaffold* ?
+
+1. Which files are stored under *src*, *target*, *.vscode* and *libs* ?
+
+1. What is *"sourcing" of a project* ? How is *"sourcing"* performed?
+
+1. Name three examples of what gets constructed during *"sourcing"*.
+
+1. How does *assertions* in Unit tests work? Give an example.
+
+1. What is a *"clean project build"*? Name steps.
+
+1. What is the result of the *"project build"* process? Where is it created?
+
+1. What is a *"runtime"*, what is *"Inversion-of-Control"*?
+
+1. What is a *git commit* ? How are *git commits* created?
+
+1. What is a *"push conflict"* when a branch is pushed into a remote repository?
+
+<!-- 1. Under what conditions can *git commits* be removed? -->
+
+
+&nbsp;
+
+Prepare two terminals on your laptop showing results of following commands.
 
 In the first terminal, show that *"clean project build"* is working and the
 produced artifact (`.jar`) works properly for the *OptionalsRunner* example:
@@ -2728,33 +2758,6 @@ The expected result is shown in the right figure.
 Open *VSCode* and show the program and tests also run properly in the IDE:
 
 <img src="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/markup/img/final-test-vscode.png" width="720"/>
-
-
-&nbsp;
-
-Show notes with answered questions:
-
-1. What is a *project scaffold* ?
-
-1. Which files are stored under *src*, *target*, *.vscode* and *libs* ?
-
-1. What is *"sourcing" of a project* ? How is *"sourcing"* performed?
-
-1. Name three examples of what gets constructed during *"sourcing"*.
-
-1. How does *assertions* in Unit tests work? Give an example.
-
-1. What is a *"clean project build"*? Name steps.
-
-1. What is the result of the *"project build"* process? Where is it created?
-
-1. What is a *"runtime"*, what is *"Inversion-of-Control"*?
-
-1. What is a *git commit* ? How are *git commits* created?
-
-1. What is a *"push conflict"* when a branch is pushed into a remote repository?
-
-<!-- 1. Under what conditions can *git commits* be removed? -->
 
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->

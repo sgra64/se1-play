@@ -33,7 +33,7 @@ class NumbersRunner implements Runner, CommandRunner {
         ));
         // 
         CommandRunner.run(this,
-            "numbers, sum, sum_positive_even_numbers, sum_recursive, findFirst, findLast, findAll, findSums, findAllSums",
+            "numbers, sum, sumPositiveEvenNumbers, sumRecursive, findFirst, findLast, findAll, findSums, findAllSums",
             String.join(" ", args));
     }
 
@@ -102,12 +102,12 @@ class NumbersRunner implements Runner, CommandRunner {
             result = String.format("%s(%s) -> %d", command, display, res);
             break;
 
-        case "sum_positive_even_numbers":
+        case "sumPositiveEvenNumbers":
             res = numbersImpl.sumPositiveEvenNumbers(numb_arr);
             result = String.format("%s(%s) -> %d", command, display, res);
             break;
 
-        case "sum_recursive":
+        case "sumRecursive":
             res = numbersImpl.sumRecursive(numb_arr, 0);
             result = String.format("%s(%s) -> %d", command, display, res);
             break;

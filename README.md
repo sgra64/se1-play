@@ -82,7 +82,9 @@ The assignment will perform the following steps:
 
 1. [Implement the *findAllSums()*-Method](#6-implement-the-findallsums---method)
 
-1. [Final Evaluation (Abnahme)](#7-final-evaluation-abnahme)
+1. [*Code-Coverage* Analysis](#7-code-coverage-analysis)
+
+1. [Final Evaluation (Abnahme)](#8-final-evaluation-abnahme)
 
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -1547,7 +1549,131 @@ A       src/tests/numbers/Numbers_8b_find_all_sums_XL_Tests.java
 
 &nbsp;
 
-## 7. Final Evaluation (Abnahme)
+## 7. *Code-Coverage* Analysis
+
+*Code Coverage* is a software quality metric that defines the ratio between:
+
+- code statements that were *executed during tests* and
+
+- *all* code statements.
+
+For example, if a file has 700 lines and 620 lines were executed during a test
+run, the code coverage ratio is: *620 / 700 = 88.6 %*.
+
+In order to determine code coverage, the executed statements during a test run
+must be recorded. From this recording, a *test coverage report* is created.
+
+[*JaCoCo*](https://www.eclemma.org/jacoco) is a popular code coverage tool
+that is included in the project under: `libs/jacoco`:
+
+```
+total 872
+drwxr-xr-x 1 svgr2 Kein      0 May 17 21:11 .
+drwxr-xr-x 1 svgr2 Kein      0 May 17 21:11 ..
+-rw-r--r-- 1 svgr2 Kein 300661 May 17 21:11 jacocoagent.jar
+-rw-r--r-- 1 svgr2 Kein 583967 May 17 21:11 jacococli.jar
+```
+
+Library `jacocoagent.jar` is used to record execution of statements during test
+runs. Library `jacococli.jar` is used to create test-reports with coverage
+metrics from the recordings.
+
+Creating a code coverage report requires two steps:
+
+1. Execute tests with the *jacocoagent.jar*. All tests should pass for code
+    coverage analysis:
+
+    ```sh
+    # compile code and tests
+    mk compile compile-tests
+
+    # run specific test with recording execution in the tested code
+    mk coverage -c numbers.Numbers_1_sum_Tests
+
+    # run all tests with recording execution in the tested code
+    mk coverage
+    ```
+
+    The recording is stored in file: `target/coverage/jacoco.exec`.
+
+1. Create test-report for the package `numbers` from the recording:
+
+    ```sh
+    # create coverage report for the specific class 'numbers/NumbersImpl.class'
+    # from the recording or for the entire package 'numbers'
+    mk coverage-report numbers/NumbersImpl.class
+    mk coverage-report numbers
+    ```
+
+    The report is stored as *HTML* under: `target/coverage-report/index.html`
+
+    The test-report is also created as file: `target/jacoco.xml` for the
+    [*Coverage Gutters*](https://marketplace.visualstudio.com/items?itemName=ryanluker.vscode-coverage-gutters)
+    *VSCode-Plugin* that displays coverage also in the *VSCode* editor.
+
+To review the code coverage report, the *index.html* file can be opened in a
+web-browser.
+
+Current tests cover the file *NumbersImpl.java*. Therefore, report-generation
+should be limited to this class for analysis (otherwise, other un-tested code
+distorts the analysis).
+
+The figures show the created coverage report for class *NumbersImpl.java* in
+package *numbers*. The coverage is shown as *97%* :
+
+
+<img src="markup/coverage-1.png" width="720"/>
+
+<img src="markup/coverage-2.png" width="720"/>
+
+
+&nbsp;
+
+Clicking into class *NumbersImpl.java* reveals the coverage breakdown to methods.
+Most methods are at *100%*, except for *findAll()* (*68%*) and *findSums()* (*98%*).
+
+<img src="markup/coverage-3.png" width="720"/>
+
+
+&nbsp;
+
+*"Green"* lines indicate that they were executed at least once during the test run.
+*"Red"* lines were not executed during the test run.
+*"Yellow"* lines were *"partially"* executed.
+
+Method *findAll()* shows one yellow and one red line. The test for `numbers==null`
+and throwing an *IllegalArgumentException* as a consequence was never executed
+during tests.
+
+<img src="markup/coverage-4-NumbersImpl-a.png" width="720"/>
+
+
+&nbsp;
+
+In order to *"cover this case"*, another test *641* can be added to
+`Numbers_6_find_all_Tests.java`:
+
+```java
+@Test @Order(641)
+void test641_find_all_exception_null_arg() {
+    IllegalArgumentException ex =
+        assertThrows(IllegalArgumentException.class,
+            () -> testObj.findAll(null, 0));
+    // 
+    assertEquals("illegal argument: null", ex.getMessage());
+}
+```
+
+After the case has been covered, method *findAll()* also shows full coverage:
+
+<img src="markup/coverage-4-NumbersImpl-b.png" width="720"/>
+
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+&nbsp;
+
+## 8. Final Evaluation (Abnahme)
 
 For the final evaluation, please prepare two terminals showing the results of
 the following commands.
@@ -1748,3 +1874,4 @@ Open *VSCode* and show tests are also passing in the IDE:
 <!-- 
 <img src="https://raw.githubusercontent.com/sgra64/se1-play/refs/heads/markup/img/final-test-vscode.png" width="720"/>
  -->
+

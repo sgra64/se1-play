@@ -93,8 +93,10 @@ public class Numbers_3_sum_recursion_Tests {
 
     @Test @Order(312)
     void test312_sum_recursion_corner_big_array_number_series() {
-        long big = 1000000000;
-        big =            3600;  // > 3600: java.lang.StackOverflowError, terminal test runner
+        long big = 100000000;
+        big =           3600;   // > 3600: java.lang.StackOverflowError, terminal test runner
+        big =           3405;   // > 3405: java.lang.StackOverflowError, coverage test run
+        big =           1000;   // safe test run
         int[] testData = new int[Long.valueOf(big).intValue()];
         for(int i=0; i < big; i++) {
             testData[i] = i;

@@ -1005,11 +1005,13 @@ Show branches and commit logs:
 # show all branches, including fetched remote branches
 git branch -avv
 
-# show all local branches
-git log --oneline --graph git-modules main b1-optionals b2-numbers b3-streams
+# show the commit log of branch 'b3-streams'
+git log --oneline
 ```
 
-<img src="markup/final-test.png" width="600"/>
+<img src="markup/git-streams-branches.png" width="720"/>
+
+<img src="markup/git-streams-log.png" width="600"/>
 
 
 The next step of the project is *integrating* and *releasing* the parts.
@@ -1030,12 +1032,12 @@ and *(continuous)*
 [*"Integration"*](https://martinfowler.com/articles/continuousIntegration.html)
 is initiated by the team, usually on a new branch.
 
-We will create a new branch: `rel_integration` off the *"base"* commit to
+We will create a new branch: `release-integration` off the *"base"* commit to
 collect the developments on branches: *b1-optionals*, *b2-numbers* and *b3-streams*.
 
 ```sh
-# create new branch 'rel_integration' off the 'base'-commit
-git switch -c rel_integration base
+# create new branch 'release-integration' off the 'base'-commit
+git switch -c release-integration base
 
 # show that no prior content exists in the branch
 find src
@@ -1062,10 +1064,10 @@ src/tests/application/Application_0_always_pass_Tests.java
 ### Step 1: Integration branch *b1-optionals*
 
 In a first step, content of branch *b1-optionals* is carried over to branch
-*rel_integration*:
+*release-integration*:
 
 ```sh
-# carry over content from branch 'b1-optionals' to branch 'rel_integration'
+# carry over content from branch 'b1-optionals' to branch 'release-integration'
 git checkout b1-optionals -- .
 
 # show content carried over from branch 'b1-optionals'
@@ -1116,17 +1118,17 @@ Der Artikel 'Messer' konnte nicht gefunden werden
 When everything works, the first part of the integration can be committed:
 
 ```sh
-# create first commit on branch 'rel_integration'
+# create first commit on branch 'release-integration'
 git commit -m "content branch b1-optionals"
 
-# show the new commit on branch 'rel_integration'
+# show the new commit on branch 'release-integration'
 git log --oneline
 ```
 
-The commit is recorded on branch *rel_integration:*
+The commit is recorded on branch *release-integration:*
 
 ```
-50813ac (HEAD -> rel_integration) content branch b1-optionals
+50813ac (HEAD -> release-integration) content branch b1-optionals
 0889bca (tag: base, main) require module 'runtime-SE' in module-info.java
 ...
 ```
@@ -1198,10 +1200,10 @@ git log --oneline
 ```
 
 The commit log shows *all commits* of branch *b2-numbers* have been carried
-over to branch *rel_integration*.
+over to branch *release-integration*.
 
 ```
-d696b16 (HEAD -> rel_integration) merge commit b2-numbers
+d696b16 (HEAD -> release-integration) merge commit b2-numbers
 50813ac content branch b1-optionals
 72905f2 (b2-numbers) add test 641 test641_find_all_exception_null_arg
 7f62390 findAllSums() complete
@@ -1247,7 +1249,7 @@ The commit log now shows one commit for the merge from branch *b2-humbers*
 (compare to the prior commit log with 9 commits from *base*).
 
 ```
-3a8e268 (HEAD -> rel_integration) merge commit b2-numbers
+3a8e268 (HEAD -> release-integration) merge commit b2-numbers
 50813ac content branch b1-optionals
 0889bca (tag: base, main) require module 'runtime-SE' in module-info.java
 ...
@@ -1363,7 +1365,7 @@ Hello, 'SE-1 Play' (numbers)            <-- 'b2-numbers' example
 git status
 ```
 ```
-On branch rel_integration
+On branch release-integration
   (use "git restore <file>..." to discard changes in working directory)
         modified:   src/main/module-info.java               <-- modification
         modified:   src/main/numbers/NumbersRunner.java     <-- modification
@@ -1378,7 +1380,7 @@ Commit with message: `add IntegrationRunner.java` and show the commit
 log:
 
 ```
-49542d9 (HEAD -> rel_integration) add IntegrationRunner.java
+49542d9 (HEAD -> release-integration) add IntegrationRunner.java
 3a8e268 merge commit b2-numbers
 50813ac content branch b1-optionals
 0889bca (tag: base, main) require module 'runtime-SE' in module-info.java
@@ -1389,7 +1391,7 @@ log:
 
 ### Step 3: Integration branch *b3-streams*
 
-Integrate branch *b3-streams* to branch *rel_integration*:
+Integrate branch *b3-streams* to branch *release-integration*:
 
 ```sh
 # show content with 'src/main/optionals', 'src/main/numbers', 'src/main/streams',
@@ -1454,7 +1456,7 @@ Commit changes with message: `merge commit b3-streams`.
 git merge b2-numbers
 ```
 ```
-9d15c6b (HEAD -> rel_integration) merge commit b3-streams
+9d15c6b (HEAD -> release-integration) merge commit b3-streams
 49542d9 add IntegrationRunner.java
 3a8e268 merge commit b2-numbers
 50813ac content branch b1-optionals
@@ -1493,10 +1495,10 @@ Hello, 'SE-1 Play' (streams)
 
 Commit final changes with message: `update IntegrationRunner to run b3-streams examples`.
 
-The final commit log on branch *"rel_integration"* is:
+The final commit log on branch *"release-integration"* is:
 
 ```
-e9beed7 (HEAD -> rel_integration) update IntegrationRunner to run b3-streams examples
+e9beed7 (HEAD -> release-integration) update IntegrationRunner to run b3-streams examples
 9d15c6b merge commit b3-streams
 49542d9 add IntegrationRunner.java
 3a8e268 merge commit b2-numbers
@@ -1550,35 +1552,32 @@ Add file `CHANGELOG.md` to the project directory
 ```
 -->
 
-Switch to branch *rel_integration* and demonstrate:
+Switch to branch *release* and demonstrate:
 
 ```sh
-git switch rel_integration
+# switch to the 'release' branch
+git switch release
 
 # show all branches, including fetched remote branches
 git branch -avv
-
-# show all local branches
-git log --oneline --graph git-modules main b1-optionals b2-numbers b3-streams
 ```
 
-<img src="markup/final-test.png" width="600"/>
+<img src="markup/git-release-branches.png" width="720"/>
 
+
+&nbsp;
 
 ```sh
-# show the commit-log of branch 'rel_integration'
-git log --oneline
-```
-```
-e9beed7 (HEAD -> rel_integration) update IntegrationRunner to run b3-streams examples
-9d15c6b merge commit b3-streams
-49542d9 add IntegrationRunner.java
-3a8e268 merge commit b2-numbers
-50813ac content branch b1-optionals
-0889bca (tag: base, main) require module 'runtime-SE' in module-info.java
+# show the commit-log of all branches
+git log --oneline --graph main b1-optionals b2-numbers b3-streams release-integration release
 ```
 
-Run *clean project build*, *tests* and *examples:*
+<img src="markup/git-release-log.png" width="720"/>
+
+
+&nbsp;
+
+Run a *clean project build*, run *tests* and run *examples:*
 
 ```sh
 # show 'src' content
@@ -1587,7 +1586,7 @@ find src
 # perform clean project build
 mk clean compile compile-tests
 
-# run tests
+# run tests -> show 111 successful tests
 mk run-tests
 
 # run 'b1-optionals' example
@@ -1617,3 +1616,75 @@ Hello, 'SE-1 Play' (streams)
  - tenEvenRandomNumbers() -> [168, 384, 668, 16, 152, 772, 560, 488, 476, 460]
 ```
 
+Show the finally packaged artifact:
+
+```sh
+# package final release-jar, rename to 'application-1.0.0-RELEASE.jar'
+mk package
+mv tar
+
+# show the release-jar
+ls -la target
+```
+```
+total 84
+drwxr-xr-x 1     0 Jun  1 10:59 ./
+drwxr-xr-x 1     0 Jun  1 10:56 ../
+-rw-r--r-- 1 70400 Jun  1 10:59 application-1.0.0-RELEASE.jar
+drwxr-xr-x 1     0 Jun  1 10:59 classes/
+drwxr-xr-x 1     0 Jun  1 10:57 resources/
+drwxr-xr-x 1     0 Jun  1 10:57 test-classes/
+```
+
+Run examples with final release-jar:
+
+```sh
+# run 'b1-optionals' example with final release-jar
+java -jar target/application-1.0.0-RELEASE.jar b1-optionals Kanne Becher Messer
+
+# run 'b2-numbers' example with final release-jar
+java -jar target/application-1.0.0-RELEASE.jar run b2-numbers sum numbers=[1, 2, 3, 4, 5, 6]
+
+# run 'b3-streams' example with final release-jar
+java -jar target/application-1.0.0-RELEASE.jar b3-streams tenEvenRandomNumbers repeat=3
+```
+```
+$ java -jar target/application-1.0.0-RELEASE.jar b1-optionals Kanne Becher Messer
+Hello, 'SE-1 Play' (integration)
+Hello, 'SE-1 Play' (optionals)
+Der Preis für 'Kanne' ist: 1999 €-Cent
+Der Preis für 'Becher' ist: 749 €-Cent
+Der Artikel 'Messer' konnte nicht gefunden werden
+
+$ java -jar target/application-1.0.0-RELEASE.jar run b2-numbers sum numbers=[1, 2, 3, 4, 5, 6]
+Hello, 'SE-1 Play' (integration)
+Hello, 'SE-1 Play' (numbers)
+ - sum([1, 2, 3, 4, 5, 6]) -> 21
+
+$ java -jar target/application-1.0.0-RELEASE.jar b3-streams tenEvenRandomNumbers repeat=3
+Hello, 'SE-1 Play' (integration)
+Hello, 'SE-1 Play' (streams)
+ - tenEvenRandomNumbers() -> [324, 214, 66, 804, 382, 750, 518, 654, 278, 610]
+ - tenEvenRandomNumbers() -> [128, 770, 406, 380, 616, 440, 360, 752, 42, 44]
+ - tenEvenRandomNumbers() -> [642, 118, 60, 786, 610, 480, 20, 372, 114, 150]
+```
+
+The final release-jar `application-1.0.0-RELEASE.jar` can now be distributed
+through an
+[*artifact repository*](https://jfrog.com/learn/devops/software-artifact-repository)
+such as:
+
+- [*Sonatype Nexus Repository*](): A highly popular repository that supports various package formats and focuses heavily on software supply chain security and component lifecycle management.
+
+- [*JFrog Artifactory*](https://jfrog.com): A universal binary repository manager supporting over 27 package types. It acts as a caching proxy and integrates deeply with CI servers.
+
+- *GitHub Packages:* Integrated directly into GitHub, this allows teams to host software packages and container images right alongside their source code.
+
+- *AWS CodeArtifact:* A fully managed artifact repository service that integrates seamlessly with existing build tools and AWS services.
+
+- *Google Artifact Registry:* A unified repository on Google Cloud designed to manage container images and language packages (like Maven and npm) securely.
+
+[*Maven Repository*](https://mvnrepository.com)
+is the largest, global artifact repository for Java `.jar` packages. It stores
+all publicly available Java `.jar` packages since the beginning of Java (for over
+25+ years).

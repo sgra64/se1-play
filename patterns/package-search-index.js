@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html","k":"18"},{"m":"se1_play","l":"application"},{"m":"se1_play","l":"components"},{"m":"se1_play","l":"components.impl"},{"m":"se1_play","l":"datamodel"},{"m":"se1_play","l":"patterns"}];updateSearchResults();

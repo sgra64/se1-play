@@ -1,0 +1,19 @@
+## Generate datamodel and component packages
+
+mk delombok
+
+find target/delombok -name '*.java' > docfiles
+
+edit 'docfiles' to remove files from being included in Javadocs
+remove
+- target/delombok/components/impl
+- target/delombok/datamodel/Accessors.java
+- target/delombok/patterns
+
+run:
+  javadoc --source-path target/delombok -d target/javadoc \
+    --module-path "$MODULEPATH" -version -author -Xdoclint:-missing \
+    -noqualifier "java.*:application.*:components.*:datamodel.*:patterns.*" \
+    @docfiles
+
+https://sgra64.github.io/se1-play/patterns/module-summary.html

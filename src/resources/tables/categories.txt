@@ -1,0 +1,22 @@
++--------+------------------------------------------------------+--------------+
+| ID     | DESCRIPTION                                          | VAT_CODE     |
++--------+------------------------------------------------------+--------------+
+| 10     | Reinigung & Pflege                                   | A            |
+| 11     | Papierwaren & Hygiene                                | A            |
+| 12     | Küche & Kochen                                       | A            |
+| 14     | Kleine Haushaltsgeräte                               | A            |
+| 30     | Brote                                                | B            |
+| 31     | Brötchen & Kleingebäck                               | B            |
+| 32     | Süßgebäck & Kuchen                                   | B            |
+| 33     | Herzhaftes Gebäck                                    | B            |
+| 50     | Krimi                                                | C            |
+| 51     | Sci-Fi & Fantasy                                     | C            |
+| 52     | Roman / Belletristik                                 | C            |
+| 53     | Sachbuch                                             | C            |
+| 54     | Ratgeber                                             | C            |
+| 55     | Historischer Roman                                   | C            |
+| 56     | Biografie                                            | C            |
+| 57     | Jugendbuch                                           | C            |
+| 58     | Karten und Tourismus                                 | C            |
+| 59     | Freizeit und Sport                                   | A            |
++--------+------------------------------------------------------+--------------+

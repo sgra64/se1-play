@@ -1,0 +1,112 @@
++--------+-------------------------------------------+----------+--------------+
+| ID     | DESCRIPTION                               | CATEGORY |        PRICE |
++--------+-------------------------------------------+----------+--------------+
+| 524810 | Toastbrot XL (500g)                       |       30 |         1.49 |
+| 652810 | Küchenwaage digital (1 Stk.)              |       14 |         9.99 |
+| 106754 | Mohnbrötchen (1 Stk.)                     |       31 |         0.55 |
+| 750349 | Gesund Kochen unter 20 Minuten (Hardcover)|       54 |        19.99 |
+| 164872 | Käsebrötchen überbacken (1 Stk.)          |       33 |         1.20 |
+| 245262 | Buch "OOP" (Object-Oriented Programming) (|       53 |        79.95 |
+| 105743 | Vollwaschmittel Pulver (100 Wäschen)      |       10 |        14.99 |
+| 135948 | Gegen den Strom - Mein Leben (Hardcover)  |       56 |        28.00 |
+| 508693 | Wäschekorb Kunststoff (45L)               |       13 |         5.99 |
+| 750361 | Laugenbrezel (1 Stk.)                     |       31 |         0.95 |
+| 539164 | Künstliche Intelligenz im Alltag (Taschenb|       53 |        18.00 |
+| 483091 | Das Erbe der Hanse (Hardcover)            |       55 |        23.00 |
+| 514832 | Allzweckreiniger (1L)                     |       10 |         1.49 |
+| 135962 | Rosinenbrötchen (1 Stk.)                  |       32 |         0.80 |
+| 827413 | Die Brücke der verlorenen Zeit (Taschenbuc|       57 |        10.99 |
+| 462108 | Papiertaschentücher Box (100 Stk.)        |       11 |         1.15 |
+| 637205 | Wassereimer Kunststoff (10L)              |       13 |         1.99 |
+| 860432 | Projekt Proxima (Taschenbuch)             |       51 |        16.00 |
+| 149283 | Tod im Alten Land (Taschenbuch)           |       50 |        11.90 |
+| 418592 | Weizenmischbrot (750g)                    |       30 |         3.10 |
+| 539182 | Sesambrötchen (1 Stk.)                    |       31 |         0.55 |
+| 872491 | Der Finanz-Code (Hardcover)               |       53 |        26.99 |
+| 641582 | Die Weberei der Träume (Taschenbuch)      |       55 |        13.99 |
+| 952356 | Fahrradkarte Berlin (Karte)               |       58 |         6.95 |
+| 309547 | Geflügelrolle (1 Stk.)                    |       33 |         2.40 |
+| 941375 | Kaffeemaschine (Filter, 10 Tassen)        |       14 |        27.99 |
+| 182064 | Rührschüssel Kunststoff (3L)              |       12 |         3.49 |
+| 708412 | Küchen-Alufolie (30m)                     |       11 |         2.19 |
+| 159284 | Dinkelbrot (500g)                         |       30 |         3.85 |
+| 827451 | Berliner / Pfannkuchen (1 Stk.)           |       32 |         1.35 |
+| 847163 | Pizzaschnecke (1 Stk.)                    |       33 |         1.90 |
+| 307519 | Kochtopf Edelstahl (mit Deckel)           |       12 |        29.99 |
+| 793164 | Frischhaltedosen Set (3-teilig)           |       12 |         7.99 |
+| 271685 | Duschgel (250ml)                          |       11 |         0.85 |
+| 208457 | Der Stressfreie Garten (Hardcover)        |       54 |        24.90 |
+| 695128 | Klassisches Weizenbrötchen (1 Stk.)       |       31 |         0.45 |
+| 523091 | Zwiebelkuchen Stück (150g)                |       33 |         2.85 |
+| 335953 | Fahrradhelm (S, M, L, XL)                 |       59 |       169.00 |
+| 318290 | Toilettenpapier 3-lagig (8 Rollen)        |       11 |         3.25 |
+| 962135 | Mindset für Minimalisten (Taschenbuch)    |       54 |        14.95 |
+| 208473 | Croissant französisch (1 Stk.)            |       31 |         1.40 |
+| 947538 | Küchensieb Edelstahl (1 Stk.)             |       12 |         6.99 |
+| 436571 | WC-Frisch Blauspüler (3er Pack)           |       10 |         2.99 |
+| 812396 | Spülmittel (500ml)                        |       10 |         1.25 |
+| 694120 | Weichspüler (1L)                          |       10 |         2.19 |
+| 610925 | Korkenzieher / Flaschenöffner (1 Stk.)    |       12 |         3.99 |
+| 695148 | Ein Sommer in Biarritz (Taschenbuch)      |       52 |        11.99 |
+| 962148 | Laugenstange (1 Stk.)                     |       31 |         0.85 |
+| 684391 | Pfanne beschichtet (28cm)                 |       12 |        24.99 |
+| 594023 | Zahnpasta (75ml)                          |       11 |         1.49 |
+| 573819 | Gefrierbeutel 3L (30 Stk.)                |       10 |         1.29 |
+| 936054 | Münchner Blut (Taschenbuch)               |       50 |        13.00 |
+| 289405 | Geschirrspültabs (60 Stk.)                |       10 |         4.49 |
+| 705162 | In den Tiefen des Moores (Hardcover)      |       50 |        24.00 |
+| 374915 | Schatten über Elvoria (Taschenbuch)       |       51 |        14.99 |
+| 273804 | Nussecke (1 Stk.)                         |       32 |         2.10 |
+| 521870 | Die Chroniken von Nova (Hardcover)        |       51 |        22.00 |
+| 870534 | Toaster (2 Schlitze)                      |       14 |        17.49 |
+| 750214 | Schwammtücher (5er Pack)                  |       10 |         0.99 |
+| 895134 | Bodenwischtuch (1 Stk.)                   |       10 |         1.99 |
+| 914836 | Kehrset (Feger & Schaufel) (1 Set)        |       13 |         3.99 |
+| 183965 | Topfreiniger Stahlschwämme (3er Pack)     |       10 |         1.19 |
+| 703146 | Roggenvollkornbrot (500g)                 |       30 |         3.45 |
+| 706219 | Apfeltasche (1 Stk.)                      |       32 |         1.85 |
+| 721058 | Fusselrolle (inkl. 2 Rollen)              |       13 |         2.99 |
+| 123564 | Buch "Java" (Hardcover)                   |       53 |        49.90 |
+| 475319 | Wäscheklammern Holz (50 Stk.)             |       13 |         1.99 |
+| 851647 | Schneidebrett Kunststoff (1 Stk.)         |       12 |         5.99 |
+| 364720 | Kleiderbügel Kunststoff (10 Stk.)         |       13 |         4.49 |
+| 241076 | Müllbeutel 30L mit Zugband (20 Stk.)      |       10 |         1.79 |
+| 529073 | Kochmesser Edelstahl (1 Stk.)             |       12 |        14.99 |
+| 963250 | Backpapier Zuschnitte (30 Stk.)           |       11 |         1.39 |
+| 628407 | Mikrofasertücher (4er Pack)               |       10 |         3.49 |
+| 135874 | Kosmetiktücher Box (90 Stk.)              |       11 |         0.95 |
+| 236481 | Geschirrtuch Baumwolle (3er Pack)         |       12 |         4.99 |
+| 426179 | Wasserkocher Edelstahl (1.7L)             |       14 |        19.99 |
+| 415936 | Frischhaltefolie (50m)                    |       11 |         1.49 |
+| 733634 | Tasse (Art Deco Collection)               |       12 |         2.99 |
+| 483017 | Schokocroissant (1 Stk.)                  |       32 |         1.60 |
+| 749531 | Küchenrolle 3-lagig (4 Rollen)            |       11 |         2.49 |
+| 872415 | Mehrkornbrötchen (1 Stk.)                 |       31 |         0.75 |
+| 347859 | Glasreiniger Spray (750ml)                |       10 |         1.79 |
+| 921048 | Badreiniger gegen Kalk (750ml)            |       10 |         2.29 |
+| 523473 | Becher (Art Deco Collection)              |       12 |         1.49 |
+| 382419 | Der lautlose Zeuge (Taschenbuch)          |       50 |        12.99 |
+| 314076 | Die Psychologie des Erfolgs (Taschenbuch) |       53 |        15.00 |
+| 906452 | Gummihandschuhe (1 Paar)                  |       10 |         0.89 |
+| 594130 | Amerikaner mit Zuckerguss (1 Stk.)        |       32 |         1.70 |
+| 681425 | Schinken-Käse-Stange (1 Stk.)             |       33 |         2.25 |
+| 158942 | Staubwedel statisch (1 Stk.)              |       13 |         2.49 |
+| 247519 | Die Frauen vom Kaffeehaus (Taschenbuch)   |       52 |        12.00 |
+| 783061 | Batterien AA (8er Pack)                   |       13 |         2.79 |
+| 319462 | Handmixer (300 Watt)                      |       14 |        22.99 |
+| 827369 | Flüssigseife Nachfüllbeutel (500ml)       |       11 |         0.99 |
+| 152804 | Kaffeefilter Größe 4 (100 Stk.)           |       12 |         0.99 |
+| 839142 | Wäscheleine (20m)                         |       13 |         2.49 |
+| 952036 | Zimtschnecke (1 Stk.)                     |       32 |         1.95 |
+| 932067 | Sonnenblumenkernbrot (750g)               |       30 |         3.60 |
+| 106735 | Das Leuchten der Erinnerung (Hardcover)   |       52 |        25.00 |
+| 860413 | Ciabatta (300g)                           |       30 |         1.95 |
+| 247539 | Pumpernickel (250g)                       |       30 |         1.69 |
+| 641529 | Franzbrötchen (1 Stk.)                    |       31 |         1.65 |
+| 314096 | Kürbiskernbrötchen (1 Stk.)               |       31 |         0.85 |
+| 673276 | Teller (Art Deco Collection)              |       12 |         6.49 |
+| 354546 | Kanne (Art Deco Collection)               |       12 |        19.99 |
+| 419583 | Donut mit Schokoglasur (1 Stk.)           |       32 |         1.25 |
+| 381945 | Baguette klassisch (250g)                 |       30 |         1.20 |
+| 295417 | Wäschenetz für Feines (3er Set)           |       13 |         2.99 |
++--------+-------------------------------------------+----------+--------------+

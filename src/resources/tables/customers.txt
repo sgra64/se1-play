@@ -1,0 +1,41 @@
++--------+---------------------+---------------------+-------------------------+
+|     ID | NAME                | FIRSTNAME           | CONTACT                 |
++--------+---------------------+---------------------+-------------------------+
+| 286516 | Schulz-Mueller      | Tim                 | tim2346@gmx.de          |
+| 456454 | Abdelalim           | Khaled Saad Mohamed | +49 1524-12948210       |
+| 825786 | Neumann             | Lena                | +49 173-4292109         |
+| 892474 | Meyer               | Eric                | eric98@yahoo.com        |
+| 412396 | Blumenfeld          | Nadine-Ulla         | +49 152-92454           |
+| 643270 | Bayer               | Anne                | anne24@yahoo.de         |
++--------+---------------------+---------------------+-------------------------+
+
++--------+---------------------+---------------------+-------------------------+
+|     ID | NAME                | FIRSTNAME           | CONTACT                 |
++--------+---------------------+---------------------+-------------------------+
+| 456454 | Abdelalim           | Khaled Saad Mohamed | +49 1524-12948210       |
+| 147392 | Schwarz             | Stefanie            | +49 151 1234584         |
+| 731592 | Weber               | Anna                | +49 151 1234570         |
+| 472910 | Richter             | Daniel              | daniel.richter@yahoo.de |
+| 539201 | Neumann             | Robert              | robert.neumann@onvista.c|
+| 103948 | Müller              | Tobias              | tobias.mueller@gmail.com|
+| 918273 | Bauer               | Christina           | +49 151 1234578         |
+| 643270 | Bayer               | Anne                | anne24@yahoo.de         |
+| 784019 | Schröder            | Anja                | +49 151 1234582         |
+| 362840 | Meyer               | Andreas             | andreas.meyer@gmx.de    |
+| 850193 | Wagner              | Julia               | +49 151 1234572         |
+| 361947 | Braun               | Melanie             | +49 151 1234586         |
+| 519384 | Becker              | Christian           | christian.becker@google.|
+| 610582 | Klein               | Nicole              | +49 151 1234580         |
+| 892014 | Zimmermann          | Jan                 | jan.zimmermann@web.de   |
+| 304928 | Koch                | Martin              | martin.koch@vaio.io     |
+| 492015 | Fischer             | Michael             | michael.fischer@telekom.|
+| 647201 | Schulz              | Laura               | +49 151 1234574         |
+| 412396 | Blumenfeld          | Nadine-Ulla         | +49 152-92454           |
+| 284719 | Schmidt             | Sabine              | +49 151 1234568         |
+| 286516 | Schulz-Mueller      | Tim                 | tim2346@gmx.de          |
+| 259381 | Wolf                | Markus              | markus.wolf@gmail.com   |
+| 825786 | Neumann             | Lena                | +49 173-4292109         |
+| 826491 | Schäfer             | Sandra              | +49 151 1234576         |
+| 892474 | Meyer               | Eric                | eric98@yahoo.com        |
+| 193850 | Hoffmann            | Stefan              | stefan.hoffmann@bht-berl|
++--------+---------------------+---------------------+-------------------------+

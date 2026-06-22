@@ -1,0 +1,21 @@
+[
+  { "id": 10, "description": "Reinigung & Pflege", "vat_code": "A" },
+  { "id": 11, "description": "Papierwaren & Hygiene", "vat_code": "A" },
+  { "id": 12, "description": "Küche & Kochen", "vat_code": "A" },
+  { "id": 13, "description": "Haushalt", "vat_code": "A" },
+  { "id": 14, "description": "Kleine Haushaltsgeräte", "vat_code": "A" },
+  { "id": 30, "description": "Brote", "vat_code": "B" },
+  { "id": 31, "description": "Brötchen & Kleingebäck", "vat_code": "B" },
+  { "id": 32, "description": "Süßgebäck & Kuchen", "vat_code": "B" },
+  { "id": 33, "description": "Herzhaftes Gebäck", "vat_code": "B" },
+  { "id": 50, "description": "Krimi", "vat_code": "C" },
+  { "id": 51, "description": "Sci-Fi & Fantasy", "vat_code": "C" },
+  { "id": 52, "description": "Roman / Belletristik", "vat_code": "C" },
+  { "id": 53, "description": "Sachbuch", "vat_code": "C" },
+  { "id": 54, "description": "Ratgeber", "vat_code": "C" },
+  { "id": 55, "description": "Historischer Roman", "vat_code": "C" },
+  { "id": 56, "description": "Biografie", "vat_code": "C" },
+  { "id": 57, "description": "Jugendbuch", "vat_code": "C" },
+  { "id": 58, "description": "Karten und Tourismus", "vat_code": "C" },
+  { "id": 59, "description": "Freizeit und Sport", "vat_code": "A" }
+]

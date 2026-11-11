@@ -1,7 +1,7 @@
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-<!-- B1 (SE-1)
+<!-- C1 (SE-1)
 -->
-# B1: Project *"se1-play"*
+# C1: Project *"se1-play"*
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 The assignment demonstates the structure and tools used of a professional
@@ -24,6 +24,9 @@ The project is structured into several parts:
     [*VSCode*](https://code.visualstudio.com/)
     [*IDE*](https://en.wikipedia.org/wiki/Integrated_development_environment)
     (Integrated Development Environment),
+
+- `.devcontainer (*)` - folder with specifications of the *VSCode* Dev-Container,
+    see [*Assignment A5*](https://github.com/sgra64/a15-setup/tree/main/a5-vscode-setup#vscode-dev-container),
 
 - `.env (*)` - folder with the *sourcing script:* `env.sh` to set up the project
     environment with:
@@ -61,7 +64,7 @@ Project "*se1-play*" is created in several steps:
 
 1. [Create a *.gitignore* - File](#3-create-a-gitignore---file)
 
-1. [Import *git*-Submodules: *.env*, *.vscode*, *libs*](#4-import-git-submodules-env-vscode-libs)
+1. [Import *git*-Submodules: *.env*, *.vscode*, *.devcontainer*, *libs*](#4-import-git-submodules-env-vscode-devcontainer-libs)
 
 1. [Explore: *libs*](#5-explore-libs)
 
@@ -117,6 +120,11 @@ structure is called the project *"scaffold" :*
    +--.project          # VSCode file with project settings (*)
    +--.classpath        # VSCode project file with CLASSPATH information (*)
    |
+   +-<.devcontainer>    # git-module with VSCode Dev-Container specs
+   |   +--.gitignore
+   |   +--.bashrc, .profile, .termrc
+   |   +--devcontainer.json     # spec of the Docker-Container
+   |
    +-<.env>             # git-module with the sourcing script: 'env.sh'
    |  +--env.sh         # sourcing script to set up the project environment
    |
@@ -129,7 +137,6 @@ structure is called the project *"scaffold" :*
    |   +--launch.json           # VSCode launch targets
    |   +--launch-coderunner     # Coderunner launch target (*)
    |   +--launch-terminal.json  # terminal launch settings
-   |
    +-<libs>             # git-module with libraries required by the project
    |  |
    |  +-<jackson>           # library to process JSON data in Java
@@ -336,12 +343,15 @@ e9c43c5 (tag: root) root commit (empty)                 <-- initial root commit
 
 &nbsp;
 
-## 4. Import *git*-Submodules: *.env*, *.vscode*, *libs*
+## 4. Import *git*-Submodules: *.env*, *.vscode*, *.devcontainer*, *libs*
 
 [*Git Submodules*](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
 (read the: [*article*](https://www.freecodecamp.org/news/how-to-use-git-submodules/))
 is a mechanism to import content into a project that is maintained outside by
 other people/teams in separate *git* repositories, here these are:
+
+- project [*.devcontainer*-repo](https://github.com/sgra64/dev-container-java)
+    for the `.devcontainer` folder with the specs of the *VSCode* Dev-Container,
 
 - project [*.env*-repo](https://github.com/sgra64/gitmodule-env.sh)
     for the `.env` folder with the *sourcing* script,
@@ -433,18 +443,25 @@ e9c43c5 (tag: root) root commit (empty)
 
 &nbsp;
 
-Import two more modules:
-[*gitmodule-vscode-java*](https://github.com/sgra64/gitmodule-vscode-java) and
+Import the other *git*-modules:
+[*gitmodule-vscode-java*](https://github.com/sgra64/gitmodule-vscode-java),
+gitmodule [*dev-container-java*](https://github.com/sgra64/dev-container-java) and
 [*gitmodule-libs-jars*](https://github.com/sgra64/gitmodule-libs-jars):
 
 ```sh
-# import git submodule '.vscode' from the remote 'gitmodule-vscode-java.git' repository
+# import git submodule '.vscode' from the remote 'gitmodule-vscode-java' git-repository
 git submodule add -f -- https://github.com/sgra64/gitmodule-vscode-java.git .vscode
 
 git rm --cached .gitmodules && git commit -m "git submodule: .vscode"
 
 
-# import git submodule '.libs' from the remote 'gitmodule-libs-jars.git' repository
+# import git submodule '.devcontainer' from the remote 'dev-container-java' git-repository
+git submodule add -f -- https://github.com/sgra64/dev-container-java.git .vscode
+
+git rm --cached .gitmodules && git commit -m "git submodule: .devcontainer"
+
+
+# import git submodule '.libs' from the remote 'gitmodule-libs-jars' git-repository
 git submodule add -f -- https://github.com/sgra64/gitmodule-libs-jars.git libs
 
 git rm --cached .gitmodules && git commit -m "git submodule: libs"
@@ -459,6 +476,7 @@ ls -la                  # show imported content
 total 17
 drwxr-xr-x 1    0 Apr 19 19:33 ./
 drwxr-xr-x 1    0 Apr 19 18:56 ../
+drwxr-xr-x 1    0 Nov  3 22:30 .devcontainer/   <-- imported module '.devcontainer'
 drwxr-xr-x 1    0 Apr 19 19:33 .env/            <-- imported module '.env'
 drwxr-xr-x 1    0 Apr 19 19:33 .git/
 -rw-r--r-- 1 1074 Apr 19 19:30 .gitignore
@@ -480,6 +498,9 @@ cat .gitmodules
 [submodule ".vscode"]
     path = .vscode
     url = https://github.com/sgra64/gitmodule-vscode-java.git
+[submodule ".vscode"]
+    path = .devcontainer
+    url = https://github.com/sgra64/dev-container-java.git
 [submodule "libs"]
     path = libs
     url = https://github.com/sgra64/gitmodule-libs-jar.git
@@ -493,6 +514,7 @@ git log --oneline
 ```
 ```
 99f8ede (HEAD -> git-modules) git submodule: libs   <-- branch 'git-modules'
+b38d569 git submodule: .devcontainer
 adc62d6 git submodule: .vscode
 5cf0596 git submodule: .env
 dcf9764 (main) add .gitignore                       <-- branch 'main' points here
@@ -530,6 +552,7 @@ Test that *git-modules* have properly been imported:
 git submodule               # list registered sub-modules
 ```
 ```
+a6de25ed2bad35f4cf3305c292745283c66ed2ba .devcontainer (heads/main)
 cdf8cb5d3a6de25ed2ba69a03a4594fe0c8beccc .env (heads/main)
 d35f4cf3305c2927452f53675873b36a85583c66 .vscode (heads/main)
 c96cf621126cd9563e147af57e9d0ebba848f8ab libs (heads/main)
@@ -543,6 +566,8 @@ repository:
 git submodule foreach git pull
 ```
 ```
+Entering '.devcontainer'
+Already up to date.
 Entering '.env'
 Already up to date.
 Entering '.vscode'
@@ -560,6 +585,7 @@ git switch main             # switch back to the main branch
 Ignore warnings when switching back to the *main* branch:
 
 ```
+warning: unable to rmdir '.devcontainer': Directory not empty
 warning: unable to rmdir '.env': Directory not empty
 warning: unable to rmdir '.vscode': Directory not empty
 warning: unable to rmdir 'libs': Directory not empty
@@ -584,6 +610,7 @@ ls -la
 ```
 drwxr-xr-x 1    0 Apr 19 19:42 ./
 drwxr-xr-x 1    0 Apr 19 18:56 ../
+drwxr-xr-x 1    0 Nov  3 22:30 .devcontainer/   <-- module '.devcontainer'
 drwxr-xr-x 1    0 Apr 19 19:33 .env/            <-- module '.env'
 drwxr-xr-x 1    0 Apr 19 19:52 .git/
 -rw-r--r-- 1 1074 Apr 19 19:30 .gitignore
@@ -906,6 +933,7 @@ total 30
 drwxr-xr-x 1    0 Apr 19 21:29 ./
 drwxr-xr-x 1    0 Apr 19 18:56 ../
 -rw-r--r-- 1 2906 Apr 19 21:29 .classpath               <-- created
+drwxr-xr-x 1    0 Nov  3 22:30 .devcontainer/
 drwxr-xr-x 1    0 Apr 19 20:54 .env/
 drwxr-xr-x 1    0 Apr 19 20:54 .git/
 -rw-r--r-- 1 1074 Apr 19 20:54 .gitignore
@@ -995,6 +1023,7 @@ total 33                    <-- 'ls -la' shows the content of the project direct
 drwxr-xr-x 1 svgr2 Kein    0 Apr 19 21:36 .
 drwxr-xr-x 1 svgr2 Kein    0 Apr 19 18:56 ..
 -rw-r--r-- 1 svgr2 Kein 2906 Apr 19 21:34 .classpath
+drwxr-xr-x 1 svgr2 Kein    0 Nov  3 22:30 .devcontainer
 drwxr-xr-x 1 svgr2 Kein    0 Apr 19 20:54 .env
 drwxr-xr-x 1 svgr2 Kein    0 Apr 19 20:54 .git
 -rw-r--r-- 1 svgr2 Kein 1074 Apr 19 20:54 .gitignore

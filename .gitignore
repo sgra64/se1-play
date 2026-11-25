@@ -9,6 +9,7 @@
 .env/
 .vscode/
 .libs/
+.devcontainer/
 
 # ignore output directories with generated content
 bin/
